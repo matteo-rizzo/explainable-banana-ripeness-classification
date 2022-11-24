@@ -4,17 +4,22 @@ import time
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from segmentation.scikit_test import rescale
+
 mpl.rcParams['figure.dpi'] = 300
 from cellpose import io, models, plot
 
-files = ["image.png"]
-out_files = [os.path.join("../out", f) for f in files][0]
+files = ["segmentation/image.png"]
+out_files = [os.path.join("segmentation/out", os.path.basename(f)) for f in files][0]
 
 # REPLACE FILES WITH YOUR IMAGE PATHS
 # files = ['img0.tif', 'img1.tif']
 
 # view 1 image
 img = io.imread(files[-1])
+
+img = rescale(img)
+
 plt.figure(figsize=(2, 2))
 plt.imshow(img)
 plt.axis('off')
