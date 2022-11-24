@@ -2,6 +2,7 @@ import time
 
 from PIL import Image
 from fastseg import MobileV3Small  # MobileV3Large
+from fastseg.image import colorize
 
 # https://pypi.org/project/fastseg/
 
@@ -16,3 +17,6 @@ start = time.perf_counter()
 labels = model.predict_one(image)
 end = time.perf_counter()
 print(f"Time: {end - start} s")
+
+colorized = colorize(labels)  # returns a PIL Image
+colorized.show()
