@@ -16,6 +16,7 @@ class NetworkFactory:
 
     def get(self, network_type: str, module_params: Dict, activation: bool = False) -> nn.Module:
         if network_type not in self.networks_map.keys():
-            raise ValueError("Network {} is not implemented! \n Implemented networks are: {}"
-                             .format(network_type, list(self.networks_map.keys())))
+            raise ValueError(
+                f"Network {network_type} is not implemented! "
+                f"\n Implemented networks are: {list(self.networks_map.keys())}")
         return self.networks_map[network_type](module_params, activation)
