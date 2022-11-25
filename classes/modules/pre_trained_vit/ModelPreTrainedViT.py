@@ -1,7 +1,7 @@
 from typing import Dict
 
 from classes.core.Model import Model
-from classes.modules.pre_trainet_vit.PreTrainedViT import PreTrainedViT
+from classes.modules.pre_trained_vit.PreTrainedViT import PreTrainedViT
 
 
 class ModelPreTrainedCNN(Model):
