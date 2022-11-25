@@ -22,9 +22,9 @@ def set_random_seed(seed: int, device: torch.device):
 
 def get_device(device_type: str) -> torch.device:
     """
-    Returns the device specified in the experiments parameters (if available, else fallback to a "cpu" device")
+    Returns the device specified in the experiments parameters (if available, else fallback to a "cpu" device)
     :param device_type: the id of the selected device (if cuda device, must match the regex "cuda:\d"
-    :return: the device specified in the experiments parameters (if available, else fallback to a "cpu" device")
+    :return: the device specified in the experiments parameters (if available, else fallback to a "cpu" device)
     """
     if device_type == "cpu":
         return torch.device("cpu")
