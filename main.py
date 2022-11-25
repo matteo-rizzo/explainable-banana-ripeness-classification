@@ -31,11 +31,11 @@ def get_device(device_type: str) -> torch.device:
 
     if re.match(r"\bcuda:\b\d+", device_type):
         if not torch.cuda.is_available():
-            print("WARNING: running on cpu since device {} is not available".format(device_type))
+            print(f"WARNING: running on cpu since device {device_type} is not available")
             return torch.device("cpu")
         return torch.device(device_type)
 
-    raise ValueError("ERROR: {} is not a valid device! Supported device are 'cpu' and 'cuda:n'".format(device_type))
+    raise ValueError(f"ERROR: {device_type} is not a valid device! Supported device are 'cpu' and 'cuda:n'")
 
 
 def main():
@@ -51,14 +51,14 @@ def main():
     network_type = train_params["network_type"]
     dataset_name = data_params["dataset"]["name"]
 
-    print("\n\n==========================================================\n"
-          "            Experiment on {} using {}                       \n"
-          "==========================================================\n\n".format(dataset_name, network_type))
+    print(f"\n\n==========================================================\n"
+          f"            Experiment on {dataset_name} using {network_type}                       \n"
+          f"==========================================================\n\n")
 
-    print("\t Using Torch version ... : {}".format(torch.__version__))
-    print("\t Running on device ..... : {}\n".format(device))
+    print(f"\t Using Torch version ... : {torch.__version__}")
+    print(f"\t Running on device ..... : {device}\n")
 
-    experiment_id = "{}_{}_{}".format(data_params["dataset"]["name"], network_type, str(time.time()))
+    experiment_id = f"{data_params['dataset']['name']}_{network_type}_{str(time.time())}"
     path_to_results = os.path.join("results", experiment_id)
     os.makedirs(path_to_results)
     Params.save_experiment_params(path_to_results, network_type, dataset_name)
@@ -67,9 +67,9 @@ def main():
     start_time = time.time()
 
     for seed in range(num_seeds):
-        print("\n\n==========================================================\n"
-              "                      Seed {} / {}                       \n"
-              "==========================================================\n".format(seed + 1, num_seeds))
+        print(f"\n\n==========================================================\n"
+              f"                      Seed {seed + 1} / {num_seeds}                       \n"
+              f"==========================================================\n")
 
         data_manager = DataManager(data_params, network_type)
         use_cv_metadata = data_params["cv"]["use_cv_metadata"]
@@ -92,15 +92,15 @@ def main():
               "                        Finished CV                  \n"
               "................................................................\n")
 
-    print("\n Average test results for {} seeds \n".format(num_seeds))
+    print(f"\n Average test results for {num_seeds} seeds \n")
     avg_seeds_test = pd.DataFrame(test_scores)
     avg_seeds_test.insert(0, "seed", list(range(1, num_seeds + 1)))
     avg_seeds_test.to_csv(os.path.join(path_to_results, "avg_seeds_test.csv"), index=False)
     print(avg_seeds_test)
-
+    elapsed: float = (time.time() - start_time) / 60
     print("\n\n==========================================================\n"
-          "            Finished experiment in {:.2f}m              \n"
-          "==========================================================\n".format((time.time() - start_time) / 60))
+          f"            Finished experiment in {elapsed:.2f}m              \n"
+          "==========================================================\n")
 
 
 if __name__ == "__main__":
