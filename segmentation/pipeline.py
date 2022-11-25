@@ -72,13 +72,14 @@ def main():
     print(f"SLIC time per image: {(end - start) / len(IMAGES)} s;   TOTAL: {(end - start_img) / len(IMAGES)} s")
 
     # PLOT results
-    f, axs = create_figure(len(IMAGES), 3)
+    f, axs = create_figure(len(IMAGES), 4)
     f.suptitle("sharpening", fontsize=16)
     for i in range(len(IMAGES)):
         img, img_proc, mask = imgs[i], imgs_proc[i], masks[i]
         axs[i, 0].imshow(img)
         axs[i, 1].imshow(img_proc)
         axs[i, 2].imshow(color.label2rgb(mask, img, kind="overlay"))
+        axs[i, 3].imshow(img * mask[..., np.newaxis])
     plt.tight_layout()
     plt.show()
 

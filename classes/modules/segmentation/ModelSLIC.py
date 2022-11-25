@@ -11,7 +11,7 @@ class ModelSLIC(Model):
     _default_parameters = {
         "contast": dict(p_min=1.0, p_max=99.0),
         "sharpen": dict(radius=4.0, amount=1.0),
-        "blur": dict(std=1.0),
+        "blur": dict(std=1.0)
     }
 
     def __init__(self, params: Dict = _default_parameters, device=None):
