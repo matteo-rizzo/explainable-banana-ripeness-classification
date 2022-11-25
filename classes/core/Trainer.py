@@ -53,7 +53,7 @@ class Trainer:
         training_loader = data["train"]
 
         for epoch in range(self.__epochs):
-            print("\n *** Epoch {}/{} *** \n".format(epoch + 1, self.__epochs))
+            print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** \n")
 
             self.__model.train_mode()
 
@@ -71,8 +71,9 @@ class Trainer:
 
                 if not (i + 1) % self.__log_every:
                     avg_loss, avg_accuracy = running_loss / self.__log_every, running_accuracy / self.__log_every
-                    print("[ Epoch: {}/{}, batch: {} ] [ Loss: {:.4f} | Accuracy: {:.4f} ]"
-                          .format(epoch + 1, self.__epochs, i + 1, avg_loss, avg_accuracy))
+                    print(
+                        f"[ Epoch: {epoch + 1}/{self.__epochs}, batch: {i + 1} ] "
+                        f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]")
                     running_loss, running_accuracy = 0.0, 0.0
 
             print("\n ........................................................... \n")
@@ -98,8 +99,9 @@ class Trainer:
             metrics_check = metric_value < self.__es_metric_best_value
 
         if metrics_check:
-            print("\n\t Old best val {m}: {o:.4f} | New best {m}: {n:.4f} \n"
-                  .format(m=self.__es_metric, o=self.__es_metric_best_value, n=metric_value))
+            print(
+                f"\n\t Old best val {self.__es_metric}: {self.__es_metric_best_value:.4f} "
+                f"| New best {self.__es_metric}: {metric_value:.4f} \n")
 
             print("\t Saving new best model...")
             self.__model.save(self.__path_to_best_model)
@@ -110,8 +112,8 @@ class Trainer:
         else:
             self.__epochs_no_improvement += 1
             if self.__epochs_no_improvement == self.__patience:
-                print("\n ** No decrease in val {} for {} evaluations. Early stopping! ** \n"
-                      .format(self.__es_metric, self.__patience))
+                print(f"\n ** No decrease in val {self.__es_metric} "
+                      f"for {self.__patience} evaluations. Early stopping! ** \n")
                 return True
 
         print("\n Epochs without improvement: ", self.__epochs_no_improvement)

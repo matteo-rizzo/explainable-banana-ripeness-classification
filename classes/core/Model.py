@@ -70,7 +70,7 @@ class Model:
         :param learning_rate: the initial learning rate
         :return: an optimizer in {Adam, SGD}
         """
-        print("\n Optimizer: {} (learning rate is {})".format(optimizer_type, learning_rate))
+        print(f"\n Optimizer: {optimizer_type} (learning rate is {learning_rate})")
         self.__optimizer = OptimizerFactory(list(self._network.parameters()), learning_rate).get(optimizer_type)
 
     def set_criterion(self, criterion_type: str):
@@ -79,7 +79,7 @@ class Model:
         :param criterion_type: the type of criterion to be instantiated, in {NLLLoss, CrossEntropyLoss}
         :return: a criterion in {NLLLoss, CrossEntropyLoss}
         """
-        print("\n Criterion: {}".format(criterion_type))
+        print(f"\n Criterion: {criterion_type}")
         self.__criterion = CriterionFactory().get(criterion_type).to(self._device)
 
     def save(self, path_to_model: str):
