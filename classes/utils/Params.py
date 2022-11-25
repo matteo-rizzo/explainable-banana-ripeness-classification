@@ -46,8 +46,8 @@ class Params:
         """
         path_to_params = os.path.join("params", "networks", network_type + ".json")
         if not os.path.isfile(path_to_params):
-            raise ValueError("Params file '{}' for network '{}' not found! \n Available params files are: {}"
-                             .format(path_to_params, network_type, os.listdir(os.path.join("params", "networks"))))
+            raise ValueError(f"Params file '{path_to_params}' for network '{network_type}' not found!"
+                             f"\n Available params files are: {os.listdir(os.path.join('params', 'networks'))}")
         network_params = json.load(open(path_to_params, "r"))
         network_params["architecture"] = network_type
         network_params["batch_size"] = Params.load_experiment_params()["train"]["batch_size"]
@@ -62,8 +62,9 @@ class Params:
         """
         path_to_params = os.path.join("params", "dataset", dataset_name + ".json")
         if not os.path.isfile(path_to_params):
-            raise ValueError("Params file '{}' for dataset '{}' not found! \n Available params files are: {}"
-                             .format(path_to_params, dataset_name, os.listdir(os.path.join("params", "dataset"))))
+            raise ValueError(
+                f"Params file '{path_to_params}' for dataset '{dataset_name}' not found! "
+                f"\n Available params files are: {os.listdir(os.path.join('params', 'dataset'))}")
         params = json.load(open(path_to_params, "r"))
         params["name"] = dataset_name
 

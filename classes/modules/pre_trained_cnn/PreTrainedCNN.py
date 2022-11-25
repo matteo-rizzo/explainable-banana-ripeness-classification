@@ -38,7 +38,7 @@ class PreTrainedCNN(nn.Module):
 
         if download_model_locally:
             path_to_local = os.path.join("assets", "pretrained")
-            print("\n Loading local model at: {} \n".format(path_to_local))
+            print(f"\n Loading local model at: {path_to_local} \n")
             os.environ['TORCH_HOME'] = path_to_local
 
         pre_trained = pre_trained(pretrained=True)
