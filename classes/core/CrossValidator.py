@@ -44,9 +44,9 @@ class CrossValidator:
         avg_scores = {}
         for set_type in ["train", "val", "test"]:
             avg_scores[set_type] = self.__merge_metrics(cv_metrics, set_type)
-            print("\n Average {} metrics: \n".format(set_type))
+            print(f"\n Average {set_type} metrics: \n")
             for metric, value in avg_scores[set_type].items():
-                print(("\t - {} " + "".join(["."] * (15 - len(metric))) + " : {}").format(metric, value))
+                print(f"\t - {''.join(['.'] * (15 - len(metric)))} : {value}")
 
         if save:
             Params.save(avg_scores, os.path.join(self.__paths_to_results["metrics"], "cv_average.json"))
@@ -59,7 +59,7 @@ class CrossValidator:
         Creates the paths to the "metrics", "models", "preds" and "plots" folder for the current experiment.
         @param seed: the current random seed
         """
-        path_to_main_dir = os.path.join(self.__path_to_results, "seed_" + str(seed))
+        path_to_main_dir = os.path.join(self.__path_to_results, f"seed_{str(seed)}")
 
         self.__paths_to_results = {
             "metrics": os.path.join(path_to_main_dir, "metrics"),
@@ -84,7 +84,7 @@ class CrossValidator:
         k = self.__data_manager.get_k()
 
         for fold in range(k):
-            print("\n * Processing fold {} / {} - seed {} * \n".format(fold + 1, k, seed))
+            print(f"\n * Processing fold {fold + 1} / {k} - seed {seed} * \n")
 
             model_name = self.__train_params["network_type"] + "_fold_" + str(fold)
             path_to_best_model = os.path.join(self.__paths_to_results["models"], model_name + ".pth")
@@ -98,10 +98,10 @@ class CrossValidator:
 
             best_eval = self.__evaluator.evaluate(data, model, path_to_best_model)
 
-            print("\n *** Finished processing fold {} / {}! ***".format(fold + 1, k))
+            print(f"\n *** Finished processing fold {fold + 1} / {k}! ***")
 
             print("\n Saving metrics...")
-            metrics_log = "fold_" + str(fold) + ".json"
+            metrics_log = f"fold_{str(fold)}.json"
             Params.save(best_eval["metrics"], os.path.join(self.__paths_to_results["metrics"], metrics_log))
             cv_metrics.append(best_eval["metrics"])
             print("-> Metrics saved!")
@@ -115,9 +115,9 @@ class CrossValidator:
             folds_times.append((start_time - end_time) / 60)
             estimated_time = (np.mean(np.array(folds_times)) * (k - fold))
             print("\n Time overview: \n")
-            print("\t - Time to train fold ............. : {:.2f}m".format((end_time - start_time) / 60))
-            print("\t - Elapsed time CV time: .......... : {:.2f}m".format((end_time - zero_time) / 60))
-            print("\t - Estimated time of completion ... : {:.2f}m".format(estimated_time))
+            print(f"\t - Time to train fold ............. : {(end_time - start_time) / 60:.2f}m")
+            print(f"\t - Elapsed time CV time: .......... : {(end_time - zero_time) / 60:.2f}m")
+            print(f"\t - Estimated time of completion ... : {estimated_time:.2f}m")
             print("\n----------------------------------------------------------------\n")
 
         return self.__avg_metrics(cv_metrics, save=True)["test"]
