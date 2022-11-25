@@ -7,16 +7,12 @@ import numpy as np
 import skimage.segmentation as seg
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
-from skimage import io, exposure, color
-from skimage.filters import unsharp_mask
+from skimage import io, color
 
+from classes.modules.segmentation.utils import adjust_contrast, blur_image, sharpen
 from segmentation.scikit_test import rescale_img
 
 mpl.rcParams["figure.dpi"] = 300
-
-# Contrast
-# Shadows
-# Blur
 
 base_images = os.path.join("segmentation", "images")
 
@@ -35,21 +31,6 @@ def create_figure(n_rows: int = 1, n_cols: int = 1) -> Tuple[Figure, np.ndarray]
     return fig, axs
 
 
-def adjust_contrast(img, p_min=1.0, p_max=99.0) -> np.ndarray:
-    vmin, vmax = np.percentile(img, q=(p_min, p_max))
-    img = exposure.rescale_intensity(img,
-                                     in_range=(vmin, vmax),
-                                     out_range=np.float32)
-    return img
-
-
-def sharpen(img, radius: float = 1.0, amount: float = 1.0) -> np.ndarray:
-    return unsharp_mask(img, radius=radius, amount=amount,
-                        preserve_range=False,
-                        channel_axis=None,  # -1 does not work
-                        )
-
-
 def main():
     # Load images
     imgs = [io.imread(img_f, as_gray=False) for img_f in IMAGES]
@@ -59,11 +40,14 @@ def main():
 
     start_img = time.perf_counter()
     # Contrast
-    imgs_proc = [adjust_contrast(img) for img in imgs_proc]
+    imgs_proc = [adjust_contrast(img, p_min=1.0, p_max=99.0) for img in imgs_proc]
 
     # Sharpening
     imgs_proc = [sharpen(img, radius=4.0, amount=1.0) for img in imgs_proc]
     # (keep "amount" low, "radius" < 5)
+
+    # Blur
+    imgs_proc = [blur_image(img, std=1.0) for img in imgs_proc]
 
     # SLIC clustering
     kv = dict(n_segments=2,  # ok, background/banana
@@ -82,6 +66,7 @@ def main():
     start = time.perf_counter()
     # Predict numeric labels [0-18] for each pixel of the image
     masks = [seg.slic(img, **kv) for img in imgs_proc]
+    # masks = seg.slic(np.stack(imgs_proc), **kv)
     end = time.perf_counter()
     masks = [rescale_img(m, oi.shape[1], order=0, preserve_range=True) for m, oi in zip(masks, imgs)]
     print(f"SLIC time per image: {(end - start) / len(IMAGES)} s;   TOTAL: {(end - start_img) / len(IMAGES)} s")
