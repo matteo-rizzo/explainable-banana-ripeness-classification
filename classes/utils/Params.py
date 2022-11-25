@@ -1,11 +1,13 @@
-import json
 import os
+from pathlib import Path
 from typing import Tuple, Dict
 
 import pandas as pd
+import yaml
 
 
 class Params:
+    base_param_path: Path = Path("params")
 
     @staticmethod
     def load() -> Tuple:
@@ -23,32 +25,36 @@ class Params:
     @staticmethod
     def load_experiment_params() -> Dict:
         """
-        Loads the parameters stored in the params/experiment.json file
+        Loads the parameters stored in the params/experiment.yaml file
         :return: the loaded experiment parameters in a Dict
         """
-        return json.load(open(os.path.join("params", "experiment.json"), "r"))
+        experiments_path: Path = Params.base_param_path / "experiment.yml"
+        with open(experiments_path, "r") as f:
+            return yaml.load(f, Loader=yaml.SafeLoader)
 
     @staticmethod
     def load_modality_params(modality: str) -> Dict:
         """
-        Loads the parameters stored in the params/modalities/modality.json file
+        Loads the parameters stored in the params/modalities/modality.yaml file
         :param modality: the modality params to be loaded
         :return: the loaded cross val parameters in a Dict
         """
-        return json.load(open(os.path.join("params", "modalities", modality + ".json"), "r"))
+        modality_path: Path = Params.base_param_path / "modalities" / f"{modality}.yml"
+        with open(modality_path, "r") as f:
+            return yaml.load(f, Loader=yaml.SafeLoader)
 
     @staticmethod
     def load_network_params(network_type: str) -> Dict:
         """
-        Loads and preprocesses the parameters stored in the params/modules/network_type.json file
+        Loads and preprocesses the parameters stored in the params/modules/network_type.yaml file
         :param network_type: the type of network to be loaded
         :return: the loaded network parameters in a Dict
         """
-        path_to_params = os.path.join("params", "networks", network_type + ".json")
-        if not os.path.isfile(path_to_params):
-            raise ValueError(f"Params file '{path_to_params}' for network '{network_type}' not found!"
-                             f"\n Available params files are: {os.listdir(os.path.join('params', 'networks'))}")
-        network_params = json.load(open(path_to_params, "r"))
+        path_to_params: Path = Params.base_param_path / "networks" / f"{network_type}.yml"
+        if not path_to_params.is_file():
+            raise ValueError(f"Params file '{str(path_to_params)}' for network '{network_type}' not found!"
+                             f"\n Available params files are: {os.listdir(Params.base_param_path / 'networks')}")
+        network_params = yaml.load(open(path_to_params, "r"), Loader=yaml.SafeLoader)
         network_params["architecture"] = network_type
         network_params["batch_size"] = Params.load_experiment_params()["train"]["batch_size"]
         return network_params
@@ -56,16 +62,17 @@ class Params:
     @staticmethod
     def load_dataset_params(dataset_name: str) -> Dict:
         """
-        Loads the parameters stored in the params/modules/dataset_name.json file merging the paths
+        Loads the parameters stored in the params/modules/dataset_name.yml file merging the paths
         :param dataset_name: the type of data to be loaded
         :return: the loaded data parameters in a Dict
         """
-        path_to_params = os.path.join("params", "dataset", dataset_name + ".json")
-        if not os.path.isfile(path_to_params):
+        path_to_params: Path = Params.base_param_path / "dataset" / f"{dataset_name}.yml"
+        if not path_to_params.is_file():
             raise ValueError(
                 f"Params file '{path_to_params}' for dataset '{dataset_name}' not found! "
-                f"\n Available params files are: {os.listdir(os.path.join('params', 'dataset'))}")
-        params = json.load(open(path_to_params, "r"))
+                f"\n Available params files are: {os.listdir(Params.base_param_path / 'dataset')}")
+        with open(path_to_params, "r") as f:
+            params = yaml.load(f, Loader=yaml.SafeLoader)
         params["name"] = dataset_name
 
         dataset_dir, modalities_dir = params["paths"]["dataset_dir"], params["paths"]["modalities_dir"]
@@ -80,11 +87,12 @@ class Params:
     @staticmethod
     def save(data: Dict, path_to_destination):
         """
-        Saves the given data into a JSON file at the given destination
+        Saves the given data into a YAML file at the given destination
         :param data: the data to be saved
         :param path_to_destination: the destination of the file with the saved metrics
         """
-        json.dump(data, open(path_to_destination, 'w'), indent=2)
+        with open(path_to_destination, 'w') as f:
+            yaml.dump(data, f, Dumper=yaml.SafeDumper)
 
     @staticmethod
     def save_experiment_params(path_to_results: str, network_type: str, dataset_name: str):
@@ -94,9 +102,9 @@ class Params:
         :param network_type: the type of network used for the experiment
         :param dataset_name: the type of data used for the experiment
         """
-        Params.save(Params.load_experiment_params(), os.path.join(path_to_results, "experiment.json"))
-        Params.save(Params.load_dataset_params(dataset_name), os.path.join(path_to_results, "data.json"))
-        Params.save(Params.load_network_params(network_type), os.path.join(path_to_results, "network_params.json"))
+        Params.save(Params.load_experiment_params(), os.path.join(path_to_results, "experiment.yml"))
+        Params.save(Params.load_dataset_params(dataset_name), os.path.join(path_to_results, "data.yml"))
+        Params.save(Params.load_network_params(network_type), os.path.join(path_to_results, "network_params.yml"))
 
     @staticmethod
     def save_experiment_preds(fold_evaluation: Dict, path_to_preds: str, fold_number: int):

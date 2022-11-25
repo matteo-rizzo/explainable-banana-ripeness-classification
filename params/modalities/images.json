@@ -1,9 +1,0 @@
-{
-  "path_to_data": "dataset",
-  "file_format": "png",
-  "num_channels": 3,
-  "size": {
-    "width": 224,
-    "height": 224
-  }
-}
