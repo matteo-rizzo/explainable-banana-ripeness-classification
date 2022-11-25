@@ -52,9 +52,9 @@ class Evaluator:
             set_metrics = self.__compute_metrics(y_true, y_pred, y_1_scores=y_scores[:, 1])
             set_metrics["accuracy"], set_metrics["loss"] = np.mean(accuracy), np.mean(loss)
 
-            print("\n {} metrics: \n".format(set_type.upper()))
+            print(f"\n {set_type.upper()} metrics: \n")
             for metric, value in set_metrics.items():
-                print(("\t - {} " + "".join(["."] * (15 - len(metric))) + " : {:.4f}").format(metric, value))
+                print(f"\t - {''.join(['.'] * (15 - len(metric)))} : {value:.4f}")
 
             metrics[set_type], gt[set_type], preds[set_type] = set_metrics, y_true, y_pred
 
