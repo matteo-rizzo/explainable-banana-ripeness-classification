@@ -4,7 +4,7 @@ import time
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from segmentation.scikit_test import rescale
+from segmentation.scikit_test import rescale_img
 
 mpl.rcParams['figure.dpi'] = 300
 from cellpose import io, models, plot
@@ -18,7 +18,7 @@ out_files = [os.path.join("segmentation/out", os.path.basename(f)) for f in file
 # view 1 image
 img = io.imread(files[-1])
 
-img = rescale(img)
+img = rescale_img(img)
 
 plt.figure(figsize=(2, 2))
 plt.imshow(img)

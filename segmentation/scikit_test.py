@@ -1,6 +1,7 @@
 import time
 
 import matplotlib as mpl
+import numpy as np
 import skimage.color as color
 import skimage.segmentation as seg
 from matplotlib import pyplot as plt
@@ -10,7 +11,7 @@ from skimage.transform import resize
 mpl.rcParams['figure.dpi'] = 300
 
 
-def rescale(img, scaled_w: int = 512, **kwargs):
+def rescale_img(img: np.ndarray, scaled_w: int = 512, **kwargs) -> np.ndarray:
     h, w, *c = img.shape
     scaled_h = h * scaled_w // w
 
@@ -29,7 +30,7 @@ def image_show(image, nrows=1, ncols=1, cmap="gray"):
 if __name__ == "__main__":
     image_o = io.imread("segmentation/image.png", as_gray=False)
     h, w, c = image_o.shape
-    image = rescale(image_o, anti_aliasing=True)
+    image = rescale_img(image_o, anti_aliasing=True)
     # image = color.rgb2gray(image)
     f, ax = image_show(image, ncols=2)
 
@@ -44,11 +45,12 @@ if __name__ == "__main__":
                     enforce_connectivity=True,
                     # if True better contours, but some non-banana regions.
                     # If False follows bananas better, but black spots are sometimes left out. More problematic
+                    convert2lab=True,  # leave as is
                     channel_axis=-1)  # leave as is
     end = time.perf_counter()
     print(f"Time: {end - start} s")
 
-    mask_r = rescale(mask, w, order=0, preserve_range=True)
+    mask_r = rescale_img(mask, w, order=0, preserve_range=True)
 
     ax[1].imshow(color.label2rgb(mask_r, image_o, kind="overlay"))
     plt.show()
