@@ -39,7 +39,7 @@ class Params:
         :param modality: the modality params to be loaded
         :return: the loaded cross val parameters in a Dict
         """
-        modality_path: Path = Params.base_param_path / "modalities" / f"{modality}.yml"
+        modality_path: Path = Params.base_param_path / f"{modality}.yml"
         with open(modality_path, "r") as f:
             return yaml.load(f, Loader=yaml.SafeLoader)
 

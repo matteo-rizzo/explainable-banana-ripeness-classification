@@ -34,7 +34,6 @@ class Trainer:
         network_params["device"] = self.__device
 
         self.__model = ModelFactory().get(network_type, network_params)
-        print(self.__model)
         self.__model.set_optimizer(self.__optimizer_type, self.__lr)
         self.__model.set_criterion(criterion_type)
 

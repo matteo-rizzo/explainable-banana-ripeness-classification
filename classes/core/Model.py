@@ -58,7 +58,6 @@ class Model:
         :param y: the ground truth
         :return: the loss value for the current update of the weights
         """
-        print(o, y)
         loss = self.__criterion(o, y)
         loss.backward()
         self.__optimizer.step()

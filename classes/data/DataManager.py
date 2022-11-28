@@ -28,10 +28,13 @@ class DataManager:
 
     def __read_data(self) -> Dict:
         data = {}
-        for class_dir in os.listdir(self.__path_to_images):
-            label = class_dir.split('_')[0]
-            path_to_class_dir = os.path.join(self.__path_to_images, class_dir)
+        for label in os.listdir(self.__path_to_images):
+            if label == ".DS_Store":
+                continue
+            path_to_class_dir = os.path.join(self.__path_to_images, label)
             items = os.listdir(path_to_class_dir)
+            if ".DS_Store" in path_to_class_dir:
+                continue
             data[label] = {}
             data[label]['x_paths'] = np.array([os.path.join(path_to_class_dir, item) for item in items])
             data[label]['y'] = np.array([int(label)] * len(data[label]['x_paths']))
