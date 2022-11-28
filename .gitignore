@@ -133,3 +133,4 @@ out/
 # TF/PYTORCH dumps
 *.h5
 *.pt
+/dataset/treviso-market/treviso-market/
