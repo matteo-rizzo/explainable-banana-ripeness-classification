@@ -2,7 +2,6 @@ from typing import List
 
 import torch
 from torch import optim
-from transformers import AdamW
 
 
 class OptimizerFactory:
@@ -11,7 +10,7 @@ class OptimizerFactory:
         self.optimizers_map = {
             "SGD": optim.SGD(network_parameters, lr=learning_rate, momentum=0.9, nesterov=True),
             "Adam": optim.Adam(network_parameters, lr=learning_rate),
-            "AdamW": AdamW(network_parameters, lr=learning_rate, correct_bias=False),
+            "AdamW": optim.AdamW(network_parameters, lr=learning_rate, correct_bias=False),
         }
 
     def get(self, optimizer_type: str) -> torch.optim:
