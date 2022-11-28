@@ -9,7 +9,7 @@ from classes.modules.segmentation.utils import sharpen, adjust_contrast, blur_im
 
 class ModelSLIC(Model):
     _default_parameters = {
-        "contast": dict(p_min=1.0, p_max=99.0),
+        "contrast": dict(p_min=1.0, p_max=99.0),
         "sharpen": dict(radius=4.0, amount=1.0),
         "blur": dict(std=1.0)
     }
@@ -23,7 +23,7 @@ class ModelSLIC(Model):
         Segment a batch of images
 
         :param x: 4D array of size (batch, height, width, channels)
-        :return: batch of segmented images
+        :return: batch of segmented images (same shape as input)
         """
 
         # Contrast
@@ -47,6 +47,7 @@ class ModelSLIC(Model):
                   enforce_connectivity=True,
                   # if True better contours, but some non-banana regions.
                   # If False follows bananas better, but black spots are sometimes left out. More problematic
+                  max_size_factor=3,  # can be tuned
                   convert2lab=True,  # leave as is
                   channel_axis=-1)  # leave as is
 
