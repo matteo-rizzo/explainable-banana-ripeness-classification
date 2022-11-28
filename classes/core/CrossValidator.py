@@ -85,7 +85,7 @@ class CrossValidator:
         k = self.__data_manager.get_k()
 
         for fold in range(k):
-            print(f"\n * Processing fold {fold + 1} / {k} - seed {seed} * ")
+            print(f"\n * Processing fold {fold + 1} / {k} - seed {seed} * \n")
 
             model_name = self.__train_params["network_type"] + "_fold_" + str(fold)
             path_to_best_model = os.path.join(self.__paths_to_results["models"], model_name + ".pth")

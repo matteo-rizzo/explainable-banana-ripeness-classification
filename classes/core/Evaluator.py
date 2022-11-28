@@ -9,6 +9,7 @@ from classes.core.Model import Model
 from tqdm import tqdm
 import sys
 
+
 class Evaluator:
 
     def __init__(self, device: torch.device):

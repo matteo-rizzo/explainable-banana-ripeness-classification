@@ -73,7 +73,7 @@ class DataManager:
                                  converters={"train": eval, "val": eval, "test": eval})
         self.__split_data = saved_data.to_dict("records")
 
-    def print_split_info(self):
+    def print_split_info(self, verbose: bool = False):
         """ Shows how the data has been split_data in each fold """
 
         split_info = []
@@ -83,15 +83,16 @@ class DataManager:
                 'val': list(set([item.split("_")[-1] for item in fold_paths['val'][0]])),
                 'test': list(set([item.split("_")[-1] for item in fold_paths['test'][0]]))
             })
-        # TODO: this is TOO MUCH. Either set a verbose parameter, or remove
-        # print("\n..............................................\n")
-        # print("Split info overview:\n")
-        # pp = pprint.PrettyPrinter(compact=True)
-        # for fold in range(self.__k):
-        #     print(colored(f'fold {fold}: ', 'blue'))
-        #     pp.pprint(split_info[fold])
-        #     print('\n')
-        # print("\n..............................................\n")
+
+        if verbose:
+            print("\n..............................................\n")
+            print("Split info overview:\n")
+            pp = pprint.PrettyPrinter(compact=True)
+            for fold in range(self.__k):
+                print(colored(f'fold {fold}: ', 'blue'))
+                pp.pprint(split_info[fold])
+                print('\n')
+            print("\n..............................................\n")
 
     def load_split(self, fold: int) -> Dict:
         """ Loads the data based on the fold paths """
@@ -105,9 +106,7 @@ class DataManager:
         print("\n..............................................")
         print("Split size overview:")
         for set_type, y in {"train": y_train, "val": y_valid, "test": y_test}.items():
-            num_pos = sum(y)
-            num_neg = len(y) - num_pos
-            print(f"\t * {set_type.upper()}: [ Pos: {num_pos} | Neg: {num_neg} ]")
+            print(f"\t * {set_type.upper()}: {len(y)}")
         print("..............................................")
 
         return {
