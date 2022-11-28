@@ -4,7 +4,7 @@ from classes.core.Model import Model
 from classes.modules.pre_trained_vit.PreTrainedViT import PreTrainedViT
 
 
-class ModelPreTrainedCNN(Model):
+class ModelPreTrainedVit(Model):
 
     def __init__(self, network_params: Dict):
         super().__init__(device=network_params["device"])

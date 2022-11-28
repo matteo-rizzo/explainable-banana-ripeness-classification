@@ -4,6 +4,7 @@ from classes.core.Model import Model
 from classes.modules.cnn_img.ModelImagesCNN import ModelImagesCNN
 from classes.modules.pre_trained_cnn.ModelPreTrainedCNN import ModelPreTrainedCNN
 from classes.modules.transformer.ModelTransformer import ModelTransformer
+from classes.modules.pre_trained_vit.ModelPreTrainedViT import ModelPreTrainedVit
 
 
 class ModelFactory:
@@ -11,6 +12,7 @@ class ModelFactory:
         "cnn_img": ModelImagesCNN,
         "pre_trained_cnn": ModelPreTrainedCNN,
         "transformer": ModelTransformer,
+        "pre_trainer_vit": ModelPreTrainedVit
     }
 
     def get(self, model_type: str, model_params: Dict) -> Model:
