@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import GroupShuffleSplit
+from sklearn.model_selection import ShuffleSplit
 from termcolor import colored
 from torch.utils.data import DataLoader
 
@@ -16,10 +16,10 @@ from classes.data.loaders.ImageLoader import ImageLoader
 class DataManager:
 
     def __init__(self, data_params: Dict, network_type: str):
-        self.__path_to_main_modality = data_params["dataset"]["paths"]["main_modality"]
+        self.__path_to_images = data_params["dataset"]["paths"]["images"]
         self.__k = data_params["cv"]["k"]
         self.__batch_size = data_params["batch_size"]
-        self.__loader = ImageLoader()
+        self.__loader = ImageLoader().load
         self.__split_data = []
         self.__data = self.__read_data()
 
@@ -28,9 +28,9 @@ class DataManager:
 
     def __read_data(self) -> Dict:
         data = {}
-        for class_dir in os.listdir(self.__path_to_main_modality):
+        for class_dir in os.listdir(self.__path_to_images):
             label = class_dir.split('_')[0]
-            path_to_class_dir = os.path.join(self.__path_to_main_modality, class_dir)
+            path_to_class_dir = os.path.join(self.__path_to_images, class_dir)
             items = os.listdir(path_to_class_dir)
             data[label] = {}
             data[label]['x_paths'] = np.array([os.path.join(path_to_class_dir, item) for item in items])
@@ -41,7 +41,7 @@ class DataManager:
 
         print("\n Generating new splits...")
 
-        gss = GroupShuffleSplit(n_splits=self.__k, test_size=1 / self.__k)
+        ss = ShuffleSplit(n_splits=self.__k, test_size=1 / self.__k, random_state=0)
 
         for i in range(self.__k):
 
@@ -50,10 +50,9 @@ class DataManager:
 
             for label in self.__data.keys():
                 x_paths, y = self.__data[label]['x_paths'], self.__data[label]['y']
-                groups = self.__data[label]['groups']
 
-                train_val, test = list(gss.split(x_paths, y, groups))[i]
-                train, val = list(gss.split(x_paths[train_val], y[train_val], groups[train_val]))[i]
+                train_val, test = list(ss.split(x_paths, y))[i]
+                train, val = list(ss.split(x_paths[train_val], y[train_val]))[i]
 
                 x_train_paths.extend(list(x_paths[train_val][train])), y_train.extend(list(y[train_val][train]))
                 x_val_paths.extend(list(x_paths[train_val][val])), y_valid.extend(list(y[train_val][val]))

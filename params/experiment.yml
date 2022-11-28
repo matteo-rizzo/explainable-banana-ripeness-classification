@@ -2,14 +2,14 @@
 device: "cuda:0"
 num_seeds: 10
 
-dataset_name: "bananas"
+dataset_name: "treviso-market"
 
 train:
-  network_type: "transformer"
+  network_type: "cnn"
   epochs: 15
   optimizer: "Adam"
   criterion: "CrossEntropyLoss"
-  batch_size: 8
+  batch_size: 16
   learning_rate: 3.0e-05
   log_every: 1
   evaluate_every: 1

@@ -9,7 +9,7 @@ from classes.modules.transformer.Transformer import Transformer
 
 class NetworkFactory:
     networks_map = {
-        "cnn_img": ImagesCNN,
+        "cnn": ImagesCNN,
         "pre_trained_cnn": PreTrainedCNN,
         "transformer": Transformer
     }

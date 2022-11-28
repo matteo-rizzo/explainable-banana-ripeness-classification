@@ -4,8 +4,9 @@ classes:
   '2': '2'
   '3': '3'
   '4': '4'
+
 paths:
-  dataset_dir: "../dataset/"
+  dataset_dir: "dataset/treviso-market"
   dataset_metadata: "metadata"
   cv_metadata: "metadata/cv_splits"
-  modalities_dir: "modalities"
+  modalities_dir: ""

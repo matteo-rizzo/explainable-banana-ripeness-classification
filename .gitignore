@@ -134,3 +134,6 @@ out/
 *.h5
 *.pt
 /dataset/treviso-market/treviso-market/
+/dataset/treviso-market/treviso-market.zip
+/results/
+/dataset/treviso-market.zip

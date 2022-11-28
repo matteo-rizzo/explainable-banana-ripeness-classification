@@ -9,7 +9,7 @@ from classes.modules.pre_trained_vit.ModelPreTrainedViT import ModelPreTrainedVi
 
 class ModelFactory:
     models_map = {
-        "cnn_img": ModelImagesCNN,
+        "cnn": ModelImagesCNN,
         "pre_trained_cnn": ModelPreTrainedCNN,
         "transformer": ModelTransformer,
         "pre_trainer_vit": ModelPreTrainedVit

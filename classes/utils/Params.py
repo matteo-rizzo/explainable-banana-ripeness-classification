@@ -57,6 +57,7 @@ class Params:
         network_params = yaml.load(open(path_to_params, "r"), Loader=yaml.SafeLoader)
         network_params["architecture"] = network_type
         network_params["batch_size"] = Params.load_experiment_params()["train"]["batch_size"]
+        network_params["modality"] = Params.load_modality_params("images")
         return network_params
 
     @staticmethod
@@ -78,9 +79,7 @@ class Params:
         dataset_dir, modalities_dir = params["paths"]["dataset_dir"], params["paths"]["modalities_dir"]
         params["paths"]["dataset_metadata"] = os.path.join(dataset_dir, params["paths"]["dataset_metadata"])
         params["paths"]["cv_metadata"] = os.path.join(dataset_dir, params["paths"]["cv_metadata"])
-        params["paths"]["main_modality"] = os.path.join(dataset_dir, modalities_dir, params["paths"]["main_modality"])
-        for modality, path_to_modality in params["paths"]["modalities"].items():
-            params["paths"][modality] = os.path.join(params["paths"]["dataset_dir"], modalities_dir, path_to_modality)
+        params["paths"]["images"] = os.path.join(params["paths"]["dataset_dir"], modalities_dir)
 
         return params
 

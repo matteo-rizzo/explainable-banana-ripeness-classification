@@ -21,7 +21,7 @@ class ImageLoader(Loader):
         """
         return [transforms.Resize(self.__img_size),
                 transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5))]
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
 
     def load(self, path_to_input: str) -> torch.Tensor:
         """
@@ -29,6 +29,6 @@ class ImageLoader(Loader):
         :param path_to_input: the path to the data item to be loaded referred to the main modality
         :return: the image data item as a tensor
         """
-        image = Image.open(self._get_path_to_item(path_to_input))
+        image = Image.open(self._get_path_to_item(path_to_input)).convert('RGB')
         transformations = self.__get_transformations()
         return transforms.Compose(transformations)(image)[0:self.__num_channels, :, :]

@@ -72,7 +72,7 @@ def main():
     experiment_id = f"{data_params['dataset']['name']}" \
                     f"_{network_type}_{time.ctime().replace(' ', '_').replace(':', '-')}"
     path_to_results = Path("results") / experiment_id
-    path_to_results.mkdir()
+    path_to_results.mkdir(parents=True)
     Params.save_experiment_params(path_to_results, network_type, dataset_name)
 
     test_scores = []
