@@ -42,7 +42,7 @@ class DataManager:
 
     def generate_split(self):
 
-        print("\n Generating new splits...")
+        print(" Generating new splits...")
 
         ss = ShuffleSplit(n_splits=self.__k, test_size=1 / self.__k, random_state=0)
 
@@ -83,15 +83,15 @@ class DataManager:
                 'val': list(set([item.split("_")[-1] for item in fold_paths['val'][0]])),
                 'test': list(set([item.split("_")[-1] for item in fold_paths['test'][0]]))
             })
-
-        print("\n..............................................\n")
-        print("Split info overview:\n")
-        pp = pprint.PrettyPrinter(compact=True)
-        for fold in range(self.__k):
-            print(colored(f'fold {fold}: ', 'blue'))
-            pp.pprint(split_info[fold])
-            print('\n')
-        print("\n..............................................\n")
+        # Note: this is TOO MUCH
+        # print("\n..............................................\n")
+        # print("Split info overview:\n")
+        # pp = pprint.PrettyPrinter(compact=True)
+        # for fold in range(self.__k):
+        #     print(colored(f'fold {fold}: ', 'blue'))
+        #     pp.pprint(split_info[fold])
+        #     print('\n')
+        # print("\n..............................................\n")
 
     def load_split(self, fold: int) -> Dict:
         """ Loads the data based on the fold paths """
@@ -102,13 +102,13 @@ class DataManager:
         x_val_paths, y_valid = fold_paths['val']
         x_test_paths, y_test = fold_paths['test']
 
-        print("\n..............................................\n")
-        print("Split size overview:\n")
+        print("\n..............................................")
+        print("Split size overview:")
         for set_type, y in {"train": y_train, "val": y_valid, "test": y_test}.items():
             num_pos = sum(y)
             num_neg = len(y) - num_pos
-            print("\t * {}: [ Pos: {} | Neg: {} ]".format(set_type.upper(), num_pos, num_neg))
-        print("\n..............................................\n")
+            print(f"\t * {set_type.upper()}: [ Pos: {num_pos} | Neg: {num_neg} ]")
+        print("..............................................")
 
         return {
             'train': DataLoader(Dataset(x_train_paths, y_train, self.__loader), self.__batch_size, shuffle=True),
@@ -118,7 +118,7 @@ class DataManager:
 
     def save_split_to_file(self, path_to_results: Union[str, Path], seed: int):
         path_to_metadata = os.path.join(path_to_results, "cv_splits")
-        path_to_file = os.path.join(path_to_metadata, "split_{}.csv".format(seed))
+        path_to_file = os.path.join(path_to_metadata, f"split_{seed}.csv")
         os.makedirs(path_to_metadata, exist_ok=True)
         pd.DataFrame(self.__split_data).to_csv(path_to_file, index=False)
-        print("\n CV split metadata written at {}".format(path_to_file))
+        print(f" CV split metadata written at {path_to_file}")

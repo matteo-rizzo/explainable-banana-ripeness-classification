@@ -61,12 +61,12 @@ def main():
     network_type = train_params["network_type"]
     dataset_name = data_params["dataset"]["name"]
 
-    print(f"\n\n==============================================================\n"
+    print(f"\n==============================================================\n"
           f"            Experiment on {dataset_name} using {network_type}                       \n"
-          f"==============================================================\n")
+          f"==============================================================")
 
     print(f"\t Using Torch version ... : {torch.__version__}")
-    print(f"\t Running on device ..... : {device}\n")
+    print(f"\t Running on device ..... : {device}")
 
     # Initialize folder for result output
     experiment_id = f"{data_params['dataset']['name']}" \
@@ -76,15 +76,15 @@ def main():
     Params.save_experiment_params(path_to_results, network_type, dataset_name)
 
     test_scores = []
-    start_time = time.perf_counter()
+    start_time: float = time.perf_counter()
 
     for seed in range(num_seeds):
-        print(f"\n\n==========================================================\n"
+        print(f"\n==============================================================\n"
               f"                      Seed {seed + 1} / {num_seeds}                       \n"
-              f"==========================================================\n")
+              f"==============================================================")
 
         data_manager = DataManager(data_params, network_type)
-        use_cv_metadata = data_params["cv"]["use_cv_metadata"]
+        use_cv_metadata: bool = data_params["cv"]["use_cv_metadata"]
 
         if use_cv_metadata:
             path_to_metadata = data_params["dataset"]["paths"]["cv_metadata"]

@@ -45,7 +45,7 @@ class Trainer:
         :param data: a dictionary of data loaders containing train, val and test data
         :return: the evaluation metrics of the training and the trained model
         """
-        print("\n Training the model... \n")
+        print("\n Training the model...")
 
         self.__model.print_model_overview()
 
@@ -53,7 +53,7 @@ class Trainer:
         training_loader = data["train"]
 
         for epoch in range(self.__epochs):
-            print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** \n")
+            print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** ")
 
             self.__model.train_mode()
 
@@ -76,14 +76,14 @@ class Trainer:
                         f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]")
                     running_loss, running_accuracy = 0.0, 0.0
 
-            print("\n ........................................................... \n")
+            print(" ...........................................................")
 
             if not (epoch + 1) % self.__evaluate_every:
                 evaluations += [self.__evaluator.evaluate(data, self.__model)]
                 if self.__early_stopping_check(evaluations[-1]["metrics"]["val"][self.__es_metric]):
                     break
 
-        print("\n Finished training! \n")
+        print("\n Finished training!")
 
         return self.__model, evaluations
 
@@ -100,8 +100,8 @@ class Trainer:
 
         if metrics_check:
             print(
-                f"\n\t Old best val {self.__es_metric}: {self.__es_metric_best_value:.4f} "
-                f"| New best {self.__es_metric}: {metric_value:.4f} \n")
+                f"\t Old best val {self.__es_metric}: {self.__es_metric_best_value:.4f} "
+                f"| New best {self.__es_metric}: {metric_value:.4f}")
 
             print("\t Saving new best model...")
             self.__model.save(self.__path_to_best_model)
@@ -112,10 +112,10 @@ class Trainer:
         else:
             self.__epochs_no_improvement += 1
             if self.__epochs_no_improvement == self.__patience:
-                print(f"\n ** No decrease in val {self.__es_metric} "
-                      f"for {self.__patience} evaluations. Early stopping! ** \n")
+                print(f" ** No decrease in val {self.__es_metric} "
+                      f"for {self.__patience} evaluations. Early stopping! ** ")
                 return True
 
-        print("\n Epochs without improvement: ", self.__epochs_no_improvement)
-        print("\n ........................................................... \n")
+        print(" Epochs without improvement: ", self.__epochs_no_improvement)
+        print(" ........................................................... ")
         return False

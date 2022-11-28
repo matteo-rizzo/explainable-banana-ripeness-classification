@@ -22,8 +22,12 @@ class Model:
         """
         Prints the architecture of the network
         """
-        print("\n Model overview: \n")
-        print(self._network)
+
+        # TODO: Inserisci pure un modo di fare il print verbose di tutto.
+        # Però che printi ogni volta l'intero modello è esagerato
+        print(f" Model: {self._network.__class__.__name__}")
+        # print(" Model overview: ")
+        # print(self._network)
 
     def train_mode(self):
         """
@@ -70,7 +74,7 @@ class Model:
         :param learning_rate: the initial learning rate
         :return: an optimizer in {Adam, SGD}
         """
-        print(f"\n Optimizer: {optimizer_type} (learning rate is {learning_rate})")
+        print(f" Optimizer: {optimizer_type} (learning rate is {learning_rate})")
         self.__optimizer = OptimizerFactory(list(self._network.parameters()), learning_rate).get(optimizer_type)
 
     def set_criterion(self, criterion_type: str):
@@ -79,7 +83,7 @@ class Model:
         :param criterion_type: the type of criterion to be instantiated, in {NLLLoss, CrossEntropyLoss}
         :return: a criterion in {NLLLoss, CrossEntropyLoss}
         """
-        print(f"\n Criterion: {criterion_type}")
+        print(f" Criterion: {criterion_type}")
         self.__criterion = CriterionFactory().get(criterion_type).to(self._device)
 
     def save(self, path_to_model: str):
@@ -94,5 +98,5 @@ class Model:
         Loads a model from the given path
         :param path_to_model: the path where to load the model from
         """
-        print("\n Loading model... \n")
+        print(" Loading model... ")
         self._network.load_state_dict(torch.load(path_to_model))
