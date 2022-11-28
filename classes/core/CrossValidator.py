@@ -19,10 +19,10 @@ class CrossValidator:
         :param path_to_results: the path to the directory with the results for the current experiment
         :param train_params: the params to be submitted to the Trainer instance
         """
-        self.__data_manager = data_manager
+        self.data_manager = data_manager
         self.__path_to_results = path_to_results
         self.__train_params = train_params
-        self.__evaluator = Evaluator(train_params["device"])
+        self.evaluator = Evaluator(train_params["device"])
         self.__paths_to_results = {}
 
     @staticmethod
@@ -82,7 +82,7 @@ class CrossValidator:
         cv_metrics, folds_times = [], []
         zero_time = time.perf_counter()
 
-        k = self.__data_manager.get_k()
+        k = self.data_manager.get_k()
 
         for fold in range(k):
             print(f"\n * Processing fold {fold + 1} / {k} - seed {seed} * \n")
@@ -91,13 +91,13 @@ class CrossValidator:
             path_to_best_model = os.path.join(self.__paths_to_results["models"], model_name + ".pth")
             trainer = Trainer(self.__train_params, path_to_best_model)
 
-            data = self.__data_manager.load_split(fold)
+            data = self.data_manager.load_split(fold)
 
             start_time = time.perf_counter()
             model, evaluations = trainer.train(data)
             end_time = time.perf_counter()
 
-            best_eval = self.__evaluator.evaluate(data, model, path_to_best_model)
+            best_eval = self.evaluator.evaluate(data, model, path_to_best_model)
 
             print(f" *** Finished processing fold {fold + 1} / {k}! ***")
 

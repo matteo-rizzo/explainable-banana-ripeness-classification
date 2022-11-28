@@ -36,16 +36,16 @@ class Trainer:
         network_params = Params.load_network_params(network_type)
         network_params["device"] = self.__device
 
-        self.__model = ModelFactory().get(network_type, network_params)
-        self.__model.set_optimizer(self.__optimizer_type, self.__lr)
-        self.__model.set_criterion(criterion_type)
+        self.model = ModelFactory().get(network_type, network_params)
+        self.model.set_optimizer(self.__optimizer_type, self.__lr)
+        self.model.set_criterion(criterion_type)
 
-        self.__evaluator = Evaluator(self.__device)
+        self.evaluator = Evaluator(self.__device)
 
     def train_one_epoch(self, epoch, training_loader):
         print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** ")
 
-        self.__model.train_mode()
+        self.model.train_mode()
         running_loss, running_accuracy = 0.0, 0.0
 
         # Visual progress bar
@@ -56,14 +56,14 @@ class Trainer:
         for i, (x, y) in enumerate(training_loader):
             tqdm_bar.update(1)
             # Zero gradients
-            self.__model.reset_gradient()
+            self.model.reset_gradient()
 
             # Forward pass
             y = y.long().to(self.__device)
-            o = self.__model.predict(x).to(self.__device)
+            o = self.model.predict(x).to(self.__device)
 
             # Loss, backward pass, step
-            running_loss += self.__model.update_weights(o, y)
+            running_loss += self.model.update_weights(o, y)
             running_accuracy += Evaluator.batch_accuracy(o, y)
 
             # Log current epoch result
@@ -88,7 +88,7 @@ class Trainer:
         """
         print("\n Training the model...")
 
-        self.__model.print_model_overview()
+        self.model.print_model_overview()
 
         evaluations = []
         training_loader = data["train"]
@@ -100,13 +100,13 @@ class Trainer:
 
             # Perform evaluation
             if not (epoch + 1) % self.__evaluate_every:
-                evaluations += [self.__evaluator.evaluate(data, self.__model)]
+                evaluations += [self.evaluator.evaluate(data, self.model)]
                 if self.__early_stopping_check(evaluations[-1]["metrics"]["val"][self.__es_metric]):
                     break
 
         print("\n Finished training!")
 
-        return self.__model, evaluations
+        return self.model, evaluations
 
     def __early_stopping_check(self, metric_value: float) -> bool:
         """
@@ -125,7 +125,7 @@ class Trainer:
                 f"| New best {self.__es_metric}: {metric_value:.4f}")
 
             print("\t Saving new best model...")
-            self.__model.save(self.__path_to_best_model)
+            self.model.save(self.__path_to_best_model)
             print("\t -> New best model saved!")
 
             self.__es_metric_best_value = metric_value

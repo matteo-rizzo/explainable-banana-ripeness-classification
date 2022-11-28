@@ -10,7 +10,7 @@ class Model:
 
     def __init__(self, device: torch.device):
         self._device = device
-        self._network, self.__optimizer, self.__criterion = None, None, None
+        self._network, self.optimizer, self.criterion = None, None, None
 
     def predict(self, x: Union[torch.Tensor, Dict], *args: any, **kwargs: any) -> Union[tuple, torch.Tensor]:
         """
@@ -49,11 +49,11 @@ class Model:
         :param y: the ground truth
         :return: the loss value based on the set criterion
         """
-        return self.__criterion(o, y).item()
+        return self.criterion(o, y).item()
 
     def reset_gradient(self):
         """ Zeros out all the accumulated gradients """
-        self.__optimizer.zero_grad()
+        self.optimizer.zero_grad()
 
     def update_weights(self, o: torch.Tensor, y: torch.Tensor) -> float:
         """
@@ -62,9 +62,9 @@ class Model:
         :param y: the ground truth
         :return: the loss value for the current update of the weights
         """
-        loss = self.__criterion(o, y)
+        loss = self.criterion(o, y)
         loss.backward()
-        self.__optimizer.step()
+        self.optimizer.step()
         return loss.item()
 
     def set_optimizer(self, optimizer_type: str, learning_rate: float):
@@ -75,7 +75,7 @@ class Model:
         :return: an optimizer in {Adam, SGD}
         """
         print(f" Optimizer: {optimizer_type} (learning rate is {learning_rate})")
-        self.__optimizer = OptimizerFactory(list(self._network.parameters()), learning_rate).get(optimizer_type)
+        self.optimizer = OptimizerFactory(list(self._network.parameters()), learning_rate).get(optimizer_type)
 
     def set_criterion(self, criterion_type: str):
         """
@@ -84,7 +84,7 @@ class Model:
         :return: a criterion in {NLLLoss, CrossEntropyLoss}
         """
         print(f" Criterion: {criterion_type}")
-        self.__criterion = CriterionFactory().get(criterion_type).to(self._device)
+        self.criterion = CriterionFactory().get(criterion_type).to(self._device)
 
     def save(self, path_to_model: str):
         """

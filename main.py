@@ -83,7 +83,6 @@ def main():
         print(f"\n==============================================================\n"
               f"                      Seed {seed + 1} / {num_seeds}                       \n"
               f"==============================================================")
-        # TODO: What is CV metadata?
         data_manager = DataManager(data_params, network_type)
         use_cv_metadata: bool = data_params["cv"]["use_cv_metadata"]
 
