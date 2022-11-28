@@ -6,7 +6,8 @@ import torch.utils.data
 from sklearn.metrics import recall_score, f1_score, roc_auc_score, roc_curve
 
 from classes.core.Model import Model
-
+from tqdm import tqdm
+import sys
 
 class Evaluator:
 
@@ -33,11 +34,17 @@ class Evaluator:
 
         for set_type, dataloader in data.items():
 
+            # Visual progress bar
+            tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
+            tqdm_bar.set_description_str(" Evaluating  ")
+
             loss, accuracy, y_scores, y_true = [], [], [], []
 
             with torch.no_grad():
 
                 for i, (x, y) in enumerate(dataloader):
+                    tqdm_bar.update(1)
+
                     y = y.long().to(self.__device)
                     o = model.predict(x).to(self.__device)
 
@@ -46,6 +53,7 @@ class Evaluator:
 
                     y_scores += torch.exp(o).cpu().numpy().tolist()
                     y_true += y.cpu().numpy().tolist()
+                tqdm_bar.close()
 
             y_scores, y_true = np.array(y_scores).reshape((len(y_scores), 2)), np.array(y_true)
             y_pred = np.array((y_scores[:, 1] >= self.__optimal_roc_threshold(y_true, y_scores[:, 1])), dtype=np.int)

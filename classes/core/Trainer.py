@@ -1,4 +1,7 @@
+import sys
 from typing import Dict, Tuple
+
+from tqdm import tqdm
 
 from classes.core.Evaluator import Evaluator
 from classes.factories.ModelFactory import ModelFactory
@@ -39,6 +42,44 @@ class Trainer:
 
         self.__evaluator = Evaluator(self.__device)
 
+    def train_one_epoch(self, epoch, training_loader):
+        print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** ")
+
+        self.__model.train_mode()
+        running_loss, running_accuracy = 0.0, 0.0
+
+        # Visual progress bar
+        tqdm_bar = tqdm(training_loader, total=len(training_loader), unit="batch", file=sys.stdout)
+        tqdm_bar.set_description_str(" Training  ")
+
+        # Process batches
+        for i, (x, y) in enumerate(training_loader):
+            tqdm_bar.update(1)
+            # Zero gradients
+            self.__model.reset_gradient()
+
+            # Forward pass
+            y = y.long().to(self.__device)
+            o = self.__model.predict(x).to(self.__device)
+
+            # Loss, backward pass, step
+            running_loss += self.__model.update_weights(o, y)
+            running_accuracy += Evaluator.batch_accuracy(o, y)
+
+            # Log current epoch result
+            if not (i + 1) % self.__log_every:
+                avg_loss, avg_accuracy = running_loss / self.__log_every, running_accuracy / self.__log_every
+                # print(
+                #     f"[ Epoch: {epoch + 1}/{self.__epochs}, batch: {i + 1} ] "
+                #     f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]")
+                running_loss, running_accuracy = 0.0, 0.0
+                # Update progress bar
+                progress: str = f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]"
+                tqdm_bar.set_postfix_str(progress)
+        # Close progress bar for this epoch
+        tqdm_bar.close()
+        print(" ...........................................................")
+
     def train(self, data: Dict) -> Tuple:
         """
         Trains the model according to the established parameters and the given data
@@ -52,32 +93,12 @@ class Trainer:
         evaluations = []
         training_loader = data["train"]
 
+        # --- Single epoch ---
         for epoch in range(self.__epochs):
-            print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** ")
+            # Train epoch
+            self.train_one_epoch(epoch, training_loader)
 
-            self.__model.train_mode()
-
-            running_loss, running_accuracy = 0.0, 0.0
-
-            for i, (x, y) in enumerate(training_loader):
-
-                self.__model.reset_gradient()
-
-                y = y.long().to(self.__device)
-                o = self.__model.predict(x).to(self.__device)
-
-                running_loss += self.__model.update_weights(o, y)
-                running_accuracy += Evaluator.batch_accuracy(o, y)
-
-                if not (i + 1) % self.__log_every:
-                    avg_loss, avg_accuracy = running_loss / self.__log_every, running_accuracy / self.__log_every
-                    print(
-                        f"[ Epoch: {epoch + 1}/{self.__epochs}, batch: {i + 1} ] "
-                        f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]")
-                    running_loss, running_accuracy = 0.0, 0.0
-
-            print(" ...........................................................")
-
+            # Perform evaluation
             if not (epoch + 1) % self.__evaluate_every:
                 evaluations += [self.__evaluator.evaluate(data, self.__model)]
                 if self.__early_stopping_check(evaluations[-1]["metrics"]["val"][self.__es_metric]):

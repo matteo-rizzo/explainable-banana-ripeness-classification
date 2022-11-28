@@ -78,11 +78,12 @@ def main():
     test_scores = []
     start_time: float = time.perf_counter()
 
+    # Loop through seeds
     for seed in range(num_seeds):
         print(f"\n==============================================================\n"
               f"                      Seed {seed + 1} / {num_seeds}                       \n"
               f"==============================================================")
-
+        # TODO: What is CV metadata?
         data_manager = DataManager(data_params, network_type)
         use_cv_metadata: bool = data_params["cv"]["use_cv_metadata"]
 
@@ -95,16 +96,17 @@ def main():
 
         data_manager.print_split_info()
 
+        # Initialize the cross validator, which will also train the models
         cv = CrossValidator(data_manager, path_to_results, train_params)
 
         set_random_seed(seed, device)
         test_scores += [cv.validate(seed + 1)]
 
-        print("\n................................................................\n"
-              "                        Finished CV                  \n"
-              "................................................................\n")
+    print("\n................................................................\n"
+          "                        Finished CV                  \n"
+          "................................................................")
 
-    print(f"\n Average test results for {num_seeds} seeds \n")
+    print(f" Average test results for {num_seeds} seeds ")
     avg_seeds_test = pd.DataFrame(test_scores)
     avg_seeds_test.insert(0, "seed", list(range(1, num_seeds + 1)))
     avg_seeds_test.to_csv(os.path.join(path_to_results, "avg_seeds_test.csv"), index=False)
