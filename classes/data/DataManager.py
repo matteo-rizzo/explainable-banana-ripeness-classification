@@ -83,7 +83,7 @@ class DataManager:
                 'val': list(set([item.split("_")[-1] for item in fold_paths['val'][0]])),
                 'test': list(set([item.split("_")[-1] for item in fold_paths['test'][0]]))
             })
-        # Note: this is TOO MUCH
+        # TODO: this is TOO MUCH. Either set a verbose parameter, or remove
         # print("\n..............................................\n")
         # print("Split info overview:\n")
         # pp = pprint.PrettyPrinter(compact=True)
