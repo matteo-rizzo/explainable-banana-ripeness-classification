@@ -10,7 +10,7 @@ class OptimizerFactory:
         self.optimizers_map = {
             "SGD": optim.SGD(network_parameters, lr=learning_rate, momentum=0.9, nesterov=True),
             "Adam": optim.Adam(network_parameters, lr=learning_rate),
-            "AdamW": optim.AdamW(network_parameters, lr=learning_rate, correct_bias=False),
+            "AdamW": optim.AdamW(network_parameters, lr=learning_rate),
         }
 
     def get(self, optimizer_type: str) -> torch.optim:
