@@ -1,5 +1,6 @@
 import os
 import time
+from pathlib import Path
 from typing import Union, Dict, List
 
 import numpy as np
@@ -12,7 +13,7 @@ from classes.utils.Params import Params
 
 class CrossValidator:
 
-    def __init__(self, data_manager: DataManager, path_to_results: str, train_params: Dict):
+    def __init__(self, data_manager: DataManager, path_to_results: Union[str, Path], train_params: Dict):
         """
         :param data_manager: an instance of DataManager to load the folds from the filesystem
         :param path_to_results: the path to the directory with the results for the current experiment

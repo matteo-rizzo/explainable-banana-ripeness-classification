@@ -1,6 +1,7 @@
 import os
 import pprint
-from typing import Dict
+from typing import Dict, Union
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -113,7 +114,7 @@ class DataManager:
             'test': DataLoader(Dataset(x_test_paths, y_test, self.__loader), self.__batch_size)
         }
 
-    def save_split_to_file(self, path_to_results: str, seed: int):
+    def save_split_to_file(self, path_to_results: Union[str, Path], seed: int):
         path_to_metadata = os.path.join(path_to_results, "cv_splits")
         path_to_file = os.path.join(path_to_metadata, "split_{}.csv".format(seed))
         os.makedirs(path_to_metadata, exist_ok=True)

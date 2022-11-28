@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Union
 
 import pandas as pd
 import yaml
@@ -95,7 +95,7 @@ class Params:
             yaml.dump(data, f, Dumper=yaml.SafeDumper)
 
     @staticmethod
-    def save_experiment_params(path_to_results: str, network_type: str, dataset_name: str):
+    def save_experiment_params(path_to_results: Union[str, Path], network_type: str, dataset_name: str):
         """
         Saves the configuration for the current experiment to file at the given path
         :param path_to_results: the path where to save the configuration of the experiment at
