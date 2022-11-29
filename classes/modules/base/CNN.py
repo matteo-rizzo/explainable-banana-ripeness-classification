@@ -3,6 +3,7 @@ from typing import Dict, Tuple, Callable
 import numpy as np
 import torch
 from torch import nn
+from torchvision.transforms import transforms
 
 
 class CNN(nn.Module):
@@ -18,6 +19,8 @@ class CNN(nn.Module):
         classifier_params = network_params["layers"]["classifier"]
         self.__bottleneck_output_size = classifier_params["linear_1"]["out_features"]
         self.__activation = activation
+
+        self.__normalization = network_params["normalization"]
 
         conv_blocks, last_conv_out_channels = self._generate_conv_blocks()
         self.conv_and_pool_layers = nn.Sequential(*conv_blocks)
@@ -170,6 +173,12 @@ class CNN(nn.Module):
         return conv_blocks, last_conv_out_channels
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # --- Normalization ---
+        # This variant normalizes here to use faster gpu matrix operations
+        mean, std = self.__normalization.values()
+        normalization = transforms.Normalize(mean=mean, std=std)
+        x = normalization(x)
+        # ---------------------
         x = self.conv_and_pool_layers(x)
         x = self.fc(x.view(-1, self.__linear_size))
         return self.classifier(x) if self.__activation else x

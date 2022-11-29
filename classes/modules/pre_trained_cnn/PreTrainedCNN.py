@@ -4,6 +4,7 @@ from typing import Dict
 import torch
 import torch.nn as nn
 from torchvision import models
+from torchvision.transforms import transforms
 
 
 class PreTrainedCNN(nn.Module):
@@ -33,6 +34,8 @@ class PreTrainedCNN(nn.Module):
         features_extraction = network_params["features_extraction"]
         download_model_locally = network_params["download_model_locally"]
         self.output_size = network_params["output_size"]
+
+        self.__normalization = network_params["normalization"]
 
         pre_trained = pretrained_models[pre_trained_type]
 
@@ -91,4 +94,10 @@ class PreTrainedCNN(nn.Module):
         return self.__initializations[pretrained_model_type](pretrained_model)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # --- Normalization ---
+        # This variant normalizes here to use faster gpu matrix operations
+        mean, std = self.__normalization.values()
+        normalization = transforms.Normalize(mean=mean, std=std)
+        x = normalization(x)
+        # ---------------------
         return self.model(x)

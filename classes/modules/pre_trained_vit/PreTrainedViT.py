@@ -2,6 +2,7 @@ from typing import Dict
 
 import torch
 import torch.nn as nn
+from torchvision.transforms import transforms
 from transformers import ViTFeatureExtractor, DeiTFeatureExtractor, BeitFeatureExtractor
 # from transformers import ViTModel, DeiTModel, BeitModel
 from transformers import ViTForImageClassification, DeiTForImageClassification, BeitForImageClassification
@@ -14,11 +15,11 @@ class PreTrainedViT(nn.Module):
         pretrained_models = {
             # --- Vision Transformers ---
             # Base
-            "ViT": (ViTFeatureExtractor, ViTForImageClassification),
+            "ViT": ViTForImageClassification,
             # Data-efficient Image Transformers
-            "DeIT": (DeiTFeatureExtractor, DeiTForImageClassification),
+            "DeIT": DeiTForImageClassification,
             # BERT pre-training of Image Transformers
-            "BeiT": (BeitFeatureExtractor, BeitForImageClassification),
+            "BeiT": BeitForImageClassification,
             # A method for self-supervised training of Vision Transformers
             "DINO": None,
             # Masked Autoencoders
@@ -28,13 +29,20 @@ class PreTrainedViT(nn.Module):
             "SwinV2": None,
         }
 
-        self.feature_extractor, self.model = pretrained_models[network_params["model_type"]]
+        self.model = pretrained_models[network_params["model_type"]]
 
-        self.feature_extractor = self.feature_extractor.from_pretrained(network_params["pretrained_model"])
         self.model = self.model.from_pretrained(
             network_params["pretrained_model"],
             num_labels=network_params["num_classes"]
         )
 
+        self.__normalization = network_params["normalization"]
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # --- Normalization ---
+        # This variant normalizes here to use faster gpu matrix operations
+        mean, std = self.__normalization.values()
+        normalization = transforms.Normalize(mean=mean, std=std)
+        x = normalization(x)
+        # ---------------------
         return self.model(x)
