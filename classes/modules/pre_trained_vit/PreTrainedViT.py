@@ -37,6 +37,4 @@ class PreTrainedViT(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # I know this doesn't go here, but I wanted to test
-        # inputs = self.feature_extractor(images=x, return_tensors="pt")
         return self.model(x)
