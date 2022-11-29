@@ -2,3 +2,12 @@
 model_type: "ViT"
 pretrained_model: 'google/vit-base-patch16-224-in21k'
 num_classes: 4
+
+# Note: These are mean and stds taken from imagenet.
+#  mean: [0.485, 0.456, 0.406]
+#  std: [0.229, 0.224, 0.225]
+
+# Pretrained Vit needs standard!
+normalization:
+  mean: [0.5, 0.5, 0.5]
+  std: [0.5, 0.5, 0.5]

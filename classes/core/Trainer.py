@@ -60,7 +60,7 @@ class Trainer:
 
             # Forward pass
             y = y.long().to(self.__device)
-            o = self.model.predict(x).to(self.__device)
+            o = self.model.predict(x)
 
             # Loss, backward pass, step
             running_loss += self.model.update_weights(o, y)

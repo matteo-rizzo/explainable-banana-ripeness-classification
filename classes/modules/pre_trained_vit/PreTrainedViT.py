@@ -3,7 +3,6 @@ from typing import Dict
 import torch
 import torch.nn as nn
 from torchvision.transforms import transforms
-from transformers import ViTFeatureExtractor, DeiTFeatureExtractor, BeitFeatureExtractor
 # from transformers import ViTModel, DeiTModel, BeitModel
 from transformers import ViTForImageClassification, DeiTForImageClassification, BeitForImageClassification
 
@@ -45,4 +44,4 @@ class PreTrainedViT(nn.Module):
         normalization = transforms.Normalize(mean=mean, std=std)
         x = normalization(x)
         # ---------------------
-        return self.model(x)
+        return self.model(x).logits

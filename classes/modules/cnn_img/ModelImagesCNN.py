@@ -15,6 +15,7 @@ class ModelImagesCNN(Model):
         self.__normalization = network_params["normalization"]
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        raise NotImplementedError
         # --- Normalization ---
         # This variant normalizes here to use faster gpu matrix operations
         mean, std = self.__normalization.values()

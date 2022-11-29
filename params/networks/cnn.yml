@@ -5,6 +5,7 @@ num_conv: 1
 
 # Note: These are mean and stds taken from imagenet.
 # Standard = mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)
+# Check what network needs what! (e.g., inceptionv3 uses standard)
 normalization:
   mean: [0.485, 0.456, 0.406]
   std: [0.229, 0.224, 0.225]
