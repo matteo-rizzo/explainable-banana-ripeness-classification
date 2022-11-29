@@ -56,6 +56,7 @@ class Evaluator:
                     y_true += y.cpu().numpy().tolist()
                 tqdm_bar.close()
 
+            # FIXME: Broken
             y_scores, y_true = np.array(y_scores).reshape((len(y_scores), 2)), np.array(y_true)
             y_pred = np.array((y_scores[:, 1] >= self.__optimal_roc_threshold(y_true, y_scores[:, 1])), dtype=np.int)
             set_metrics = self.__compute_metrics(y_true, y_pred, y_1_scores=y_scores[:, 1])

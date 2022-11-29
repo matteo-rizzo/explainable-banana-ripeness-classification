@@ -83,7 +83,7 @@ def main():
         print(f"\n==============================================================\n"
               f"                      Seed {seed + 1} / {num_seeds}                       \n"
               f"==============================================================")
-        data_manager = DataManager(data_params, network_type)
+        data_manager = DataManager(data_params)
         use_cv_metadata: bool = data_params["cv"]["use_cv_metadata"]
 
         if use_cv_metadata:

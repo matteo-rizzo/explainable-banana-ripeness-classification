@@ -1,14 +1,14 @@
 ---
 device: "cuda:0"
-num_seeds: 10
+num_seeds: 1
 
-dataset_name: "treviso-market"
+dataset_name: "treviso-market-224_224"
 
 train:
   network_type: "cnn"
-  epochs: 15
-  optimizer: "Adam"
-  criterion: "CrossEntropyLoss"
+  epochs: 1
+  optimizer: "AdamW" # SGD, Adam, AdamW
+  criterion: "CrossEntropyLoss" # NLLLoss, CrossEntropyLoss
   batch_size: 16
   learning_rate: 3.0e-05
   log_every: 1
@@ -18,5 +18,5 @@ train:
     metrics: "auc"
     metrics_trend: "increasing"
 cv:
-  k: 10
+  k: 3
   use_cv_metadata: false

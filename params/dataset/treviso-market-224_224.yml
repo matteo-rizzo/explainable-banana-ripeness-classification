@@ -1,0 +1,12 @@
+---
+classes:
+  '1': '1'
+  '2': '2'
+  '3': '3'
+  '4': '4'
+
+paths:
+  dataset_dir: "dataset/treviso-market-224_224"
+  dataset_metadata: "metadata"
+  cv_metadata: "metadata/cv_splits"
+  modalities_dir: ""

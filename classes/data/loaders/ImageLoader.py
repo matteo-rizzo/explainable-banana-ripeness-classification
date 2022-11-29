@@ -3,7 +3,6 @@ from typing import List
 import torch
 from PIL import Image
 from torchvision.transforms import transforms
-from torchvision.transforms.functional import InterpolationMode
 
 from classes.data.loaders.Loader import Loader
 
@@ -20,9 +19,13 @@ class ImageLoader(Loader):
         Creates a list of transformations to be applied to the inputs
         :return: a list of transformations to be applied to the inputs
         """
-        return [transforms.Resize(self.__img_size, interpolation=InterpolationMode.BILINEAR),
-                transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        return [  # transforms.Resize(self.__img_size, interpolation=InterpolationMode.BILINEAR),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=(0.5, 0.5, 0.5),
+                std=(0.5, 0.5, 0.5))]
+        # mean = (0.485, 0.456, 0.406),
+        # std = (0.229, 0.224, 0.225)]
 
     def load(self, path_to_input: str) -> torch.Tensor:
         """

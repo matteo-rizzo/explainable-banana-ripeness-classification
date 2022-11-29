@@ -1,7 +1,7 @@
 import os
 import pprint
-from typing import Dict, Union
 from pathlib import Path
+from typing import Dict, Union
 
 import numpy as np
 import pandas as pd
@@ -15,7 +15,7 @@ from classes.data.loaders.ImageLoader import ImageLoader
 
 class DataManager:
 
-    def __init__(self, data_params: Dict, network_type: str):
+    def __init__(self, data_params: Dict):
         self.__path_to_images = data_params["dataset"]["paths"]["images"]
         self.__k = data_params["cv"]["k"]
         self.__batch_size = data_params["batch_size"]
