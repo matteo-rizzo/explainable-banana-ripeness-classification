@@ -3,7 +3,10 @@ from torch import nn
 
 
 class CriterionFactory:
-    criteria_map = {"NLLLoss": nn.NLLLoss(), "CrossEntropyLoss": nn.CrossEntropyLoss()}
+    criteria_map = {
+        "NLLLoss": nn.NLLLoss(),
+        "CrossEntropyLoss": nn.CrossEntropyLoss()
+    }
 
     def get(self, criterion_type: str) -> torch.nn.modules.loss:
         if criterion_type not in self.criteria_map.keys():

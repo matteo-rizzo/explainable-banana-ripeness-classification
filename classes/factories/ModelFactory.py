@@ -12,7 +12,7 @@ class ModelFactory:
         "cnn": ModelImagesCNN,
         "pre_trained_cnn": ModelPreTrainedCNN,
         "transformer": ModelTransformer,
-        "pre_trainer_vit": ModelPreTrainedVit
+        "pre_trained_vit": ModelPreTrainedVit
     }
 
     def get(self, model_type: str, model_params: Dict) -> Model:
