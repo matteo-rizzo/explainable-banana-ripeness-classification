@@ -100,7 +100,6 @@ class Trainer:
 
             # Perform evaluation
             # FIXME: This breaks, it's probably still doing binary evaluation
-            print(" ! Skip evaluation, script broken")
             if not (epoch + 1) % self.__evaluate_every:
                 evaluations += [self.evaluator.evaluate(data, self.model)]
                 if self.__early_stopping_check(evaluations[-1]["metrics"]["val"][self.__es_metric]):
