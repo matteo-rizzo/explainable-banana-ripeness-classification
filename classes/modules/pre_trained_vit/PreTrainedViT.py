@@ -8,7 +8,7 @@ from transformers import ViTForImageClassification, DeiTForImageClassification, 
 
 
 class PreTrainedViT(nn.Module):
-    def __init__(self, network_params: Dict, activation: bool = True):
+    def __init__(self, network_params: Dict):
         super().__init__()
 
         pretrained_models = {
@@ -28,5 +28,15 @@ class PreTrainedViT(nn.Module):
             "SwinV2": None,
         }
 
+        self.feature_extractor, self.model = pretrained_models[network_params["model_type"]]
+
+        self.feature_extractor = self.feature_extractor.from_pretrained(network_params["pretrained_model"])
+        self.model = self.model.from_pretrained(
+            network_params["pretrained_model"],
+            num_labels=network_params["num_classes"]
+        )
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.__model(x)
+        # I know this doesn't go here, but I wanted to test
+        # inputs = self.feature_extractor(images=x, return_tensors="pt")
+        return self.model(x)

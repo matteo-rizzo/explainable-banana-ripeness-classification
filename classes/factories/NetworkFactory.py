@@ -5,13 +5,15 @@ from torch import nn
 from classes.modules.cnn_img.ImagesCNN import ImagesCNN
 from classes.modules.pre_trained_cnn.PreTrainedCNN import PreTrainedCNN
 from classes.modules.transformer.Transformer import Transformer
+from classes.modules.pre_trained_vit.PreTrainedViT import PreTrainedViT
 
 
 class NetworkFactory:
     networks_map = {
         "cnn": ImagesCNN,
         "pre_trained_cnn": PreTrainedCNN,
-        "transformer": Transformer
+        "transformer": Transformer,
+        "pre_trained_vit": PreTrainedViT
     }
 
     def get(self, network_type: str, module_params: Dict, activation: bool = False) -> nn.Module:

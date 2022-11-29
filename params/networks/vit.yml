@@ -1,3 +1,0 @@
----
-model_type: "vit"
-pretrained_model: 'google/vit-base-patch16-224-in21k'

@@ -1,0 +1,4 @@
+---
+model_type: "ViT"
+pretrained_model: 'google/vit-base-patch16-224-in21k'
+num_classes: 4

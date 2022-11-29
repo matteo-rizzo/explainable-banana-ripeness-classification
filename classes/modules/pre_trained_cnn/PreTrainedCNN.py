@@ -47,7 +47,7 @@ class PreTrainedCNN(nn.Module):
             for param in pre_trained.parameters():
                 param.requires_grad = False
 
-        self.__model = self.__add_classifier(pre_trained, pre_trained_type) if activation else pre_trained
+        self.model = self.__add_classifier(pre_trained, pre_trained_type) if activation else pre_trained
 
     def __add_classifier_to_resnet(self, model: nn.Module) -> nn.Module:
         """ Initializes Resnet18 """
@@ -91,4 +91,4 @@ class PreTrainedCNN(nn.Module):
         return self.__initializations[pretrained_model_type](pretrained_model)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.__model(x)
+        return self.model(x)
