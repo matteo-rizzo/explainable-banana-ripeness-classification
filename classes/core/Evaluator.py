@@ -4,7 +4,7 @@ from typing import Dict
 import numpy as np
 import torch
 import torch.utils.data
-from sklearn.metrics import f1_score, accuracy_score, recall_score, precision_score
+from sklearn.metrics import f1_score, recall_score, precision_score
 from tqdm import tqdm
 
 from classes.core.Model import Model
@@ -54,8 +54,8 @@ class Evaluator:
                     # Calculate output probabilities
                     output_probabilities = torch.softmax(output_logits, dim=1)
                     # Pass scores and true to cpu
-                    y_scores.append(output_probabilities.cpu().numpy().tolist())
-                    y_true.append(y.cpu().numpy().tolist())
+                    y_scores.append(output_probabilities.cpu().numpy())
+                    y_true.append(y.cpu().numpy())
                 tqdm_bar.close()
             # Find predictions
             y_pred, y_true = np.array([np.argmax(y, axis=1) for y in y_scores]), np.array(y_true)
