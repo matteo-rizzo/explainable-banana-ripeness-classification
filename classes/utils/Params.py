@@ -91,7 +91,7 @@ class Params:
         :param path_to_destination: the destination of the file with the saved metrics
         """
         with open(path_to_destination, 'w') as f:
-            yaml.dump(data, f, Dumper=yaml.SafeDumper)
+            yaml.dump(data, f, Dumper=yaml.SafeDumper, default_flow_style=False)
 
     @staticmethod
     def save_experiment_params(path_to_results: Union[str, Path], network_type: str, dataset_name: str):

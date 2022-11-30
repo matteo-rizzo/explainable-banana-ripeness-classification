@@ -5,18 +5,20 @@ import numpy as np
 import torch
 import torch.utils.data
 from sklearn.metrics import f1_score, recall_score, precision_score
+from torchmetrics.functional.classification import multiclass_f1_score, multiclass_recall, multiclass_precision
 from tqdm import tqdm
-
 from classes.core.Model import Model
 
 
 class Evaluator:
-
     def __init__(self, device: torch.device):
         """
         :param device: the device which to run on (gpu or cpu)
         """
         self.__device = device
+        # self.__f1 = F1Score(num_classes=4, average="macro", mdmc_average="global")
+        # self.__prec = Precision(num_classes=4, average="macro", mdmc_average="global")
+        # self.__rec = Recall(num_classes=4, average="macro", mdmc_average="global")
 
     def evaluate(self, data: Dict, model: Model, path_to_model: str = "") -> Dict:
         """
@@ -54,15 +56,16 @@ class Evaluator:
                     # Calculate output probabilities
                     output_probabilities = torch.softmax(output_logits, dim=1)
                     # Pass scores and true to cpu
-                    y_scores.append(output_probabilities.cpu().numpy())
-                    y_true.append(y.cpu().numpy())
+                    y_scores.append(output_probabilities.cpu())
+                    y_true.append(y.cpu())
                 tqdm_bar.close()
             # Find predictions
-            y_pred, y_true = np.array([np.argmax(y, axis=1) for y in y_scores]), np.array(y_true)
+            # TODO: seems fishy, can be done better
+            y_pred, y_true = torch.stack([torch.argmax(y, dim=1) for y in y_scores]), torch.stack(y_true)
             # Compute macro recall / prec / f1
             set_metrics = self.__compute_metrics(y_true, y_pred)
             # Mean accuracy and loss over all batches
-            set_metrics["accuracy"], set_metrics["loss"] = np.mean(accuracy), np.mean(loss)
+            set_metrics["accuracy"], set_metrics["loss"] = float(np.mean(accuracy)), float(np.mean(loss))
 
             print(f"{set_type.upper()} metrics: \n")
             for metric, value in set_metrics.items():
@@ -83,25 +86,23 @@ class Evaluator:
         output_probabilities = torch.softmax(output_logits, dim=1)
         y_pred = torch.argmax(output_probabilities, dim=1)
 
-        return torch.sum(y_pred == y) / y.shape[0]
+        return (torch.sum(y_pred == y) / y.shape[0]).item()
         # corrects = torch.sum(torch.max(output_logits, 1)[1].view(y.size()).data == y.data)
         # accuracy = corrects / y.size()[0]
         # return accuracy.item()
 
-    @staticmethod
-    def __compute_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Dict:
+    def __compute_metrics(self, y_true: torch.Tensor, y_pred: torch.Tensor) -> Dict:
         """
         Computes the metrics for the given preds and labels
         :param y_true: the ground-truth labels
         :param y_pred: the preds of the model
         :return: the following metrics in a Dict: accuracy / macro precision / macro recall / macro F1
         """
-        # sensitivity = recall_score(y_true, y_pred, pos_label=1)
-        # specificity = recall_score(y_true, y_pred, pos_label=0)
+        # TODO: improve way this receives number of classes
         return {
-            "precision": precision_score(y_true, y_pred, average="macro"),
-            "recall": recall_score(y_true, y_pred, average="macro"),
-            "macro_f1": f1_score(y_true, y_pred, average="macro"),
+            "precision": float(multiclass_precision(y_pred, y_true, num_classes=4)),
+            "recall": float(multiclass_recall(y_pred, y_true, num_classes=4)),
+            "macro_f1": float(multiclass_f1_score(y_pred, y_true, num_classes=4))
         }
 
     # @staticmethod

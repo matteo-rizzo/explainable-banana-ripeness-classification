@@ -110,9 +110,12 @@ class DataManager:
         print("..............................................")
 
         return {
-            'train': DataLoader(Dataset(x_train_paths, y_train, self.__loader), self.__batch_size, shuffle=True),
-            'val': DataLoader(Dataset(x_val_paths, y_valid, self.__loader), self.__batch_size),
-            'test': DataLoader(Dataset(x_test_paths, y_test, self.__loader), self.__batch_size)
+            'train': DataLoader(Dataset(x_train_paths, y_train, self.__loader),
+                                self.__batch_size, shuffle=True, drop_last=True),
+            'val': DataLoader(Dataset(x_val_paths, y_valid, self.__loader),
+                              self.__batch_size, drop_last=True),
+            'test': DataLoader(Dataset(x_test_paths, y_test, self.__loader),
+                               self.__batch_size, drop_last=True)
         }
 
     def save_split_to_file(self, path_to_results: Union[str, Path], seed: int):

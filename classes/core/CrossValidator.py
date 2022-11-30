@@ -33,7 +33,7 @@ class CrossValidator:
         :param set_type: set code in ["train", "val", "test"]
         :return: the input metrics averaged by set type
         """
-        return {k: np.array([m[set_type][k] for m in metrics]).mean() for k in metrics[0][set_type].keys()}
+        return {k: float(np.array([m[set_type][k] for m in metrics]).mean()) for k in metrics[0][set_type].keys()}
 
     def __avg_metrics(self, cv_metrics: List, save: bool = False, inplace: bool = False) -> Union[Dict, None]:
         """
@@ -47,10 +47,10 @@ class CrossValidator:
             avg_scores[set_type] = self.__merge_metrics(cv_metrics, set_type)
             print(f" Average {set_type} metrics: ")
             for metric, value in avg_scores[set_type].items():
-                print(f"\t - {''.join(['.'] * (15 - len(metric)))} : {value}")
+                print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {value}")
 
         if save:
-            Params.save(avg_scores, os.path.join(self.__paths_to_results["metrics"], "cv_average.json"))
+            Params.save(avg_scores, os.path.join(self.__paths_to_results["metrics"], "cv_average.yml"))
 
         if not inplace:
             return avg_scores
@@ -102,7 +102,7 @@ class CrossValidator:
             print(f" *** Finished processing fold {fold + 1} / {k}! ***")
 
             print(" Saving metrics...")
-            metrics_log = f"fold_{str(fold)}.json"
+            metrics_log = f"fold_{str(fold)}.yml"
             Params.save(best_eval["metrics"], os.path.join(self.__paths_to_results["metrics"], metrics_log))
             cv_metrics.append(best_eval["metrics"])
             print("-> Metrics saved!")
