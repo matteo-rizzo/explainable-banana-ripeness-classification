@@ -61,9 +61,9 @@ def main():
     network_type = train_params["network_type"]
     dataset_name = data_params["dataset"]["name"]
 
-    print(f"\n==============================================================\n"
+    print(f"\n======================================================{'='*len(network_type)+'='*len(dataset_name)}\n"
           f"            Experiment on {dataset_name} using {network_type}                       \n"
-          f"==============================================================")
+          f"======================================================{'='*len(network_type)+'='*len(dataset_name)}")
 
     print(f"\t Using Torch version ... : {torch.__version__}")
     print(f"\t Running on device ..... : {device}")

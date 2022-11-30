@@ -69,9 +69,6 @@ class Trainer:
             # Log current epoch result
             if not (i + 1) % self.__log_every:
                 avg_loss, avg_accuracy = running_loss / self.__log_every, running_accuracy / self.__log_every
-                # print(
-                #     f"[ Epoch: {epoch + 1}/{self.__epochs}, batch: {i + 1} ] "
-                #     f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]")
                 running_loss, running_accuracy = 0.0, 0.0
                 # Update progress bar
                 progress: str = f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]"
@@ -99,7 +96,6 @@ class Trainer:
             self.train_one_epoch(epoch, training_loader)
 
             # Perform evaluation
-            # FIXME: This breaks, it's probably still doing binary evaluation
             if not (epoch + 1) % self.__evaluate_every:
                 evaluations += [self.evaluator.evaluate(data, self.model)]
                 if self.__early_stopping_check(evaluations[-1]["metrics"]["val"][self.__es_metric]):
