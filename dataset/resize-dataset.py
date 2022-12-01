@@ -24,6 +24,8 @@ def main():
     resized_path.mkdir(exist_ok=True)
     # ------------------
     for folder in sub_folders:
+        if folder == ".DS_Store":
+            continue
         images: List[str] = os.listdir(raw_path / folder)
         resized_subfolder_path: Path = resized_path / folder
         resized_subfolder_path.mkdir(exist_ok=True)

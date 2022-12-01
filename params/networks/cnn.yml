@@ -26,5 +26,3 @@ layers:
   classifier:
     linear_1:
       out_features: 50
-    linear_2:
-      out_features: 20

@@ -2,7 +2,7 @@ from typing import Dict
 
 from torch import nn
 
-from classes.modules.cnn_img.ImagesCNN import ImagesCNN
+from classes.modules.cnn.CNN import CNN
 from classes.modules.pre_trained_cnn.PreTrainedCNN import PreTrainedCNN
 from classes.modules.transformer.Transformer import Transformer
 from classes.modules.pre_trained_vit.PreTrainedViT import PreTrainedViT
@@ -10,7 +10,7 @@ from classes.modules.pre_trained_vit.PreTrainedViT import PreTrainedViT
 
 class NetworkFactory:
     networks_map = {
-        "cnn": ImagesCNN,
+        "cnn": CNN,
         "pre_trained_cnn": PreTrainedCNN,
         "transformer": Transformer,
         "pre_trained_vit": PreTrainedViT

@@ -1,7 +1,7 @@
 from typing import Dict
 
 from classes.core.Model import Model
-from classes.modules.cnn_img.ModelImagesCNN import ModelImagesCNN
+from classes.modules.cnn.ModelCNN import ModelCNN
 from classes.modules.pre_trained_cnn.ModelPreTrainedCNN import ModelPreTrainedCNN
 from classes.modules.transformer.ModelTransformer import ModelTransformer
 from classes.modules.pre_trained_vit.ModelPreTrainedViT import ModelPreTrainedVit
@@ -9,9 +9,8 @@ from classes.modules.pre_trained_vit.ModelPreTrainedViT import ModelPreTrainedVi
 
 class ModelFactory:
     models_map = {
-        "cnn": ModelImagesCNN,
+        "cnn": ModelCNN,
         "pre_trained_cnn": ModelPreTrainedCNN,
-        "transformer": ModelTransformer,
         "pre_trained_vit": ModelPreTrainedVit
     }
 
