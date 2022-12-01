@@ -47,7 +47,7 @@ class CrossValidator:
             avg_scores[set_type] = self.__merge_metrics(cv_metrics, set_type)
             print(f" Average {set_type} metrics: ")
             for metric, value in avg_scores[set_type].items():
-                print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {value:3f}")
+                print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {value}")
 
         if save:
             Params.save(avg_scores, os.path.join(self.__paths_to_results["metrics"], "cv_average.yml"))
@@ -99,7 +99,7 @@ class CrossValidator:
 
             best_eval = self.evaluator.evaluate(data, model, path_to_best_model)
 
-            print(f" *** Finished processing fold {fold + 1} / {k}! ***")
+            print(f"\n *** Finished processing fold {fold + 1} / {k}! ***\n")
 
             print(" Saving metrics...")
             metrics_log = f"fold_{str(fold)}.yml"
@@ -113,9 +113,9 @@ class CrossValidator:
 
             self.__avg_metrics(cv_metrics, inplace=True)
 
-            folds_times.append((end_time - start_time) / 60)
-            estimated_time = (np.mean(np.array(folds_times)) * (k - fold))
-            print(" Time overview: ")
+            folds_times.append((start_time - end_time) / 60)
+            estimated_time = abs(np.mean(np.array(folds_times)) * (k - fold))
+            print("\n Time overview: ")
             print(f"\t - Time to train fold ............. : {(end_time - start_time) / 60:.2f}m")
             print(f"\t - Elapsed time CV time: .......... : {(end_time - zero_time) / 60:.2f}m")
             print(f"\t - Estimated time of completion ... : {estimated_time:.2f}m")

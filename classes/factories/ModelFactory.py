@@ -3,7 +3,6 @@ from typing import Dict
 from classes.core.Model import Model
 from classes.modules.cnn.ModelCNN import ModelCNN
 from classes.modules.pre_trained_cnn.ModelPreTrainedCNN import ModelPreTrainedCNN
-from classes.modules.transformer.ModelTransformer import ModelTransformer
 from classes.modules.pre_trained_vit.ModelPreTrainedViT import ModelPreTrainedVit
 
 

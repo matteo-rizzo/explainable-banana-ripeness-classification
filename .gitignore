@@ -134,3 +134,4 @@ out/
 *.h5
 *.pt
 /dataset/
+/results/

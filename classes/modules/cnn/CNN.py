@@ -1,9 +1,7 @@
-from typing import Dict, Tuple, Callable
+from typing import Dict
 
-import numpy as np
 import torch
 from torch import nn
-from torchvision.transforms import transforms
 
 
 class CNN(nn.Module):
@@ -34,7 +32,7 @@ class CNN(nn.Module):
             nn.MaxPool2d(2, 2),
 
             nn.Flatten(),
-            nn.Linear(82944, 1024),
+            nn.Linear(200704, 1024),
             nn.ReLU(),
             nn.Linear(1024, 512),
             nn.ReLU(),

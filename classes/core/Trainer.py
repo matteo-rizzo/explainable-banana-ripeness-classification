@@ -40,7 +40,7 @@ class Trainer:
         self.model.set_optimizer(self.__optimizer_type, self.__lr)
         self.model.set_criterion(criterion_type)
 
-        self.evaluator = Evaluator(self.__device, num_classes=train_params["num_classes"])
+        self.evaluator = Evaluator(self.__device)
 
     def train_one_epoch(self, epoch, training_loader):
         print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** ")
@@ -61,8 +61,6 @@ class Trainer:
             # Forward pass
             y = y.long().to(self.__device)
             o = self.model.predict(x).to(self.__device)
-
-            # print(o, y)
 
             # Loss, backward pass, step
             running_loss += self.model.update_weights(o, y)
@@ -119,9 +117,8 @@ class Trainer:
             metrics_check = metric_value < self.__es_metric_best_value
 
         if metrics_check:
-            print(
-                f"\t Old best val {self.__es_metric}: {self.__es_metric_best_value:.4f} "
-                f"| New best {self.__es_metric}: {metric_value:.4f}")
+            print(f"\n\t Old best val {self.__es_metric}: {self.__es_metric_best_value:.4f} "
+                  f"| New best {self.__es_metric}: {metric_value:.4f}\n")
 
             print("\t Saving new best model...")
             self.model.save(self.__path_to_best_model)
