@@ -6,7 +6,7 @@ dataset_name: "treviso-market-224_224"
 
 train:
   network_type: "mobilenet_v2" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
-  epochs: 10
+  epochs: 2
   optimizer: "AdamW" # SGD, Adam, AdamW
   criterion: "CrossEntropyLoss" # NLLLoss, CrossEntropyLoss
   batch_size: 8
