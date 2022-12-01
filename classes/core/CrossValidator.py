@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Union, Dict, List
 
 import numpy as np
+import torch
 
 from classes.core.Evaluator import Evaluator
 from classes.core.Trainer import Trainer
@@ -121,4 +122,7 @@ class CrossValidator:
             print(f"\t - Estimated time of completion ... : {estimated_time:.2f}m")
             print("----------------------------------------------------------------")
 
+            # Necessary for sequential run. Empty cache should be automatic, but best be sure.
+            del trainer, model, data
+            torch.cuda.empty_cache()
         return self.__avg_metrics(cv_metrics, save=True)["test"]
