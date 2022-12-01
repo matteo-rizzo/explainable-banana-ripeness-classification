@@ -2,10 +2,11 @@
 device: "cuda:0"
 num_seeds: 1
 
-dataset_name: "treviso-market"
+dataset_name: "treviso-market-224_224"
 
 train:
   network_type: "cnn" # ['cnn', 'pre_trained_cnn', 'pre_trained_vit']
+  num_classes: 4
   epochs: 1
   optimizer: "AdamW" # SGD, Adam, AdamW
   criterion: "CrossEntropyLoss" # NLLLoss, CrossEntropyLoss

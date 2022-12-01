@@ -40,7 +40,7 @@ class Trainer:
         self.model.set_optimizer(self.__optimizer_type, self.__lr)
         self.model.set_criterion(criterion_type)
 
-        self.evaluator = Evaluator(self.__device)
+        self.evaluator = Evaluator(self.__device, num_classes=train_params["num_classes"])
 
     def train_one_epoch(self, epoch, training_loader):
         print(f"\n *** Epoch {epoch + 1}/{self.__epochs} *** ")
@@ -62,7 +62,7 @@ class Trainer:
             y = y.long().to(self.__device)
             o = self.model.predict(x).to(self.__device)
 
-            print(o, y)
+            # print(o, y)
 
             # Loss, backward pass, step
             running_loss += self.model.update_weights(o, y)

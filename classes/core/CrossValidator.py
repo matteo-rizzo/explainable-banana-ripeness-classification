@@ -22,7 +22,7 @@ class CrossValidator:
         self.data_manager = data_manager
         self.__path_to_results = path_to_results
         self.__train_params = train_params
-        self.evaluator = Evaluator(train_params["device"])
+        self.evaluator = Evaluator(train_params["device"], num_classes=train_params["num_classes"])
         self.__paths_to_results = {}
 
     @staticmethod

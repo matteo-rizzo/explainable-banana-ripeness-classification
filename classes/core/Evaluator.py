@@ -4,21 +4,19 @@ from typing import Dict
 import numpy as np
 import torch
 import torch.utils.data
-from sklearn.metrics import f1_score, recall_score, precision_score
 from torchmetrics.functional.classification import multiclass_f1_score, multiclass_recall, multiclass_precision
 from tqdm import tqdm
+
 from classes.core.Model import Model
 
 
 class Evaluator:
-    def __init__(self, device: torch.device):
+    def __init__(self, device: torch.device, num_classes: int):
         """
         :param device: the device which to run on (gpu or cpu)
         """
         self.__device = device
-        # self.__f1 = F1Score(num_classes=4, average="macro", mdmc_average="global")
-        # self.__prec = Precision(num_classes=4, average="macro", mdmc_average="global")
-        # self.__rec = Recall(num_classes=4, average="macro", mdmc_average="global")
+        self.__num_classes = num_classes
 
     def evaluate(self, data: Dict, model: Model, path_to_model: str = "") -> Dict:
         """
@@ -98,11 +96,10 @@ class Evaluator:
         :param y_pred: the preds of the model
         :return: the following metrics in a Dict: accuracy / macro precision / macro recall / macro F1
         """
-        # TODO: improve way this receives number of classes
         return {
-            "precision": float(multiclass_precision(y_pred, y_true, num_classes=4)),
-            "recall": float(multiclass_recall(y_pred, y_true, num_classes=4)),
-            "macro_f1": float(multiclass_f1_score(y_pred, y_true, num_classes=4))
+            "precision": float(multiclass_precision(y_pred, y_true, num_classes=self.__num_classes)),
+            "recall": float(multiclass_recall(y_pred, y_true, num_classes=self.__num_classes)),
+            "macro_f1": float(multiclass_f1_score(y_pred, y_true, num_classes=self.__num_classes))
         }
 
     # @staticmethod
