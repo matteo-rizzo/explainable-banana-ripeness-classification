@@ -1,17 +1,17 @@
 from typing import Dict
 
+from classes.modules.transformer.Transformer import Transformer
 from torch import nn
 
 from classes.modules.cnn.CNN import CNN
-from classes.modules.pre_trained_cnn.PreTrainedCNN import PreTrainedCNN
-from classes.modules.transformer.Transformer import Transformer
+from classes.modules.mobilenet_v2.MobileNetV2 import MobileNetV2
 from classes.modules.pre_trained_vit.PreTrainedViT import PreTrainedViT
 
 
 class NetworkFactory:
     networks_map = {
         "cnn": CNN,
-        "pre_trained_cnn": PreTrainedCNN,
+        "mobilenet_v2": MobileNetV2,
         "transformer": Transformer,
         "pre_trained_vit": PreTrainedViT
     }
