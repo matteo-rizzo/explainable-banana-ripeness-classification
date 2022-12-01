@@ -10,7 +10,7 @@ class ModelCNN(Model):
 
     def __init__(self, network_params: Dict):
         super().__init__(device=network_params["device"])
-        self._network = CNN().to(self._device)
+        self._network = CNN(network_params).to(self._device)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self._network(x)

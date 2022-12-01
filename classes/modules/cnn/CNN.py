@@ -1,11 +1,13 @@
 import torch
 from torch import nn
+from torchvision.transforms import transforms
 
 
 class CNN(nn.Module):
 
-    def __init__(self):
+    def __init__(self, network_params):
         super().__init__()
+        self.__normalization = network_params["normalization"]
 
         self.__cnn = nn.Sequential(
 
@@ -36,4 +38,8 @@ class CNN(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        mean, std = self.__normalization.values()
+        normalization = transforms.Normalize(mean=mean, std=std)
+        x = normalization(x)
+
         return self.__cnn(x)
