@@ -32,7 +32,6 @@ class Evaluator:
             model.load(path_to_model)
 
         metrics, gt, preds = {}, {}, {}
-
         for set_type, dataloader in data.items():
 
             # Visual progress bar
@@ -65,7 +64,7 @@ class Evaluator:
             # Mean accuracy and loss over all batches
             set_metrics["accuracy"], set_metrics["loss"] = float(np.mean(accuracy)), float(np.mean(loss))
 
-            print(f"{set_type.upper()} metrics: \n")
+            print(f"{set_type.upper()} metrics:")
             for metric, value in set_metrics.items():
                 print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {value:.4f}")
 

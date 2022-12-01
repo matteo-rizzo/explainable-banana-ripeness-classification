@@ -104,7 +104,7 @@ class Trainer:
                     break
 
         print("\n Finished training!")
-
+        print("----------------------------------------------------------------")
         return self.model, evaluations
 
     def __early_stopping_check(self, metric_value: float) -> bool:
