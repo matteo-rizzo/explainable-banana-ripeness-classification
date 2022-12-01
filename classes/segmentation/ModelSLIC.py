@@ -4,7 +4,7 @@ import numpy as np
 import skimage.segmentation as seg
 
 from classes.core.Model import Model
-from classes.modules.segmentation.utils import sharpen, adjust_contrast, blur_image
+from classes.segmentation.utils import sharpen, adjust_contrast, blur_image
 
 
 class ModelSLIC(Model):
