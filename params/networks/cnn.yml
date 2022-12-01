@@ -1,5 +1,5 @@
 ---
-output_size: 5
+output_size: 4
 num_conv_blocks: 2
 num_conv: 1
 

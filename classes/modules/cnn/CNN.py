@@ -1,15 +1,11 @@
-from typing import Dict
-
 import torch
 from torch import nn
 
 
 class CNN(nn.Module):
 
-    def __init__(self, network_params: Dict, activation: bool = True):
+    def __init__(self):
         super().__init__()
-
-        self.__normalization = network_params["normalization"]
 
         self.__cnn = nn.Sequential(
 
@@ -40,9 +36,4 @@ class CNN(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # --- Normalization ---
-        # This variant normalizes here to use faster gpu matrix operations
-        #mean, std = self.__normalization.values()
-        #normalization = transforms.Normalize(mean=mean, std=std)
-        #x = normalization(x)
         return self.__cnn(x)
