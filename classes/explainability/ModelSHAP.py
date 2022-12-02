@@ -36,6 +36,7 @@ class ModelSHAP(InterpretabilityModel):
         background = train_images.to(self._device)
         test_images = test_images.to(self._device)
 
+        # self._model.eval()
         e = shap.DeepExplainer(self._model, background)
         shap_values = e.shap_values(test_images)
 

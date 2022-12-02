@@ -3,6 +3,7 @@ from pathlib import Path
 import torch
 
 from classes.data.DataManager import DataManager
+from classes.explainability.ModelLIME import ModelLIME
 from classes.explainability.ModelSHAP import ModelSHAP
 from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
@@ -53,8 +54,11 @@ def explain_main():
     model = ModelFactory().get(network_type, network_params)
     model.load(str(model_path))
 
-    shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability")
-    shap_model.explain(data["train"], data["test"], label_names=LABELS)
+    # shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability")
+    # shap_model.explain(data["train"], data["test"], label_names=LABELS)
+
+    lime_model = ModelLIME(model._network, device, save_path=result_folder / "interpretability")
+    lime_model.explain(data["train"], data["test"], label_names=LABELS)
 
 
 if __name__ == "__main__":

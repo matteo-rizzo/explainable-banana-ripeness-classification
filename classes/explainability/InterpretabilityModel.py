@@ -2,14 +2,13 @@ from collections import Counter
 from typing import List, Tuple, Optional
 
 import torch.utils.data
+from torch import nn
 from torch.utils.data import DataLoader
-
-from classes.core.Model import Model
 
 
 class InterpretabilityModel:
-    def __init__(self, model: Model):
-        self._model = model
+    def __init__(self, model: nn.Module):
+        self._model: nn.Module = model
 
     @staticmethod
     def get_batch_from_loader(loader: DataLoader, num_images: int = None, classes: List[int] = None, num_per_class: int = None) -> Tuple[torch.Tensor, Optional[List]]:
