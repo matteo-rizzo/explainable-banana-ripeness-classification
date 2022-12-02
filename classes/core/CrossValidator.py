@@ -8,13 +8,13 @@ import torch
 
 from classes.core.Evaluator import Evaluator
 from classes.core.Trainer import Trainer
-from classes.data.DataManager import DataManager
+from data.managers.BananaDataManager import BananaDataManager
 from classes.utils.Params import Params
 
 
 class CrossValidator:
 
-    def __init__(self, data_manager: DataManager, path_to_results: Union[str, Path], train_params: Dict):
+    def __init__(self, data_manager: BananaDataManager, path_to_results: Union[str, Path], train_params: Dict):
         """
         :param data_manager: an instance of DataManager to load the folds from the filesystem
         :param path_to_results: the path to the directory with the results for the current experiment

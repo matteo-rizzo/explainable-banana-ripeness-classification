@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 
 from classes.core.CrossValidator import CrossValidator
-from classes.data.DataManager import DataManager
+from classes.factories.DataManagerFactory import DataManagerFactory
 from classes.utils.Params import Params
 from utilities.training import set_random_seed, get_device
 
@@ -49,7 +49,8 @@ def main():
         print(f"\n==============================================================\n"
               f"                      Seed {seed + 1} / {num_seeds}                       \n"
               f"==============================================================")
-        data_manager = DataManager(data_params)
+        data_manager = DataManagerFactory().get(data_params)
+        # BananaDataManager(data_params)
         use_cv_metadata: bool = data_params["cv"]["use_cv_metadata"]
 
         if use_cv_metadata:
