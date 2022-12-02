@@ -8,7 +8,7 @@ import torch
 
 from classes.core.Evaluator import Evaluator
 from classes.core.Trainer import Trainer
-from data.managers.BananaDataManager import BananaDataManager
+from classes.data.managers import BananaDataManager
 from classes.utils.Params import Params
 
 

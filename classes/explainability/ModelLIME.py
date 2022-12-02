@@ -17,6 +17,7 @@ from classes.explainability.InterpretabilityModel import InterpretabilityModel
 
 
 def get_preprocess_transform():
+    # TODO: use correct values
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
     transf = transforms.Compose([
@@ -74,15 +75,16 @@ class ModelLIME(InterpretabilityModel):
             explanation = explainer.explain_instance(img,
                                                      lambda data: batch_predict(data, model=self._model),  # classification function
                                                      labels=label_names,
+                                                     top_labels=len(label_names),
                                                      hide_color=0,
-                                                     num_samples=2)  # number of images that will be sent to classification function
+                                                     num_samples=1000)  # number of images that will be sent to classification function
             # num_samples should be higher, 100
 
             pred_labels = explanation.top_labels
             axs[i, 0].imshow(img)
 
             for j, lab in enumerate(pred_labels):
-                temp, mask = explanation.get_image_and_mask(lab, positive_only=True, num_features=5, hide_rest=False)
+                temp, mask = explanation.get_image_and_mask(lab, positive_only=True, num_features=5, hide_rest=True)
                 image_boundary_more = mark_boundaries(temp / 255.0, mask)
 
                 axs[i, j + 1].imshow(image_boundary_more)

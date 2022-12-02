@@ -2,7 +2,7 @@ from pathlib import Path
 
 import torch
 
-from classes.data.DataManager import DataManager
+from classes.data.managers.DataManager import DataManager
 from classes.explainability.ModelLIME import ModelLIME
 from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
@@ -11,10 +11,10 @@ from functional.yaml_manager import load_yaml
 # ------------------------------------------ PARAMETERS ------------------------------------------
 
 # Folder name inside "results" folder
-experiment_name = "treviso-market-224_224_pre_trained_vit_Thu_Dec__1_15-27-23_2022"
+experiment_name = "treviso-market-224_224_mobilenet_v2_Fri_Dec__2_16-54-21_2022"
 
 # Set filename of the dump (i.e. the ".pth" file inside the "seed_x/models" folder)
-model_pth = "pre_trained_vit_fold_0.pth"
+model_pth = "mobilenet_v2_fold_0.pth"
 
 # Set seed and fold to use for explanations
 seed_n = 1
