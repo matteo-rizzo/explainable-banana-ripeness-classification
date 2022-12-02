@@ -5,7 +5,7 @@ import time
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-from classes.data.DataManager import DataManager
+from classes.data.managers.DataManager import DataManager
 from classes.segmentation.ModelSLIC import ModelSLIC
 
 
