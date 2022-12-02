@@ -1,5 +1,5 @@
 ---
-output_size: 2
+output_size: 4
 features_extraction: false
 pretrained_model: "squeezenet"
 download_model_locally: true
