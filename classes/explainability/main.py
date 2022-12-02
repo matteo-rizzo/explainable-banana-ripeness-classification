@@ -4,10 +4,9 @@ import torch
 
 from classes.data.DataManager import DataManager
 from classes.explainability.ModelLIME import ModelLIME
-from classes.explainability.ModelSHAP import ModelSHAP
 from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
-from utilities.yaml_manager import load_yaml
+from functional.yaml_manager import load_yaml
 
 # ------------------------------------------ PARAMETERS ------------------------------------------
 

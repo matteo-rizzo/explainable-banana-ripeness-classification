@@ -4,7 +4,7 @@ import numpy as np
 import skimage.segmentation as seg
 
 from classes.core.Model import Model
-from classes.segmentation.utils import sharpen, adjust_contrast, blur_image
+from functional.segmentation import adjust_contrast, sharpen, blur_image
 
 
 class ModelSLIC(Model):
@@ -21,20 +21,19 @@ class ModelSLIC(Model):
     def predict(self, x: np.ndarray, *args: any, **kwargs: any) -> np.ndarray:
         """
         Segment a batch of images
-
         :param x: 4D array of size (batch, height, width, channels)
         :return: batch of segmented images (same shape as input)
         """
 
         # Contrast
-        imgs_proc = [adjust_contrast(img, **self.__parameters["contrast"]) for img in x]
+        images = [adjust_contrast(img, **self.__parameters["contrast"]) for img in x]
 
         # Sharpening
-        imgs_proc = [sharpen(img, **self.__parameters["sharpen"]) for img in imgs_proc]
+        images = [sharpen(img, **self.__parameters["sharpen"]) for img in images]
         # (keep "amount" low, "radius" < 5)
 
         # Blur
-        imgs_proc = [blur_image(img, **self.__parameters["blur"]) for img in imgs_proc]
+        images = [blur_image(img, **self.__parameters["blur"]) for img in images]
 
         # SLIC clustering parameters
         kv = dict(n_segments=2,  # ok, background/banana
@@ -52,5 +51,5 @@ class ModelSLIC(Model):
                   channel_axis=-1)  # leave as is
 
         # Predict numeric label 0/1 for each pixel of the image
-        masks = np.stack([seg.slic(img, **kv) for img in imgs_proc])  # (batch, h, w)
+        masks = np.stack([seg.slic(img, **kv) for img in images])  # (batch, h, w)
         return x * masks[..., np.newaxis]

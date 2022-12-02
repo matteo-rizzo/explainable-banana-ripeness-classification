@@ -1,5 +1,5 @@
 """
-Image manipulation utilities to aid the segmentation process
+Image manipulation functional to aid the segmentation process
 """
 
 import numpy as np

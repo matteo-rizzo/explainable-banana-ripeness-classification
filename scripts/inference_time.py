@@ -4,32 +4,16 @@ import time
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from classes.core.Model import Model
-from classes.data.Dataset import Dataset
-from classes.data.loaders.ImageLoader import ImageLoader
+from classes.data.DataManager import DataManager
 from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
 
 
 def main(model: Model, path_to_data: str, device: torch.device):
-    """
-    Evaluates the saved best model against train, val and test data
-    :param model: the model to be evaluated
-    :param path_to_data: the path to the dataset class folders
-    :return: the eval of the model on train, val and test data, including metrics, gt and preds
-    """
-
-    data_paths, labels = [], []
-    for folder in os.listdir(path_to_data):
-        path_to_class = os.path.join(path_to_data, folder)
-        for file_name in os.listdir(path_to_class):
-            data_paths.append(os.path.join(path_to_class, file_name))
-            labels.append(int(folder))
-
-    dataloader = DataLoader(Dataset(data_paths, labels, ImageLoader().load), batch_size=1)
+    dataloader = DataManager.get_full_dataloader(path_to_data)
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
     tqdm_bar.set_description_str(" Evaluating  ")
@@ -37,8 +21,7 @@ def main(model: Model, path_to_data: str, device: torch.device):
     execution_times = []
 
     with torch.no_grad():
-
-        for i, (x, _) in enumerate(dataloader):
+        for x, _ in dataloader:
             tqdm_bar.update(1)
             start_time = time.perf_counter()
             _ = torch.softmax(model.predict(x).to(device), dim=1)

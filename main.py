@@ -8,7 +8,7 @@ import torch
 from classes.core.CrossValidator import CrossValidator
 from classes.factories.DataManagerFactory import DataManagerFactory
 from classes.utils.Params import Params
-from utilities.training import set_random_seed, get_device
+from functional.setup import set_random_seed, get_device
 
 
 def main():
@@ -27,9 +27,10 @@ def main():
     network_type = train_params["network_type"]
     dataset_name = data_params["dataset"]["name"]
 
-    print(f"\n======================================================{'=' * len(network_type) + '=' * len(dataset_name)}\n"
-          f"            Experiment on {dataset_name} using {network_type}                       \n"
-          f"======================================================{'=' * len(network_type) + '=' * len(dataset_name)}")
+    print(
+        f"\n======================================================{'=' * len(network_type) + '=' * len(dataset_name)}\n"
+        f"            Experiment on {dataset_name} using {network_type}                       \n"
+        f"======================================================{'=' * len(network_type) + '=' * len(dataset_name)}")
 
     print(f"\t Using Torch version ... : {torch.__version__}")
     print(f"\t Running on device ..... : {device}")
