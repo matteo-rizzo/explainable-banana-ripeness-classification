@@ -133,6 +133,5 @@ out/
 # TF/PYTORCH dumps
 *.h5
 *.pt
-/dataset/
 /results/
 /trained_models/
