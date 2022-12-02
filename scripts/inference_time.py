@@ -29,7 +29,7 @@ def main(model: Model, path_to_data: str, device: torch.device):
             data_paths.append(os.path.join(path_to_class, file_name))
             labels.append(int(folder))
 
-    dataloader = DataLoader(Dataset(data_paths, labels, ImageLoader()), batch_size=1)
+    dataloader = DataLoader(Dataset(data_paths, labels, ImageLoader().load), batch_size=1)
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
     tqdm_bar.set_description_str(" Evaluating  ")
@@ -50,22 +50,23 @@ def main(model: Model, path_to_data: str, device: torch.device):
     print("----------------------------------------------------------------")
     print("\n Overview: ")
     print(f"\t - Number of items .......... : {len(dataloader)}")
-    print(f"\t - Avg execution_time........ : {(np.mean(execution_times)) / 60:.2f}m")
-    print(f"\t - Std Dev execution time ... : {(np.std(execution_times)) / 60:.2f}m")
+    print(f"\t - Avg execution_time........ : {(np.mean(execution_times)):.4f}ms")
+    print(f"\t - Std Dev execution time ... : {(np.std(execution_times)):.4f}ms")
     print("----------------------------------------------------------------")
 
 
 if __name__ == "__main__":
-    model_type = "cnn"
+    device_type = "cpu"
+    device = torch.device(device_type)
+
+    model_type = "mobilenet_v2"
     model_params = Params.load_network_params(model_type)
+    model_params["device"] = device
     model = ModelFactory().get(model_type, model_params)
-    model.load(os.path.join("pretrained", "model.pth"))
+    model.load(os.path.join("trained_models", "mobilenet_v2.pth"))
     model.evaluation_mode()
 
     path_to_data = os.path.join("dataset", "treviso-market", "preprocessed")
-
-    device_type = "cpu"
-    device = torch.device(device_type)
 
     print(f"\n\t Computing inference time for model {model_type} on {device_type}")
     print(f"\t -> Using data at {path_to_data}")

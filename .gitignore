@@ -135,3 +135,4 @@ out/
 *.pt
 /dataset/
 /results/
+/trained_models/
