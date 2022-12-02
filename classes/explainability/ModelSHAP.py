@@ -19,17 +19,19 @@ class ModelSHAP(InterpretabilityModel):
         self._num_test_images = num_test_images
         self._save_path = Path(save_path)
 
-    def explain(self, train_loader: DataLoader, test_loader: DataLoader, label_names: Optional[List] = None) -> None:
+    def explain(self, train_loader: DataLoader, test_loader: DataLoader, label_names: List) -> None:
         """
         Takes train and test images and fit a DeepExplainer to show heatmaps over a subset of test images
 
         :param train_loader: the loader containing train images
         :param test_loader: the loader containing test images
-        :param label_names: optional list of names for each output class
+        :param label_names: list of names for each output class
         """
 
-        train_images = InterpretabilityModel.get_batch_from_loader(train_loader, self._num_train_images)
-        test_images = InterpretabilityModel.get_batch_from_loader(test_loader, self._num_test_images)
+        num_class = self._num_train_images // len(label_names)
+
+        train_images, _ = ModelSHAP.get_batch_from_loader(train_loader, classes=label_names, num_per_class=num_class)
+        test_images, true_labels = ModelSHAP.get_batch_from_loader(test_loader, classes=label_names, num_per_class=1)
 
         background = train_images.to(self._device)
         test_images = test_images.to(self._device)

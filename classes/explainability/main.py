@@ -21,7 +21,7 @@ seed_n = 1
 fold_n = 1  # (as in "cv_splits")
 
 # Names of the possible classes (ripeness value), or None to unset it
-LABELS = [1, 2, 3, 4]
+LABELS = [0, 1, 2, 3]
 
 
 # ----------------------------------------- END PARAMETERS -----------------------------------------
