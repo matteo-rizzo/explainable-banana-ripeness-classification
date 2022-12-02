@@ -9,18 +9,18 @@ from torchvision.transforms.functional import InterpolationMode
 from tqdm import tqdm
 
 
-def main():
+def main(folder: str = "treviso-market"):
     # ------------------
     with open("params/images.yml", 'r') as f:
         image_parameters: Dict = yaml.load(f, Loader=yaml.SafeLoader)
     width, height = image_parameters["size"].values()
     # ------------------
     dataset_path: Path = Path("dataset")
-    raw_path: Path = dataset_path / "treviso-market"
+    raw_path: Path = dataset_path / folder
     sub_folders: List[str] = os.listdir(raw_path)
     # ------------------
     resize_transform = transforms.Resize((width, height), interpolation=InterpolationMode.BILINEAR)
-    resized_path: Path = dataset_path / f"treviso-market-{width}_{height}"
+    resized_path: Path = dataset_path / f"{folder}-{width}_{height}"
     resized_path.mkdir(exist_ok=True)
     # ------------------
     for folder in sub_folders:
@@ -36,4 +36,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main("treviso-market")
+    main("fruit-standardized/Training")
+    main("fruit-standardized/Test")

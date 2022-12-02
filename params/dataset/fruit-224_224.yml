@@ -1,0 +1,14 @@
+---
+manager: "fruit-360" # ["bananas" "fruit-360"]
+
+num_classes: 131
+
+paths:
+  dataset_dir: "dataset/fruit-224_224"
+  dataset_metadata: "metadata"
+  cv_metadata: "metadata/cv_splits"
+  modalities_dir: ""
+
+  train_split: "Training"
+  test_split: "Test"
+

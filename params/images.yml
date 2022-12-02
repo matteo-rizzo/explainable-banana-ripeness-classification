@@ -1,6 +1,6 @@
 ---
 path_to_data: ""
-file_format: "png"
+file_format: "jpg"
 num_channels: 3
 size:
   width: 224

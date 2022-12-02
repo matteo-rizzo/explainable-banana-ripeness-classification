@@ -2,10 +2,10 @@
 device: "cuda:0"
 num_seeds: 5
 
-dataset_name: "fruit-360" # [fruit-360, treviso-market-224_224]
+dataset_name: "fruit-224_224" # [fruit-360, fruit-224_224  treviso-market, treviso-market-224_224]
 
 train:
-  network_type: "cnn" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
+  network_type: "pre_trained_vit" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
   epochs: 2
   optimizer: "AdamW" # SGD, Adam, AdamW
   criterion: "CrossEntropyLoss" # NLLLoss, CrossEntropyLoss

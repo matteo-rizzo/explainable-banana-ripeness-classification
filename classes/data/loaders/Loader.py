@@ -1,7 +1,7 @@
 import os
 
 import torch
-
+from pathlib import Path
 from classes.utils.Params import Params
 
 
@@ -24,12 +24,18 @@ class Loader:
         """
         Creates the path to the data item for the specified modality
         :param path_to_input: the path to the data item related to the main modality
-        :return: the path to the eye-tracking sequence data item
+        :return: the path to the data item
         """
-        split_path = path_to_input.split(os.sep)
-        file_name = str(split_path[-1]).split(".")[0] + "." + self._file_format
-        label = str(split_path[-2])
-        return os.path.join(self._path_to_data, label, file_name)
+        # TODO: I am confused at the purpose of this function.
+        # TODO: It returns the same thing it gets, but with extra steps
+        # path_to_input = Path(path_to_input)
+        # file_name = path_to_input.name
+        # label = path_to_input.parent.name
+        # # split_path = path_to_input.split(os.sep)
+        # # file_name = str(split_path[-1]).split(".")[0] + "." + self._file_format
+        # # label = str(split_path[-2])
+        # return os.path.join(self._path_to_data, label, file_name)
+        return path_to_input
 
     def load(self, path_to_input: str) -> torch.Tensor:
         """
