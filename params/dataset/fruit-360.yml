@@ -1,6 +1,8 @@
 ---
 manager: "fruit-360" # ["bananas" "fruit-360"]
 
+num_classes: 131
+
 paths:
   dataset_dir: "dataset/fruit-standardized"
   dataset_metadata: "metadata"

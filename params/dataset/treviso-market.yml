@@ -1,6 +1,7 @@
 ---
 manager: "bananas" # ["bananas" "fruit-360"]
 
+num_classes: 4
 classes:
   '0': '0'
   '1': '1'

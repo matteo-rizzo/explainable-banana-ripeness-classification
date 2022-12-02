@@ -18,7 +18,7 @@ class Params:
             "cv": experiment_params["cv"],
             "batch_size": train_params["batch_size"]
         }
-        train_params["num_classes"] = len(data_params["dataset"]["classes"])
+        train_params["num_classes"] = data_params["dataset"]["num_classes"]
         num_seeds = experiment_params["num_seeds"]
         device_type = experiment_params["device"]
         return train_params, data_params, num_seeds, device_type
