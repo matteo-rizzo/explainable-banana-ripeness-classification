@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from torchvision.transforms import transforms
+from typing import Dict
 
 
 class CNN(nn.Module):
@@ -43,6 +44,14 @@ class CNN(nn.Module):
             nn.Linear(in_features=classifier["linear_3"]["in_features"],
                       out_features=network_params["output_size"])
         )
+
+    def __make_convolutional_block(self, block_data: Dict):
+        nn.Sequential(
+            nn.Conv2d(**block_data["conv_2d_1"]),
+            nn.ReLU(),
+            nn.Conv2d(**block_data["conv_2d_2"]),
+            nn.ReLU(),
+            nn.MaxPool2d(**block_data["pool"]))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         mean, std = self.__normalization.values()
