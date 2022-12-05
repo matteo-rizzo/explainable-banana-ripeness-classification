@@ -38,45 +38,12 @@ class DataManager:
         dataset = Dataset(data_paths, labels, ImageLoader().load, file_names=file_names if file_names_ok else None)
         return DataLoader(dataset, batch_size=1)
 
-    def __read_data(self) -> Dict:
-        data = {}
-
-        for label in os.listdir(self.__path_to_images):
-            if label == ".DS_Store":
-                continue
-            path_to_class_dir = os.path.join(self.__path_to_images, label)
-            items = os.listdir(path_to_class_dir)
-            data[label] = {}
-            data[label]['x_paths'] = np.array([os.path.join(path_to_class_dir, item) for item in items])
-            data[label]['y'] = np.array([int(label)] * len(data[label]['x_paths']))
-        return data
+    def _read_data(self, **kwargs):
+        # Abstract method
+        raise NotImplementedError("This abstract method needs to be implemented by its subclas")
 
     def generate_split(self):
-
-        print(" Generating new splits...")
-
-        ss = ShuffleSplit(n_splits=self.__k, test_size=1 / self.__k, random_state=0)
-
-        for i in range(self.__k):
-
-            x_train_paths, x_val_paths, x_test_paths = [], [], []
-            y_train, y_valid, y_test = [], [], []
-
-            for label in self.__data.keys():
-                x_paths, y = self.__data[label]['x_paths'], self.__data[label]['y']
-
-                train_val, test = list(ss.split(x_paths, y))[i]
-                train, val = list(ss.split(x_paths[train_val], y[train_val]))[i]
-
-                x_train_paths.extend(list(x_paths[train_val][train])), y_train.extend(list(y[train_val][train]))
-                x_val_paths.extend(list(x_paths[train_val][val])), y_valid.extend(list(y[train_val][val]))
-                x_test_paths.extend(list(x_paths[test])), y_test.extend(list(y[test]))
-
-            self.__split_data.append({
-                'train': (x_train_paths, y_train),
-                'val': (x_val_paths, y_valid),
-                'test': (x_test_paths, y_test)
-            })
+        raise NotImplementedError("This abstract method needs to be implemented by its subclas")
 
     def reload_split(self, path_to_metadata: str, seed: int):
         """ Reloads the data split from saved metadata in CSV format """
