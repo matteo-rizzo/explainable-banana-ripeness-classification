@@ -11,18 +11,67 @@ normalization:
   std: [ 0.229, 0.224, 0.225 ]
 
 layers:
-  conv_block:
-    conv_1:
-      type: 2d
-      out_channels: 16
-      kernel_size: 5
+  # -------------------------------
+  conv_block_1:
+    conv_2d_1:
+      in_channels: 3
+      out_channels: 32
+      kernel_size: 3
       stride: 1
-      padding: 0
+      padding: 1
+    conv_2d_2:
+      in_channels: 32
+      out_channels: 64
+      kernel_size: 3
+      stride: 1
+      padding: 1
     pool:
-      type: 2d
-      kernel_size: 2
+      kernel_size: [ 2,2 ]
       stride: 2
       padding: 0
+  # -------------------------------
+  conv_block_2:
+    conv_2d_1:
+      in_channels: 64
+      out_channels: 128
+      kernel_size: 3
+      stride: 1
+      padding: 1
+    conv_2d_2:
+      in_channels: 128
+      out_channels: 128
+      kernel_size: 3
+      stride: 1
+      padding: 1
+    pool:
+      kernel_size: [ 2,2 ]
+      stride: 2
+      padding: 0
+  # -------------------------------
+  conv_block_3:
+    conv_2d_1:
+      in_channels: 128
+      out_channels: 256
+      kernel_size: 3
+      stride: 1
+      padding: 1
+    conv_2d_2:
+      in_channels: 256
+      out_channels: 256
+      kernel_size: 3
+      stride: 1
+      padding: 1
+    pool:
+      kernel_size: [ 2,2 ]
+      stride: 2
+      padding: 0
+    # -------------------------------
   classifier:
     linear_1:
-      out_features: 50
+      in_features: 200704
+      out_features: 1024
+    linear_2:
+      in_features: 1024
+      out_features: 512
+    linear_3:
+      in_features: 512

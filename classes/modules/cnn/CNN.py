@@ -9,32 +9,39 @@ class CNN(nn.Module):
         super().__init__()
         self.__normalization = network_params["normalization"]
 
+        conv_block_1 = network_params["layers"]["conv_block_1"]
+        conv_block_2 = network_params["layers"]["conv_block_2"]
+        conv_block_3 = network_params["layers"]["conv_block_3"]
+
+        classifier = network_params["layers"]["classifier"]
+
         self.__cnn = nn.Sequential(
-
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            # --- Conv block 1 ---
+            nn.Conv2d(**conv_block_1["conv_2d_1"]),
             nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(**conv_block_1["conv_2d_2"]),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-
-            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.MaxPool2d(**conv_block_1["pool"]),
+            # --- Conv block 2 ---
+            nn.Conv2d(**conv_block_2["conv_2d_1"]),
             nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(**conv_block_2["conv_2d_2"]),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-
-            nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.MaxPool2d(**conv_block_2["pool"]),
+            # --- Conv block 3 ---
+            nn.Conv2d(**conv_block_3["conv_2d_1"]),
             nn.ReLU(),
-            nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(**conv_block_3["conv_2d_2"]),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),
-
+            nn.MaxPool2d(**conv_block_3["pool"]),
+            # --- Classifier ---
             nn.Flatten(),
-            nn.Linear(200704, 1024),
+            nn.Linear(**classifier["linear_1"]),
             nn.ReLU(),
-            nn.Linear(1024, 512),
+            nn.Linear(**classifier["linear_2"]),
             nn.ReLU(),
-            nn.Linear(512, 4)
+            nn.Linear(in_features=classifier["linear_3"]["in_features"],
+                      out_features=network_params["output_size"])
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
