@@ -8,4 +8,4 @@ class ModelMobileNetV2(Model):
 
     def __init__(self, network_params: Dict):
         super().__init__(device=network_params["device"])
-        self._network = MobileNetV2().to(self._device)
+        self._network = MobileNetV2(network_params).to(self._device)

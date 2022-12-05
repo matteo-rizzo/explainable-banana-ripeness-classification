@@ -9,7 +9,7 @@ classes:
   '3': '3'
 
 paths:
-  dataset_dir: "dataset/treviso-market-224_224-80"
+  dataset_dir: "dataset/treviso-market-224_224"
   dataset_metadata: "metadata"
   cv_metadata: "metadata/cv_splits"
   modalities_dir: ""

@@ -1,3 +1,5 @@
+from typing import Dict
+
 import torch
 import torch.nn as nn
 from torchvision import transforms
@@ -5,11 +7,15 @@ from torchvision import transforms
 
 class MobileNetV2(nn.Module):
 
-    def __init__(self):
+    def __init__(self, network_params: Dict):
         super().__init__()
-        self.__mobilenet_v2 = torch.hub.load('pytorch/vision:v0.10.0', 'mobilenet_v2', pretrained=True)
-        self.__classifier = nn.Linear(1000, 4)
-        self.__normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        self.__mobilenet_v2 = torch.hub.load(repo_or_dir=network_params["repo_or_dir"],
+                                             model=network_params["pretrained_model"],
+                                             pretrained=network_params["pretrained"])
+        self.__classifier = nn.Linear(network_params["in_features"],
+                                      network_params["output_size"])
+        self.__normalize = transforms.Normalize(network_params["normalization"]["mean"],
+                                                network_params["normalization"]["std"])
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.__normalize(x)

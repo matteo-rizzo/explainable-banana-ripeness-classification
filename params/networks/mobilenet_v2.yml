@@ -1,7 +1,8 @@
 ---
-output_size: 4
-features_extraction: false
-pretrained_model: "squeezenet"
+output_size: 131
+repo_or_dir: 'pytorch/vision:v0.10.0'
+pretrained_model: "mobilenet_v2"
+pretrained: true
 download_model_locally: true
 
 # Note: These are mean and stds taken from imagenet.
@@ -9,3 +10,4 @@ download_model_locally: true
 normalization:
   mean: [ 0.485, 0.456, 0.406 ]
   std: [ 0.229, 0.224, 0.225 ]
+in_features: 1000
