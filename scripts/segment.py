@@ -5,12 +5,12 @@ import time
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-from classes.data.managers.DataManager import DataManager
+from classes.data.managers import BananaDataManager
 from classes.segmentation.ModelSLIC import ModelSLIC
 
 
 def main(path_to_destination: str, path_to_data: str):
-    dataloader = DataManager.get_full_dataloader(path_to_data)
+    dataloader = BananaDataManager.get_full_dataloader(path_to_data)
     segmenter = ModelSLIC()
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)

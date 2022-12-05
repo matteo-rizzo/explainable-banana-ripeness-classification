@@ -2,7 +2,7 @@ from pathlib import Path
 
 import torch
 
-from classes.data.managers.DataManager import DataManager
+from classes.data.managers import BananaDataManager
 from classes.explainability.ModelLIME import ModelLIME
 from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
@@ -43,7 +43,7 @@ def explain_main():
     network_type = network_params["architecture"]
     # dataset_name = data_params["dataset"]["name"]
 
-    data_manager = DataManager(data_params)
+    data_manager = BananaDataManager(data_params)
     data_manager.reload_split(str(result_folder / "cv_splits"), seed=seed_n)
     data = data_manager.load_split(fold=fold_n)
 
