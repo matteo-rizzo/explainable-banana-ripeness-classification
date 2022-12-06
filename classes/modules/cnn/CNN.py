@@ -18,23 +18,11 @@ class CNN(nn.Module):
 
         self.__cnn = nn.Sequential(
             # --- Conv block 1 ---
-            nn.Conv2d(**conv_block_1["conv_2d_1"]),
-            nn.ReLU(),
-            nn.Conv2d(**conv_block_1["conv_2d_2"]),
-            nn.ReLU(),
-            nn.MaxPool2d(**conv_block_1["pool"]),
+            self.__make_convolutional_block(conv_block_1),
             # --- Conv block 2 ---
-            nn.Conv2d(**conv_block_2["conv_2d_1"]),
-            nn.ReLU(),
-            nn.Conv2d(**conv_block_2["conv_2d_2"]),
-            nn.ReLU(),
-            nn.MaxPool2d(**conv_block_2["pool"]),
+            self.__make_convolutional_block(conv_block_2),
             # --- Conv block 3 ---
-            nn.Conv2d(**conv_block_3["conv_2d_1"]),
-            nn.ReLU(),
-            nn.Conv2d(**conv_block_3["conv_2d_2"]),
-            nn.ReLU(),
-            nn.MaxPool2d(**conv_block_3["pool"]),
+            self.__make_convolutional_block(conv_block_3),
             # --- Classifier ---
             nn.Flatten(),
             nn.Linear(**classifier["linear_1"]),
@@ -45,8 +33,9 @@ class CNN(nn.Module):
                       out_features=network_params["output_size"])
         )
 
-    def __make_convolutional_block(self, block_data: Dict):
-        nn.Sequential(
+    @staticmethod
+    def __make_convolutional_block(block_data: Dict):
+        return nn.Sequential(
             nn.Conv2d(**block_data["conv_2d_1"]),
             nn.ReLU(),
             nn.Conv2d(**block_data["conv_2d_2"]),
