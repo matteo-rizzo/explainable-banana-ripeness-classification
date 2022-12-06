@@ -34,17 +34,6 @@ class Params:
             return yaml.load(f, Loader=yaml.SafeLoader)
 
     @staticmethod
-    def load_modality_params(modality: str) -> Dict:
-        """
-        Loads the parameters stored in the params/modalities/modality.yaml file
-        :param modality: the modality params to be loaded
-        :return: the loaded cross val parameters in a Dict
-        """
-        modality_path: Path = Params.base_param_path / f"{modality}.yml"
-        with open(modality_path, "r") as f:
-            return yaml.load(f, Loader=yaml.SafeLoader)
-
-    @staticmethod
     def load_network_params(network_type: str) -> Dict:
         """
         Loads and preprocesses the parameters stored in the params/modules/network_type.yaml file
@@ -58,7 +47,7 @@ class Params:
         network_params = yaml.load(open(path_to_params, "r"), Loader=yaml.SafeLoader)
         network_params["architecture"] = network_type
         network_params["batch_size"] = Params.load_experiment_params()["train"]["batch_size"]
-        network_params["modality"] = Params.load_modality_params("images")
+        # network_params["modality"] = Params.load_image_params("images")
         return network_params
 
     @staticmethod
@@ -77,10 +66,12 @@ class Params:
             params = yaml.load(f, Loader=yaml.SafeLoader)
         params["name"] = dataset_name
 
-        dataset_dir, modalities_dir = params["paths"]["dataset_dir"], params["paths"]["modalities_dir"]
+        # dataset_dir, modalities_dir = params["paths"]["dataset_dir"], params["paths"]["modalities_dir"]
+        dataset_dir = params["paths"]["dataset_dir"]
+        image_details = params["img_details"]
         params["paths"]["dataset_metadata"] = os.path.join(dataset_dir, params["paths"]["dataset_metadata"])
         params["paths"]["cv_metadata"] = os.path.join(dataset_dir, params["paths"]["cv_metadata"])
-        params["paths"]["images"] = os.path.join(params["paths"]["dataset_dir"], modalities_dir)
+        # params["paths"]["images"] = os.path.join(params["paths"]["dataset_dir"], modalities_dir)
 
         return params
 

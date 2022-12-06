@@ -7,8 +7,13 @@ paths:
   dataset_dir: "dataset/fruit-standardized"
   dataset_metadata: "metadata"
   cv_metadata: "metadata/cv_splits"
-  modalities_dir: ""
 
   train_split: "Training"
   test_split: "Test"
 
+img_details:
+  file_format: "jpg"
+  num_channels: 3
+  size:
+    width: 100
+    height: 100

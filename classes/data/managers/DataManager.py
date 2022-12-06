@@ -3,12 +3,10 @@ import pprint
 from pathlib import Path
 from typing import Dict, Union, Callable, List
 
-import numpy as np
 import pandas as pd
-from sklearn.model_selection import ShuffleSplit
 from termcolor import colored
 from torch.utils.data import DataLoader
-from pathlib import Path
+
 from classes.data.Dataset import Dataset
 from classes.data.loaders.ImageLoader import ImageLoader
 
@@ -16,17 +14,17 @@ from classes.data.loaders.ImageLoader import ImageLoader
 class DataManager:
 
     def __init__(self, data_params: Dict):
-        self._path_to_images: Path = Path(data_params["dataset"]["paths"]["images"])
+        self._path_to_images: Path = Path(data_params["dataset"]["paths"]["dataset_dir"])
         self._k: int = data_params["cv"]["k"]
         self._batch_size: int = data_params["batch_size"]
-        self._loader: Callable = ImageLoader().load
+        self._loader: Callable = ImageLoader(data_params["dataset"]["img_details"]).load
         self._split_data: List = []
 
     def get_k(self) -> int:
         return self._k
 
     @staticmethod
-    def get_full_dataloader(path_to_data: str, file_names_ok: bool = False):
+    def get_full_dataloader(path_to_data: str, img_details: Dict, file_names_ok: bool = False):
         data_paths, labels, file_names = [], [], []
         for folder in os.listdir(path_to_data):
             if folder == ".DS_Store":
@@ -36,7 +34,7 @@ class DataManager:
                 data_paths.append(os.path.join(path_to_class, file_name))
                 labels.append(int(folder))
                 file_names.append(file_name)
-        dataset = Dataset(data_paths, labels, ImageLoader().load, file_names=file_names if file_names_ok else None)
+        dataset = Dataset(data_paths, labels, ImageLoader(img_details).load, file_names=file_names if file_names_ok else None)
         return DataLoader(dataset, batch_size=1)
 
     def _read_data(self, **kwargs):

@@ -1,18 +1,20 @@
+from typing import Dict
 from typing import List
 
 import torch
 from PIL import Image
 from torchvision.transforms import transforms
+
 # from torchvision.transforms.functional import InterpolationMode
 from classes.data.loaders.Loader import Loader
 
 
 class ImageLoader(Loader):
 
-    def __init__(self):
-        super().__init__("images")
-        self.__num_channels = self._modality_params["num_channels"]
-        self.__img_size = (self._modality_params["size"]["width"], self._modality_params["size"]["height"])
+    def __init__(self, img_details: Dict):
+        super().__init__(img_details)
+        self.__num_channels = img_details["num_channels"]
+        self.__img_size = (img_details["size"]["width"], img_details["size"]["height"])
 
     @staticmethod
     def __get_transformations() -> List:
@@ -39,7 +41,7 @@ class ImageLoader(Loader):
         :param path_to_input: the path to the data item to be loaded referred to the main modality
         :return: the image data item as a tensor
         """
-        image = Image.open(self._get_path_to_item(path_to_input)).convert('RGB')
+        image = Image.open(path_to_input).convert('RGB')
         transformations = self.__get_transformations()
         # Note: if self.__num_channels = 3, it is the same as no indexing
         return transforms.Compose(transformations)(image)[0:self.__num_channels, :, :]

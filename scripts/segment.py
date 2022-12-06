@@ -2,6 +2,7 @@ import os
 import sys
 import time
 
+from classes.utils.Params import Params
 from matplotlib import pyplot as plt
 from skimage.transform import resize
 from tqdm import tqdm
@@ -11,7 +12,8 @@ from classes.segmentation.ModelSLIC import ModelSLIC
 
 
 def main(path_to_destination: str, path_to_data: str):
-    dataloader = BananaDataManager.get_full_dataloader(path_to_data, file_names_ok=True)
+    img_details = Params.load_dataset_params("treviso-market")["img_details"]
+    dataloader = BananaDataManager.get_full_dataloader(path_to_data, img_details, file_names_ok=True)
     segmenter = ModelSLIC()
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
@@ -31,6 +33,7 @@ def main(path_to_destination: str, path_to_data: str):
 
 
 if __name__ == "__main__":
+
     path_to_data = os.path.join("dataset", "treviso-market")
     path_to_destination = os.path.join("dataset", f"treviso-market-224_224-seg_{time.time()}")
     os.makedirs(path_to_destination, exist_ok=True)
