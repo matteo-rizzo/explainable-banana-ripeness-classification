@@ -3,8 +3,9 @@ import sys
 import time
 
 from matplotlib import pyplot as plt
-from tqdm import tqdm
 from skimage.transform import resize
+from tqdm import tqdm
+
 from classes.data.managers import BananaDataManager
 from classes.segmentation.ModelSLIC import ModelSLIC
 
@@ -17,8 +18,8 @@ def main(path_to_destination: str, path_to_data: str):
     tqdm_bar.set_description_str(" Segmenting  ")
 
     for x, y, fn in dataloader:
-        x = x.permute(0, 3, 2, 1).numpy()
         tqdm_bar.update(1)
+        x = x.permute(0, 3, 2, 1).numpy()
         masked_image = segmenter.predict(x).squeeze()
         masked_image = resize(masked_image, (224, 224, 3), preserve_range=True)
         plt.imshow(masked_image)

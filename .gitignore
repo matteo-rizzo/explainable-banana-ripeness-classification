@@ -136,4 +136,7 @@ out/
 /results/
 /trained_models/
 
-/dataset/*
+/dataset/fruit-224_224
+/dataset/treviso-market-224_224
+/dataset/fruit-standardized
+/dataset/treviso-market-224_224-seg_1670318526.223155/
