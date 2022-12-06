@@ -11,7 +11,7 @@ class MobileNetV2(nn.Module):
         super().__init__()
         self.__mobilenet_v2 = torch.hub.load(repo_or_dir=network_params["repo_or_dir"],
                                              model=network_params["pretrained_model"],
-                                             pretrained=network_params["pretrained"])
+                                             weights=network_params["weights"])
         self.__classifier = nn.Linear(network_params["in_features"],
                                       network_params["output_size"])
         self.__normalize = transforms.Normalize(network_params["normalization"]["mean"],

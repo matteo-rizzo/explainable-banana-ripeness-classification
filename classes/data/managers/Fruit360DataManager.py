@@ -62,8 +62,8 @@ class Fruit360DataManager(DataManager):
                 x_val_paths.extend(list(x_paths[val])), y_valid.extend(list(y[val]))
 
                 # Always the same, as the test set is predefined
-                x_test_paths = self._test_data[label]['x_paths']
-                y_test = self._test_data[label]['y']
+                x_test_paths.extend(list(self._test_data[label]['x_paths']))
+                y_test.extend(list(self._test_data[label]['y']))
 
             self._split_data.append({
                 'train': (x_train_paths, y_train),
