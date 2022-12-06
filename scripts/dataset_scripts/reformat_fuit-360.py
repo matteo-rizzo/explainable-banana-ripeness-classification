@@ -23,10 +23,9 @@ def main(split: str = "Training"):
         examples: List[str] = os.listdir(path_to_class)
         # Each image
         for ex in examples:
-            # Images have a "100" postfix that signifies size is 100x100
-            example_number = ex.split("_")[0]
+            # # Images have a "100" postfix that signifies size is 100x100
             image_path = path_to_class / ex
-            image_destination = path_to_standard_class / f"{example_number}.jpg"
+            image_destination = path_to_standard_class / ex
             shutil.move(image_path, image_destination)
 
 

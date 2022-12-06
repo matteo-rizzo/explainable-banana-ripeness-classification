@@ -4,8 +4,8 @@ import shutil
 
 def main():
     num_classes = 4
-    path_to_raw = os.path.join("..", "raw")
-    path_to_preprocessed = os.path.join("..", "preprocessed")
+    path_to_raw = os.path.join("../../dataset", "raw")
+    path_to_preprocessed = os.path.join("../../dataset", "preprocessed")
     counters = {str(i): int(0) for i in range(1, num_classes + 1)}
 
     paths_to_classes = {}

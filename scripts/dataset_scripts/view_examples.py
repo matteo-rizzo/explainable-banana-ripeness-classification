@@ -1,7 +1,7 @@
 import random
 
 from PIL import ImageDraw, ImageFont, Image
-from data.DataManager import DataManager
+from data.managers import BananaDataManager
 from torchvision.transforms import ToPILImage
 from utils.Params import Params
 
@@ -38,7 +38,7 @@ def show_examples(ds, split: str, examples_per_class: int = 3, size=(224, 224)):
 
 def main():
     _, data_params, _, _ = Params.load()
-    data_manager = DataManager(data_params)
+    data_manager = BananaDataManager(data_params)
     data_manager.generate_split()
 
     data = data_manager.load_split(0)
