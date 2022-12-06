@@ -29,6 +29,8 @@ class DataManager:
     def get_full_dataloader(path_to_data: str, file_names_ok: bool = False):
         data_paths, labels, file_names = [], [], []
         for folder in os.listdir(path_to_data):
+            if folder == ".DS_Store":
+                continue
             path_to_class = os.path.join(path_to_data, folder)
             for file_name in os.listdir(path_to_class):
                 data_paths.append(os.path.join(path_to_class, file_name))
