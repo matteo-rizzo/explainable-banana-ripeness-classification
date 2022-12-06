@@ -71,7 +71,7 @@ class Trainer:
                 avg_loss, avg_accuracy = running_loss / self.__log_every, running_accuracy / self.__log_every
                 running_loss, running_accuracy = 0.0, 0.0
                 # Update progress bar
-                progress: str = f"[ Loss: {avg_loss:.4f} | Accuracy: {avg_accuracy:.4f} ]"
+                progress: str = f"[ Loss: {avg_loss:.4f} | Batch accuracy: {avg_accuracy:.4f} ]"
                 tqdm_bar.set_postfix_str(progress)
         # Close progress bar for this epoch
         tqdm_bar.close()

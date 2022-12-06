@@ -48,7 +48,7 @@ class CrossValidator:
             avg_scores[set_type] = self.__merge_metrics(cv_metrics, set_type)
             print(f" Average {set_type} metrics: ")
             for metric, value in avg_scores[set_type].items():
-                print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {value}")
+                print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {value:.4f}")
 
         if save:
             Params.save(avg_scores, os.path.join(self.__paths_to_results["metrics"], "cv_average.yml"))
