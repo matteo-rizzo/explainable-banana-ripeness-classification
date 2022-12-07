@@ -16,7 +16,7 @@ https://scikit-learn.org/stable/modules/tree.html
 def main():
     num_classes = 4
 
-    path_to_data = os.path.join("dataset", "treviso-market-224_224-avg_col.csv")
+    path_to_data = os.path.join("dataset", "treviso-market-avg_col.csv")
     x = pd.read_csv(path_to_data, usecols=["r", "g", "b"], index_col=False)
     y = pd.read_csv(path_to_data, usecols=["y"], index_col=False)
 
