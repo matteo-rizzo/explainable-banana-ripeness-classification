@@ -6,12 +6,13 @@ from torch.utils.data import DataLoader
 
 class Dataset(torch.utils.data.Dataset):
 
-    def __init__(self, data_paths: List, labels: List, loader: callable, file_names: List = None):
+    def __init__(self, split: str, data_paths: List, labels: List, loader: callable, file_names: List = None):
         """
         @param data_paths: list of paths to sequences
         @param labels: list of corresponding labels
         @param loader: transform to be applied on a data item
         """
+        self.__split: str = split
         self.__data_paths = data_paths
         self.__labels = labels
         self.__loader = loader

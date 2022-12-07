@@ -35,7 +35,7 @@ class BaseDataManager:
                 data_paths.append(os.path.join(path_to_class, file_name))
                 labels.append(int(folder))
                 file_names.append(file_name)
-        dataset = Dataset(data_paths, labels, ImageLoader(img_details, {"manual": False, "auto": False}).load,
+        dataset = Dataset("ignore", data_paths, labels, ImageLoader(img_details, {"manual": False, "auto": False}).load,
                           file_names=file_names if file_names_ok else None)
         return DataLoader(dataset, batch_size=1)
 
@@ -89,11 +89,11 @@ class BaseDataManager:
         print("..............................................")
 
         return {
-            'train': DataLoader(Dataset("train", x_train_paths, y_train, self._loader),
+            'train': DataLoader(Dataset('train', x_train_paths, y_train, self._loader),
                                 self._batch_size, shuffle=True, drop_last=True),
-            'val': DataLoader(Dataset("val", x_val_paths, y_valid, self._loader),
+            'val': DataLoader(Dataset('val', x_val_paths, y_valid, self._loader),
                               self._batch_size, drop_last=True),
-            'test': DataLoader(Dataset("test", x_test_paths, y_test, self._loader),
+            'test': DataLoader(Dataset('test', x_test_paths, y_test, self._loader),
                                self._batch_size, drop_last=True)
         }
 

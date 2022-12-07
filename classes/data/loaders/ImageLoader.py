@@ -26,13 +26,24 @@ class ImageLoader(Loader):
             self._transforms = load_yaml(
                 f"params/augmentations/{self.__transformations['transformations_preset']}.yml")
 
-    def __get_transformations(self) -> Callable:
+    def __get_transformations(self, split: str) -> Callable:
         """
         Creates a list of transformations to be applied to the inputs
         :return: a list of transformations to be applied to the inputs
         """
-        # Automatic transformations following the AutoAugment approach (see paper)
+        # Cases in which transformations are not applied
+        if split == "ignore":
+            return T.ToTensor()
+        if split == "train" and not self.__transformations["at_train"]:
+            return T.ToTensor()
+        if split == "test" and not self.__transformations["at_test"]:
+            return T.ToTensor()
+        if split == "val" and not self.__transformations["at_val"]:
+            return T.ToTensor()
+
+        # Cases in which transformations ARE applied
         if self.__transformations["auto"]:
+            # Automatic transformations following the AutoAugment approach (see paper)
             return T.Compose([AutoAugment(), T.ToTensor()])
         # Manual transformations loaded from file.
         elif self.__transformations["manual"]:
@@ -56,15 +67,17 @@ class ImageLoader(Loader):
                 apply_with_p(T.RandomPerspective, self._transforms["random_perspective"]),
             ])
         else:
+            # Pil 2 Tensor
             return T.ToTensor()
 
-    def load(self, path_to_input: str) -> torch.Tensor:
+    def load(self, path_to_input: str, split: str) -> torch.Tensor:
         """
         Loads an image data item from the dataset
         :param path_to_input: the path to the data item to be loaded referred to the main modality
+        :param split: For augmentation purposes [train, test, val, ignore]
         :return: the image data item as a tensor
         """
         image = Image.open(path_to_input).convert('RGB')
-        transformations = self.__get_transformations()
+        transformations = self.__get_transformations(split)
         # Note: if self.__num_channels = 3, it is the same as no indexing
         return transformations(image)[0:self.__num_channels, :, :]
