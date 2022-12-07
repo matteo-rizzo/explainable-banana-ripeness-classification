@@ -1,10 +1,13 @@
+import copy
 import os
+from typing import Dict, List, Tuple, Any
 
 import numpy as np
 import pandas as pd
 import torch
 from sklearn import tree
 from sklearn.model_selection import train_test_split
+from sklearn.tree import _tree
 from torchmetrics.functional.classification import multiclass_precision, multiclass_recall, multiclass_f1_score
 
 """
@@ -64,6 +67,55 @@ def main():
     # fig.set_dpi(1000)
     # plt.show()
 
+    rules_extracted = get_leaf_constraints(decision_tree, feature_names=["r", "g", "b"], num_classes=num_classes)
+    print(rules_extracted)
 
-if __name__ == '__main__':
+
+def merge_rules(per_class_rules: List[List[Tuple[float, float, float]]], new_rules: Dict[str, List[float]], class_idx: int):
+    to_update: List[Tuple[float, float, float]] = per_class_rules[class_idx]
+    color_tuple = min(new_rules["r"], default=1.0), min(new_rules["g"], default=1.0), min(new_rules["b"], default=1.0)
+    to_update.append(color_tuple)
+
+
+def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[Any], num_classes: int):
+    """
+    For each target class, return the set of constraints on each feature that lead to that classification
+
+    :param clf: po
+    :return: List
+    """
+    children_left = clf.tree_.children_left
+    children_right = clf.tree_.children_right
+    feature = clf.tree_.feature
+    threshold = clf.tree_.threshold
+    prediction = clf.tree_.value.argmax(axis=2).reshape(-1)
+
+    per_class_rules: List[List[Tuple[float, float, float]]] = [[] for _ in range(num_classes)]
+    rules: Dict[str, List[float]] = dict(r=list(), g=list(), b=list())
+
+    stack = [(0, rules, feature[0])]  # start with the root node id (0) and its depth (0)
+    while len(stack) > 0:
+        # `pop` ensures each node is only visited once
+        node_id, rule_path, last_f = stack.pop()
+
+        f, t = feature[node_id], threshold[node_id]
+
+        is_split_node = children_left[node_id] != children_right[node_id]
+        if is_split_node:
+            rule_path[feature_names[f]].append(t)
+
+            # Append left and right children and depth to `stack`
+            stack.append((children_right[node_id], copy.deepcopy(rule_path), f))
+            stack.append((children_left[node_id], copy.deepcopy(rule_path), f))
+        else:
+            # Leaf node
+            assert f == _tree.TREE_UNDEFINED
+            merge_rules(per_class_rules, rule_path, prediction[node_id])
+            # rule_path[last_f].pop()
+
+    assert sum([len(a) for a in per_class_rules]) == clf.tree_.n_leaves
+    return per_class_rules
+
+
+if __name__ == "__main__":
     main()
