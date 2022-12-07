@@ -7,10 +7,12 @@ import pandas as pd
 from tqdm import tqdm
 
 from classes.data.managers import BananaDataManager
+from classes.utils.Params import Params
 
 
 def main(path_to_destination: str, path_to_data: str):
-    dataloader = BananaDataManager.get_full_dataloader(path_to_data, file_names_ok=True)
+    img_details = Params.load_dataset_params("treviso-market")["img_details"]
+    dataloader = BananaDataManager.get_full_dataloader(path_to_data, img_details, file_names_ok=True)
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
     tqdm_bar.set_description_str(" Average color  ")
