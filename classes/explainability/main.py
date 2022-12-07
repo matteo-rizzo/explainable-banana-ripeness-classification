@@ -4,6 +4,7 @@ import torch
 
 from classes.data.managers import BananaDataManager
 from classes.explainability.ModelLIME import ModelLIME
+from classes.explainability.ModelSHAP import ModelSHAP
 from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
 from functional.yaml_manager import load_yaml
@@ -11,10 +12,10 @@ from functional.yaml_manager import load_yaml
 # ------------------------------------------ PARAMETERS ------------------------------------------
 
 # Folder name inside "results" folder
-experiment_name = "treviso-market-224_224_mobilenet_v2_Fri_Dec__2_16-54-21_2022"
+experiment_name = "treviso-market-224_224_pre_trained_vit_Wed_Dec__7_14-28-31_2022"
 
 # Set filename of the dump (i.e. the ".pth" file inside the "seed_x/models" folder)
-model_pth = "mobilenet_v2_fold_0.pth"
+model_pth = "pre_trained_vit_fold_0.pth"
 
 # Set seed and fold to use for explanations
 seed_n = 1
@@ -54,10 +55,10 @@ def explain_main():
     model.load(str(model_path))
 
     # shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability")
-    # shap_model.explain(data["train"], data["test"], label_names=LABELS)
+    # shap_model.explain(data["test"], data["train"], label_names=LABELS)
 
     lime_model = ModelLIME(model._network, device, save_path=result_folder / "interpretability")
-    lime_model.explain(data["train"], data["test"], label_names=LABELS)
+    lime_model.explain(data["test"], data["train"], label_names=LABELS)
 
 
 if __name__ == "__main__":
