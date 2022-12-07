@@ -29,6 +29,6 @@ class Dataset(torch.utils.data.Dataset):
 
         if self.__file_names is not None:
             fn = self.__file_names[idx]
-            return self.__loader(x), y, fn
+            return self.__loader(x, self.__split), y, fn
 
-        return self.__loader(x), y
+        return self.__loader(x, self.__split), y

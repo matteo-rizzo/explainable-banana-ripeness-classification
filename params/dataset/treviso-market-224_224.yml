@@ -22,8 +22,8 @@ img_details:
 
 transformations:
   at_train: true
-  at_val: true
-  at_test: true
+  at_val: false
+  at_test: false
 
   manual: true
   auto: false
