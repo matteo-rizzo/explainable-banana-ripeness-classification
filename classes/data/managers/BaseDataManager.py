@@ -11,13 +11,14 @@ from classes.data.Dataset import Dataset
 from classes.data.loaders.ImageLoader import ImageLoader
 
 
-class DataManager:
+class BaseDataManager:
 
     def __init__(self, data_params: Dict):
-        self._path_to_images: Path = Path(data_params["dataset"]["paths"]["dataset_dir"])
+        dataset_params = data_params["dataset"]
+        self._path_to_images: Path = Path(dataset_params["paths"]["dataset_dir"])
         self._k: int = data_params["cv"]["k"]
         self._batch_size: int = data_params["batch_size"]
-        self._loader: Callable = ImageLoader(data_params["dataset"]["img_details"]).load
+        self._loader: Callable = ImageLoader(dataset_params["img_details"], dataset_params["transformations"]).load
         self._split_data: List = []
 
     def get_k(self) -> int:

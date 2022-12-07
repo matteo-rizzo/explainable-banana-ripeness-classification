@@ -2,7 +2,7 @@ import random
 
 from PIL import ImageDraw, ImageFont, Image
 from data.managers import BananaDataManager
-from torchvision.transforms import ToPILImage
+from torchvision.transforms import ToPILImage, AutoAugment, AutoAugmentPolicy
 from utils.Params import Params
 
 
@@ -15,12 +15,17 @@ def show_examples(ds, split: str, examples_per_class: int = 3, size=(224, 224)):
     draw = ImageDraw.Draw(grid)
     font = ImageFont.truetype("arial.ttf", 26, encoding="unic")
 
+    # AutoAugmentPolicy.IMAGENET
+    # AutoAugmentPolicy.CIFAR10
+    # AutoAugmentPolicy.SVHN
+
     for label_id, label in enumerate(labels):
         # Filter the dataset by a single label and grab a few samples
         ds_slice = random.choices([example for example in ds if example[1] == label_id], k=examples_per_class)
-
+        # augmenter = AutoAugment(AutoAugmentPolicy.IMAGENET)
         # Plot this label's examples along a row
         for i, example in enumerate(ds_slice):
+            # image = augmenter(tensor2pil(example[0]))
             image = tensor2pil(example[0])
             idx = examples_per_class * label_id + i
             box = (idx % examples_per_class * w, idx // examples_per_class * h)
@@ -48,13 +53,13 @@ def main():
     val_data = data["val"].dataset
 
     grid = show_examples(train_data, "train", examples_per_class=3)
+    # grid.save("svhn.png")
     grid.show()
-
-    grid = show_examples(test_data, "test", examples_per_class=3)
-    grid.show()
-
-    grid = show_examples(val_data, "val", examples_per_class=3)
-    grid.show()
+    # grid = show_examples(test_data, "test", examples_per_class=3)
+    # grid.show()
+    #
+    # grid = show_examples(val_data, "val", examples_per_class=3)
+    # grid.show()
 
 
 if __name__ == "__main__":

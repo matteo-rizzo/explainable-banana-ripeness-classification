@@ -19,3 +19,8 @@ img_details:
   size:
     width: 224
     height: 224
+
+transformations:
+  manual: true
+  auto: false
+  transformations_preset: "preset_1"

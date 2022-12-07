@@ -5,10 +5,10 @@ from typing import Dict, Union
 import numpy as np
 from sklearn.model_selection import ShuffleSplit
 
-from classes.data.managers.DataManager import DataManager
+from classes.data.managers.BaseDataManager import BaseDataManager
 
 
-class Fruit360DataManager(DataManager):
+class Fruit360DataManager(BaseDataManager):
 
     def __init__(self, data_params: Dict):
         super().__init__(data_params)

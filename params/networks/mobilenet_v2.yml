@@ -1,5 +1,5 @@
 ---
-output_size: 131
+output_size: 4
 repo_or_dir: 'pytorch/vision:v0.10.0'
 pretrained_model: "mobilenet_v2"
 weights: "MobileNet_V2_Weights.DEFAULT"

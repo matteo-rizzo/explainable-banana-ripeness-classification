@@ -2,21 +2,22 @@
 device: "cuda:0"
 num_seeds: 1
 
-dataset_name: "fruit-360" # [fruit-360, fruit-224_224  treviso-market, treviso-market-224_224]
+dataset_name: "treviso-market-224_224" # [fruit-360, fruit-224_224  treviso-market, treviso-market-224_224]
 
 train:
-  network_type: "mobilenet_v2" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
-  epochs: 2
+  network_type: "pre_trained_vit" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
+  epochs: 10
   optimizer: "AdamW" # SGD, Adam, AdamW
   criterion: "CrossEntropyLoss" # NLLLoss, CrossEntropyLoss
-  batch_size: 64
-  learning_rate: 3.0e-05
+  batch_size: 8
+  learning_rate: 1.5e-05
   log_every: 1
   evaluate_every: 1
   early_stopping:
-    patience: 50
+    patience: 2
     metrics: "macro_f1"
     metrics_trend: "increasing"
 cv:
   k: 5
   use_cv_metadata: false
+

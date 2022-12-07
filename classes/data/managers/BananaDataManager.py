@@ -4,10 +4,10 @@ from typing import Dict, Union
 from sklearn.model_selection import ShuffleSplit
 import numpy as np
 
-from classes.data.managers.DataManager import DataManager
+from classes.data.managers.BaseDataManager import BaseDataManager
 
 
-class BananaDataManager(DataManager):
+class BananaDataManager(BaseDataManager):
 
     def __init__(self, data_params: Dict):
         super().__init__(data_params)

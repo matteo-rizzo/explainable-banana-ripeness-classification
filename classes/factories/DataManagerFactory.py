@@ -1,6 +1,6 @@
 from typing import Dict
 
-from classes.data.managers import BananaDataManager, Fruit360DataManager, DataManager
+from classes.data.managers import BananaDataManager, Fruit360DataManager, BaseDataManager
 
 
 class DataManagerFactory:
@@ -9,7 +9,7 @@ class DataManagerFactory:
         "fruit-360": Fruit360DataManager
     }
 
-    def get(self, data_params: Dict) -> DataManager:
+    def get(self, data_params: Dict) -> BaseDataManager:
         manager = data_params['dataset']['manager']
         if manager not in self.data_managers_map.keys():
             raise ValueError(
