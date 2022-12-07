@@ -21,8 +21,16 @@ def main(path_to_destination: str, path_to_data: str):
     for x, y, fn in dataloader:
         tqdm_bar.update(1)
         x = x.permute(0, 3, 2, 1).squeeze().numpy()
-        avg_color_row = np.average(x, axis=0)
-        avg_color = np.average(avg_color_row, axis=0)
+
+        # avg_color_row = np.average(x, axis=0)
+        # avg_color = np.average(avg_color_row, axis=0)
+
+        x[np.where(x == 0)] = np.nan
+        avg_color_row = np.nanmean(x, axis=0)
+        avg_color_row[np.isnan(avg_color_row)] = 0
+        avg_color = np.nanmean(avg_color_row, axis=0)
+        avg_color[np.isnan(avg_color)] = 0
+
         data["r"].append(avg_color[0])
         data["g"].append(avg_color[1])
         data["b"].append(avg_color[2])
