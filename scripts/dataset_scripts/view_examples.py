@@ -55,11 +55,11 @@ def main():
     grid = show_examples(train_data, "train", examples_per_class=3)
     # grid.save("svhn.png")
     grid.show()
-    grid = show_examples(test_data, "test", examples_per_class=3)
-    grid.show()
-    #
-    grid = show_examples(val_data, "val", examples_per_class=3)
-    grid.show()
+    # grid = show_examples(test_data, "test", examples_per_class=3)
+    # grid.show()
+    # #
+    # grid = show_examples(val_data, "val", examples_per_class=3)
+    # grid.show()
 
 
 if __name__ == "__main__":
