@@ -4,9 +4,9 @@ import os
 import numpy as np
 import skimage.segmentation as seg
 from matplotlib import pyplot as plt
+from scipy.ndimage import binary_fill_holes
 from skimage import io
 from skimage.color import rgb2lab, deltaE_ciede2000
-from skimage.morphology import convex_hull_image
 
 from classes.core.Model import Model
 from functional.segmentation import adjust_contrast, sharpen, blur_image
@@ -82,8 +82,8 @@ class ModelSLIC(Model):
             masks = np.stack([masks, neg_masks], axis=1)[masks_idx]  # (batch, H, W)
 
         if self.__parameters["fill_contours"]:
-            # masks = np.stack([binary_fill_holes(mask) for mask in masks]).astype(bool)  # (batch, H, W)
-            masks = np.stack([convex_hull_image(mask) for mask in masks]).astype(bool)  # (batch, H, W)
+            masks = np.stack([binary_fill_holes(mask) for mask in masks]).astype(bool)  # (batch, H, W)
+            # masks = np.stack([convex_hull_image(mask) for mask in masks]).astype(bool)  # (batch, H, W)
 
         return x * masks[..., np.newaxis]
 

@@ -24,7 +24,6 @@ def main(path_to_destination: str, path_to_data: str):
         x = x.permute(0, 3, 2, 1).numpy()
         masked_image = segmenter.predict(x).squeeze()
         masked_image = resize(masked_image, (224, 224, 3), preserve_range=True)
-        # plt.imshow(masked_image)
         path_to_label = os.path.join(path_to_destination, str(y.item()))
         os.makedirs(path_to_label, exist_ok=True)
         plt.imsave(os.path.join(path_to_label, fn[0]), masked_image)
@@ -33,7 +32,7 @@ def main(path_to_destination: str, path_to_data: str):
 
 
 if __name__ == "__main__":
-    path_to_data = os.path.join("dataset", "treviso-market")
+    path_to_data = os.path.join("dataset", "treviso-market", "preprocessed")
     path_to_destination = os.path.join("dataset", f"treviso-market-224_224-seg_{time.time()}")
     os.makedirs(path_to_destination, exist_ok=True)
 
