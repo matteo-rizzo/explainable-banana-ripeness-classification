@@ -7,20 +7,22 @@ import pandas as pd
 import torch
 from sklearn import tree
 from sklearn.model_selection import train_test_split
-from sklearn.tree import _tree
 from torchmetrics.functional.classification import multiclass_precision, multiclass_recall, multiclass_f1_score
 
 """
 https://scikit-learn.org/stable/modules/tree.html
 """
 
+FEATURES_FILE = "treviso-market-224_224-hull-seg-YUV.csv"
+
 
 def main():
     num_classes = 4
     num_rand_states = 10
+    path_to_data = os.path.join("dataset", FEATURES_FILE)
+    feature_names = pd.read_csv(path_to_data, nrows=1).columns.tolist()[:-1]
 
-    path_to_data = os.path.join("dataset", "treviso-market-224_224-avg_col-seg-fill_holes.csv")
-    x = pd.read_csv(path_to_data, usecols=["r", "g", "b"], index_col=False)
+    x = pd.read_csv(path_to_data, usecols=feature_names, index_col=False)
     y = pd.read_csv(path_to_data, usecols=["y"], index_col=False)
 
     avg_metrics = {"accuracy": [], "precision": [], "recall": [], "f1": []}
@@ -67,13 +69,15 @@ def main():
     # fig.set_dpi(1000)
     # plt.show()
 
-    rules_extracted = get_leaf_constraints(decision_tree, feature_names=["r", "g", "b"], num_classes=num_classes)
+    # Explain the last decision tree
+    rules_extracted = get_leaf_constraints(decision_tree, feature_names=feature_names, num_classes=num_classes)
     print(rules_extracted)
 
 
-def merge_rules(per_class_rules: List[List[Tuple[float, float, float]]], new_rules: Dict[str, List[float]], class_idx: int):
-    to_update: List[Tuple[float, float, float]] = per_class_rules[class_idx]
-    color_tuple = min(new_rules["r"], default=1.0), min(new_rules["g"], default=1.0), min(new_rules["b"], default=1.0)
+def merge_rules(per_class_rules: List[List[Tuple[float]]], new_rules: Dict[str, List[float]], class_idx: int, max_val: float):
+    to_update: List[Tuple[float]] = per_class_rules[class_idx]
+
+    color_tuple = tuple([min(new_rules[k], default=max_val) for k in new_rules.keys()])
     to_update.append(color_tuple)
 
 
@@ -91,17 +95,18 @@ def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[A
     prediction = clf.tree_.value.argmax(axis=2).reshape(-1)
 
     per_class_rules: List[List[Tuple[float, float, float]]] = [[] for _ in range(num_classes)]
-    rules: Dict[str, List[float]] = dict(r=list(), g=list(), b=list())
+    rules: Dict[str, List[float]] = {fn: list() for fn in feature_names}
 
-    stack = [(0, rules, feature[0])]  # start with the root node id (0) and its depth (0)
+    stack = [(0, rules)]  # start with the root node id (0) and its depth (0)
     while len(stack) > 0:
         # `pop` ensures each node is only visited once
-        node_id, rule_path, last_f = stack.pop()
+        node_id, rule_path = stack.pop()
 
         f, t = feature[node_id], threshold[node_id]
 
         is_split_node = children_left[node_id] != children_right[node_id]
         if is_split_node:
+            # Decision node
             rule_path[feature_names[f]].append(t)
 
             # Append left and right children and depth to `stack`
@@ -109,11 +114,14 @@ def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[A
             stack.append((children_left[node_id], copy.deepcopy(rule_path), f))
         else:
             # Leaf node
-            assert f == _tree.TREE_UNDEFINED
-            merge_rules(per_class_rules, rule_path, prediction[node_id])
-            # rule_path[last_f].pop()
+            if feature_names == ["u", "v"]:
+                # U and V values should be in [-.5, .5]
+                max_val = .5
+            else:
+                max_val = 1.0
+            merge_rules(per_class_rules, rule_path, prediction[node_id], max_val=max_val)
 
-    assert sum([len(a) for a in per_class_rules]) == clf.tree_.n_leaves
+    assert sum([len(a) for a in per_class_rules]) == clf.tree_.n_leaves, "Wrong number of leaves and outputs"
     return per_class_rules
 
 
