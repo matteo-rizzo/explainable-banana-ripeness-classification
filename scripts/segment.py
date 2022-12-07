@@ -2,13 +2,13 @@ import os
 import sys
 import time
 
-from classes.utils.Params import Params
 from matplotlib import pyplot as plt
 from skimage.transform import resize
 from tqdm import tqdm
 
 from classes.data.managers import BananaDataManager
 from classes.segmentation.ModelSLIC import ModelSLIC
+from classes.utils.Params import Params
 
 
 def main(path_to_destination: str, path_to_data: str):
@@ -24,16 +24,15 @@ def main(path_to_destination: str, path_to_data: str):
         x = x.permute(0, 3, 2, 1).numpy()
         masked_image = segmenter.predict(x).squeeze()
         masked_image = resize(masked_image, (224, 224, 3), preserve_range=True)
-        plt.imshow(masked_image)
+        # plt.imshow(masked_image)
         path_to_label = os.path.join(path_to_destination, str(y.item()))
         os.makedirs(path_to_label, exist_ok=True)
-        plt.savefig(os.path.join(path_to_label, fn[0]))
+        plt.imsave(os.path.join(path_to_label, fn[0]), masked_image)
 
     tqdm_bar.close()
 
 
 if __name__ == "__main__":
-
     path_to_data = os.path.join("dataset", "treviso-market")
     path_to_destination = os.path.join("dataset", f"treviso-market-224_224-seg_{time.time()}")
     os.makedirs(path_to_destination, exist_ok=True)
