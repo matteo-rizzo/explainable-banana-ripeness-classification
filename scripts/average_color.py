@@ -48,7 +48,9 @@ def uv_mean(x: np.ndarray, data: Dict[str, List[float]]):
 
     if not data:
         data = {"u": [], "v": [], "y": []}
+        # data["l"] = []
 
+    # data["l"].append(avg_color[0])
     data["u"].append(avg_color[1])
     data["v"].append(avg_color[2])
 
