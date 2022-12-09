@@ -12,7 +12,7 @@ from functional.yaml_manager import load_yaml
 # ------------------------------------------ PARAMETERS ------------------------------------------
 
 # Folder name inside "results" folder
-experiment_name = "treviso-market-224_224_pre_trained_vit_Wed_Dec__7_14-28-31_2022"
+experiment_name = "treviso-market-224_224_pre_trained_vit_Fri_Dec__9_11-23-07_2022"
 
 # Set filename of the dump (i.e. the ".pth" file inside the "seed_x/models" folder)
 model_pth = "pre_trained_vit_fold_0.pth"
@@ -54,10 +54,12 @@ def explain_main():
     model = ModelFactory().get(network_type, network_params)
     model.load(str(model_path))
 
-    # shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability")
-    # shap_model.explain(data["test"], data["train"], label_names=LABELS)
+    # Cannot use more than 10 as 'num_train_images' on my GPU, should be set to 100 at least
+    shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability", num_train_images=10)
+    shap_model.explain(data["test"], data["train"], label_names=LABELS)
 
-    lime_model = ModelLIME(model._network, device, save_path=result_folder / "interpretability")
+    # Cannot use more than 10 as 'num_train_images' on my GPU, should be set to 400 at least
+    lime_model = ModelLIME(model._network, device, save_path=result_folder / "interpretability", num_train_images=100)
     lime_model.explain(data["test"], data["train"], label_names=LABELS)
 
 

@@ -12,14 +12,13 @@ from classes.explainability.InterpretabilityModel import InterpretabilityModel
 
 
 class ModelSHAP(InterpretabilityModel):
-    def __init__(self, model, device: torch.device, save_path: PathLike, num_train_images: Optional[int] = 32, num_test_images: Optional[int] = 5):
+    def __init__(self, model, device: torch.device, save_path: PathLike, num_train_images: Optional[int] = 32):
         super().__init__(model)
         self._device = device
         self._num_train_images = num_train_images
-        self._num_test_images = num_test_images
         self._save_path = Path(save_path)
 
-    def explain(self, train_loader: DataLoader, test_loader: DataLoader, label_names: List) -> None:
+    def explain(self, test_loader: DataLoader, train_loader: DataLoader, label_names: List) -> None:
         """
         Takes train and test images and fit a DeepExplainer to show heatmaps over a subset of test images
 
@@ -41,13 +40,12 @@ class ModelSHAP(InterpretabilityModel):
         shap_values = e.shap_values(test_images)
 
         if label_names is not None:
-            label_names = np.array(label_names).reshape(1, -1).repeat(self._num_test_images, axis=0)
+            label_names = np.array(label_names).reshape(1, -1).repeat(len(label_names), axis=0)
 
         # Issue in: https://github.com/slundberg/shap/issues/703
         shap_numpy = [np.swapaxes(np.swapaxes(s, 1, -1), 1, 2) for s in shap_values]
         test_numpy = np.swapaxes(np.swapaxes(test_images.cpu().numpy(), 1, -1), 1, 2)
-        shap.image_plot(shap_numpy, test_numpy, show=False, labels=label_names)  # was -test_numpy
-
+        shap.image_plot(shap_numpy, test_numpy, show=False, labels=label_names, hspace=0.2)  # was -test_numpy
         # Save figure
         self._save_path.mkdir(parents=True, exist_ok=True)
         # plt.gcf().axes[-1].set_aspect("auto")

@@ -55,11 +55,10 @@ def create_figure(n_rows: int = 1, n_cols: int = 1) -> Tuple[Figure, np.ndarray]
 
 
 class ModelLIME(InterpretabilityModel):
-    def __init__(self, model, device: torch.device, save_path: PathLike, num_train_images: Optional[int] = 32, num_test_images: Optional[int] = 5):
+    def __init__(self, model, device: torch.device, save_path: PathLike, num_train_images: Optional[int] = 32):
         super().__init__(model)
         self._device = device
         self._num_train_images = num_train_images
-        self._num_test_images = num_test_images
         self._save_path = Path(save_path)
 
     def explain(self, test_loader: DataLoader, train_loader: DataLoader, label_names: List) -> None:
@@ -77,8 +76,7 @@ class ModelLIME(InterpretabilityModel):
                                                      labels=label_names,
                                                      top_labels=len(label_names),
                                                      hide_color=0,
-                                                     num_samples=1000)  # number of images that will be sent to classification function
-            # num_samples should be higher, 100
+                                                     num_samples=self._num_train_images)  # number of images that will be sent to classification function
 
             pred_labels = explanation.top_labels
             axs[i, 0].imshow(img)
@@ -90,6 +88,6 @@ class ModelLIME(InterpretabilityModel):
                 axs[i, j + 1].imshow(image_boundary_more)
                 axs[i, j + 1].set_title(f"{lab}")
 
-        f.suptitle("LIME output", fontsize=16)
+        # f.suptitle("LIME output", fontsize=16)
         self._save_path.mkdir(parents=True, exist_ok=True)
         plt.savefig(self._save_path / "LIME_ImageExplainer.png", dpi=500, bbox_inches="tight")
