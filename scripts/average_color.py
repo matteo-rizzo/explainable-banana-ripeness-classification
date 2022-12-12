@@ -12,7 +12,7 @@ from classes.data.managers import BananaDataManager
 from classes.utils.Params import Params
 
 # Select color space and dataset
-MODE = ["YUV", "RGB"][0]
+MODE = ["YUV", "RGB"][1]
 DATASET = ["treviso-market-224_224-hull-seg", "treviso-market-224_224"][0]
 
 
