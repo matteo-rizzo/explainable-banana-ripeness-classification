@@ -13,10 +13,10 @@ from torchmetrics.functional.classification import multiclass_precision, multicl
 https://scikit-learn.org/stable/modules/tree.html
 """
 
-FEATURES_FILE = "treviso-market-224_224-hull-seg-YUV.csv"
+FEATURES_FILE = "treviso-market-224_224-hull-seg-RGB.csv"
 
 
-def main():
+def train_dt():
     num_classes = 4
     num_rand_states = 10
     path_to_data = os.path.join("dataset", FEATURES_FILE)
@@ -69,9 +69,7 @@ def main():
     # fig.set_dpi(1000)
     # plt.show()
 
-    # Explain the last decision tree
-    rules_extracted = get_leaf_constraints(decision_tree, feature_names=feature_names, num_classes=num_classes)
-    print(rules_extracted)
+    return decision_tree, feature_names, num_classes
 
 
 def merge_rules(per_class_rules: List[List[Tuple[float]]], new_rules: Dict[str, List[float]], class_idx: int, max_val: float):
@@ -81,12 +79,14 @@ def merge_rules(per_class_rules: List[List[Tuple[float]]], new_rules: Dict[str, 
     to_update.append(color_tuple)
 
 
-def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[Any], num_classes: int):
+def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[Any], num_classes: int) -> List[List[Tuple[float]]]:
     """
     For each target class, return the set of constraints on each feature that lead to that classification
 
-    :param clf: po
-    :return: List
+    :param clf: decision tree classifier (DT)
+    :param num_classes: number of predicted classes in the DT
+    :param feature_names: list of names to use for each feature in the DT, with their position matching the position in the DT
+    :return: for each output class, a list of feature ranges that lead to that prediction (as tuple of feature values)
     """
     children_left = clf.tree_.children_left
     children_right = clf.tree_.children_right
@@ -94,7 +94,7 @@ def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[A
     threshold = clf.tree_.threshold
     prediction = clf.tree_.value.argmax(axis=2).reshape(-1)
 
-    per_class_rules: List[List[Tuple[float, float, float]]] = [[] for _ in range(num_classes)]
+    per_class_rules: List[List[Tuple[float]]] = [[] for _ in range(num_classes)]
     rules: Dict[str, List[float]] = {fn: list() for fn in feature_names}
 
     stack = [(0, rules)]  # start with the root node id (0) and its depth (0)
@@ -110,8 +110,8 @@ def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[A
             rule_path[feature_names[f]].append(t)
 
             # Append left and right children and depth to `stack`
-            stack.append((children_right[node_id], copy.deepcopy(rule_path), f))
-            stack.append((children_left[node_id], copy.deepcopy(rule_path), f))
+            stack.append((children_right[node_id], copy.deepcopy(rule_path)))
+            stack.append((children_left[node_id], copy.deepcopy(rule_path)))
         else:
             # Leaf node
             if feature_names == ["u", "v"]:
@@ -126,4 +126,4 @@ def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[A
 
 
 if __name__ == "__main__":
-    main()
+    train_dt()
