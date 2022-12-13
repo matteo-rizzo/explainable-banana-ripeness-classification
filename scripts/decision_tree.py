@@ -88,7 +88,7 @@ def train_dt():
     # fig.set_dpi(1000)
     # plt.show()
 
-    return decision_tree, feature_names, num_classes
+    return decision_tree, color_feature_names, num_classes
 
 
 def merge_rules(per_class_rules: List[List[List[Tuple[float, float]]]], new_rules: Dict[str, List[Tuple[float, bool]]], class_idx: int, max_val: float, min_val: float) -> None:
