@@ -27,19 +27,21 @@ def train_dt():
     # Configure paths
     dataset_folder: Path = Path("dataset")
     path_to_color_features: Path = dataset_folder / train_config["color_features"]
-    path_to_bsa_features: Path = dataset_folder / train_config["bsa_features"]
     color_feature_names: List[str] = pd.read_csv(path_to_color_features, nrows=1).columns.tolist()[:-1]
 
     # Read values
     x_color = pd.read_csv(path_to_color_features, usecols=color_feature_names, index_col=False)
-    x_bsa = pd.read_csv(path_to_bsa_features, index_col=False)
     y = pd.read_csv(path_to_color_features, usecols=["y"], index_col=False)
 
     if train_config["features"]["color"] and train_config["features"]["bsa"]:
+        path_to_bsa_features: Path = dataset_folder / train_config["bsa_features"]
+        x_bsa = pd.read_csv(path_to_bsa_features, index_col=False)
         x = pd.concat((x_color, x_bsa), axis=1)
     elif train_config["features"]["color"]:
         x = x_color
     elif train_config["features"]["bsa"]:
+        path_to_bsa_features: Path = dataset_folder / train_config["bsa_features"]
+        x_bsa = pd.read_csv(path_to_bsa_features, index_col=False)
         x = x_bsa
     else:
         raise ValueError
