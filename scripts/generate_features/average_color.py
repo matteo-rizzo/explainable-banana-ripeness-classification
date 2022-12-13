@@ -75,8 +75,12 @@ def color_features(path_to_destination: str, path_to_data: str, mode="YUV"):
             data = rgb_mean(x, data)
         data["y"].append(y.item())
 
-    pd.DataFrame(data).to_csv(os.path.join(path_to_destination), index=False)
+    df_data = pd.DataFrame(data)
+    df_data.to_csv(os.path.join(path_to_destination), index=False)
     tqdm_bar.close()
+    pt = pd.concat([df_data.min()[:-1], df_data.max()[:-1]], axis=1)
+    pt.columns = ["min", "max"]
+    print(pt)
 
 
 if __name__ == "__main__":

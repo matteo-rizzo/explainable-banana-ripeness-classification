@@ -131,9 +131,9 @@ def interpret_decision_tree(decision_tree: DecisionTreeClassifier, feature_names
 
 
 def main():
-    r_range = (100 / 255, 200 / 255)
-    g_range = (128 / 255, 1.0)
-    b_range = (0., 128 / 255)
+    r_range = (0.41, 0.65)
+    g_range = (0.35, 0.70)
+    b_range = (0.13, 0.40)
 
     dt, feature_names, classes = train_dt()
     rules: List[List[List[Tuple[float, float]]]] = interpret_decision_tree(dt, feature_names, classes)
@@ -143,7 +143,8 @@ def main():
             fig = plot_rgb_explanation(leaf_rule, cubes_n=20, axes=fig, r_range=r_range, g_range=g_range, b_range=b_range)
         fig.set_title(f"RGB area for ripeness value {ripeness}")
         plt.tight_layout()
-        plt.show()
+        # plt.show()
+        plt.savefig(f"{ripeness}_rgb.png")
 
 
 if __name__ == "__main__":
