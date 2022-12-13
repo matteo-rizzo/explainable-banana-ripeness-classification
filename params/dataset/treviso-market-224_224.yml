@@ -21,10 +21,10 @@ img_details:
     height: 224
 
 transformations:
-  at_train: true
+  at_train: false
   at_val: false
   at_test: false
 
-  manual: true
+  manual: false
   auto: false
   transformations_preset: "preset_1"
