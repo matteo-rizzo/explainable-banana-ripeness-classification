@@ -1,5 +1,5 @@
 import copy
-import os
+from pathlib import Path
 from typing import Dict, List, Tuple, Any
 
 import numpy as np
@@ -9,26 +9,43 @@ from sklearn import tree
 from sklearn.model_selection import train_test_split
 from torchmetrics.functional.classification import multiclass_precision, multiclass_recall, multiclass_f1_score
 
+from functional.yaml_manager import load_yaml
+
 """
 https://scikit-learn.org/stable/modules/tree.html
 """
 
-FEATURES_FILE = "treviso-market-224_224-hull-seg-RGB.csv"
-
 
 def train_dt():
-    num_classes = 4
-    num_rand_states = 10
-    path_to_data = os.path.join("dataset", FEATURES_FILE)
-    feature_names = pd.read_csv(path_to_data, nrows=1).columns.tolist()[:-1]
+    # Load configuration
+    train_config: Dict = load_yaml("params/networks/decision_tree.yml")
+    num_classes: int = train_config["output_size"]
+    num_rand_states: int = train_config["num_seeds"]
 
-    x = pd.read_csv(path_to_data, usecols=feature_names, index_col=False)
-    y = pd.read_csv(path_to_data, usecols=["y"], index_col=False)
+    # Configure paths
+    dataset_folder: Path = Path("dataset")
+    path_to_color_features: Path = dataset_folder / train_config["color_features"]
+    path_to_bsa_features: Path = dataset_folder / train_config["bsa_features"]
+    color_feature_names: List[str] = pd.read_csv(path_to_color_features, nrows=1).columns.tolist()[:-1]
 
-    avg_metrics = {"accuracy": [], "precision": [], "recall": [], "f1": []}
+    # Read values
+    x_color = pd.read_csv(path_to_color_features, usecols=color_feature_names, index_col=False)
+    x_bsa = pd.read_csv(path_to_bsa_features, index_col=False)
+    y = pd.read_csv(path_to_color_features, usecols=["y"], index_col=False)
 
-    for rs in range(10):
+    if train_config["features"]["color"] and train_config["features"]["bsa"]:
+        x = pd.concat((x_color, x_bsa), axis=1)
+    elif train_config["features"]["color"]:
+        x = x_color
+    elif train_config["features"]["bsa"]:
+        x = x_bsa
+    else:
+        raise ValueError
+    # Initiate training
+    avg_metrics: Dict[str, List] = {"accuracy": [], "precision": [], "recall": [], "f1": []}
 
+    # Per-seed training
+    for rs in range(num_rand_states):
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=rs)
         y_train, y_test = y_train["y"].tolist(), y_test["y"].tolist()
 
@@ -69,17 +86,19 @@ def train_dt():
     # fig.set_dpi(1000)
     # plt.show()
 
-    return decision_tree, feature_names, num_classes
+    return decision_tree, color_feature_names, num_classes
 
 
-def merge_rules(per_class_rules: List[List[Tuple[float]]], new_rules: Dict[str, List[float]], class_idx: int, max_val: float):
+def merge_rules(per_class_rules: List[List[Tuple[float]]], new_rules: Dict[str, List[float]], class_idx: int,
+                max_val: float):
     to_update: List[Tuple[float]] = per_class_rules[class_idx]
 
     color_tuple = tuple([min(new_rules[k], default=max_val) for k in new_rules.keys()])
     to_update.append(color_tuple)
 
 
-def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[Any], num_classes: int) -> List[List[Tuple[float]]]:
+def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[Any], num_classes: int) -> List[
+    List[Tuple[float]]]:
     """
     For each target class, return the set of constraints on each feature that lead to that classification
 

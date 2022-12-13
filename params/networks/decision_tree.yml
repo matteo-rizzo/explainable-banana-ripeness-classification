@@ -1,0 +1,11 @@
+---
+output_size: 4
+num_seeds: 10
+
+color_features: "treviso-market-224_224-hull-seg-RGB.csv"
+bsa_features: "treviso-market-224_224-hull-seg_bsa.csv"
+
+features:
+  color: true
+  bsa: false
+  # contrast: None

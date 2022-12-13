@@ -2,12 +2,10 @@ import os
 import sys
 
 import pandas as pd
-from matplotlib import pyplot as plt
-from skimage.color import rgb2lab, rgba2rgb
+from skimage.color import rgb2lab
 from skimage.morphology import opening
 from tqdm import tqdm
 
-from skimage import io
 from classes.data.managers import BananaDataManager
 from classes.utils.Params import Params
 
@@ -60,7 +58,7 @@ def main():
         bsa = calculate_bsa(img)
         data.append(bsa)
 
-    pd.DataFrame(data).to_csv(os.path.join(path_to_destination), index=False)
+    pd.DataFrame(data, columns=["bsa"]).to_csv(os.path.join(path_to_destination), index=False)
     tqdm_bar.close()
 
 
