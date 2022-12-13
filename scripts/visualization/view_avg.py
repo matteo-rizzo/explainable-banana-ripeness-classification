@@ -2,9 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+data = ["dataset/treviso-market-224_224-RGB.csv",
+        "dataset/treviso-market-224_224-seg-RGB.csv", ]
+
+FILE = data[1]
+
 
 def main():
-    df = pd.read_csv("dataset/treviso-market-224_224-hull-seg-RGB.csv")
+    df = pd.read_csv(FILE)
     fig, axs = plt.subplots(nrows=31, ncols=30)
 
     for (index, image), ax in zip(df.iterrows(), axs.flatten()):
@@ -19,4 +24,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

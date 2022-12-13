@@ -172,5 +172,5 @@ def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[A
 
 if __name__ == "__main__":
     dt, f, c = train_dt()
-    leaves = get_leaf_constraints(dt, f, c)
+    # leaves = get_leaf_constraints(dt, f, c)
     pass

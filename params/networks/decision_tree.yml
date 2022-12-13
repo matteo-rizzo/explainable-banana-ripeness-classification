@@ -2,8 +2,8 @@
 output_size: 4
 num_seeds: 10
 
-color_features: "treviso-market-224_224-hull-seg-RGB.csv"
-bsa_features: "treviso-market-224_224-hull-seg_bsa.csv"
+color_features: "treviso-market-224_224-seg-RGB.csv"
+bsa_features: "treviso-market-224_224-seg_bsa.csv"
 
 features:
   color: true

@@ -9,7 +9,7 @@ from tqdm import tqdm
 from classes.data.managers import BananaDataManager
 from classes.utils.Params import Params
 
-DATASET = ["treviso-market-224_224-hull-seg", "treviso-market-224_224"][0]
+DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224"][1]
 
 
 def rgb_to_scaled_lab(image_rgb):
