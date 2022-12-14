@@ -8,15 +8,15 @@ random_affine:
   scale: [0.7, 0.9]
   p: 0.1
 elastic_transform:
-  alpha: 100.0
+  alpha: 80.0
   p: 0.1
 random_crop:
   size: [128, 128]
-  p: 0.0 # Skip for now
+  p: 0.1 # Skip for now
 color_jitter:
   brightness: 0.5
   hue: 0.0 # Best to keep at 0, otherwise yellow bananas go green
-  p: 0.1
+  p: 0.0
 gaussian_blur:
   kernel_size: [5, 9]
   sigma: [0.1, 2]

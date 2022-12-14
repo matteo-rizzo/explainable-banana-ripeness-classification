@@ -32,7 +32,7 @@ class ImageLoader(Loader):
         :return: a list of transformations to be applied to the inputs
         """
         # Cases in which transformations are not applied
-        if split == "ignore":
+        if split == "all" and not self.__transformations["all"]:
             return T.ToTensor()
         if split == "train" and not self.__transformations["at_train"]:
             return T.ToTensor()
@@ -56,7 +56,8 @@ class ImageLoader(Loader):
                 # Randomly transforms the morphology of objects in images and produces a see-through-water-like effect
                 apply_with_p(T.ElasticTransform, self._transforms["elastic_transform"]),
                 # Crops an image at a random location
-                apply_with_p(T.RandomCrop, self._transforms["random_crop"]),
+                T.Compose([apply_with_p(T.RandomCrop, self._transforms["random_crop"]),
+                           T.Resize(self.__img_size)]),
                 # Randomly changes the brightness, saturation, and other properties of an image
                 apply_with_p(T.ColorJitter, self._transforms["color_jitter"]),
                 # Performs gaussian blur transform on an image

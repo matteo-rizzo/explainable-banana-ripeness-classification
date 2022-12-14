@@ -21,10 +21,12 @@ img_details:
     height: 224
 
 transformations:
-  at_train: false
-  at_val: false
-  at_test: false
+  at_train: true
+  at_val: true
+  at_test: true
 
-  manual: false
+  all: true # Only viable in decision tree
+
+  manual: true
   auto: false
   transformations_preset: "preset_1"

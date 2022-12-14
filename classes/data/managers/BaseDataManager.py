@@ -35,7 +35,8 @@ class BaseDataManager:
                 data_paths.append(os.path.join(path_to_class, file_name))
                 labels.append(int(folder))
                 file_names.append(file_name)
-        dataset = Dataset("ignore", data_paths, labels, ImageLoader(img_details, {"manual": False, "auto": False}).load,
+        dataset = Dataset("all", data_paths, labels, ImageLoader(img_details["img_details"],
+                                                                    img_details["transformations"]).load,
                           file_names=file_names if file_names_ok else None)
         return DataLoader(dataset, batch_size=1)
 
