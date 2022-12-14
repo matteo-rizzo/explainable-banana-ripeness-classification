@@ -7,13 +7,13 @@ import torch
 from tqdm import tqdm
 
 from classes.core.Model import Model
-from classes.data.DataManager import DataManager
+from classes.data.managers import BananaDataManager
 from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
 
 
 def main(model: Model, path_to_data: str, device: torch.device):
-    dataloader = DataManager.get_full_dataloader(path_to_data)
+    dataloader = BananaDataManager.get_full_dataloader(path_to_data)
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
     tqdm_bar.set_description_str(" Evaluating  ")
