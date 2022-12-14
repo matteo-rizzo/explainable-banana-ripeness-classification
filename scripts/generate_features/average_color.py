@@ -13,7 +13,8 @@ from classes.utils.Params import Params
 
 # Select color space and dataset
 MODE = ["YUV", "RGB"][1]
-DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224"][0]
+DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
+           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][2]
 
 
 def rgb_mean(x: np.ndarray, data: Dict[str, List[float]]):
@@ -58,7 +59,7 @@ def uv_mean(x: np.ndarray, data: Dict[str, List[float]]):
 
 
 def color_features(path_to_destination: str, path_to_data: str, mode="YUV"):
-    img_details = Params.load_dataset_params(DATASET)["img_details"]
+    img_details = Params.load_dataset_params(DATASET)
     dataloader = BananaDataManager.get_full_dataloader(path_to_data, img_details, file_names_ok=True)
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
@@ -85,7 +86,7 @@ def color_features(path_to_destination: str, path_to_data: str, mode="YUV"):
 
 if __name__ == "__main__":
     path_to_data = os.path.join("dataset", DATASET)
-    path_to_destination = os.path.join("dataset", f"{DATASET}-{MODE}-{time.time()}.csv")
+    path_to_destination = os.path.join("dataset", f"{DATASET}-{MODE}.csv")
 
     print(f"\n\t Getting average colors of images at {path_to_data}")
     print(f"\t -> Saving dataset at {path_to_destination}")

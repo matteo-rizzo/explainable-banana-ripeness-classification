@@ -9,7 +9,8 @@ from tqdm import tqdm
 from classes.data.managers import BananaDataManager
 from classes.utils.Params import Params
 
-DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224"][1]
+DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
+           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][3]
 
 
 def rgb_to_scaled_lab(image_rgb):
@@ -44,7 +45,7 @@ def main():
     path_to_data = os.path.join("dataset", DATASET)
     path_to_destination = os.path.join("dataset", f"{DATASET}_bsa.csv")
 
-    img_details = Params.load_dataset_params(DATASET)["img_details"]
+    img_details = Params.load_dataset_params(DATASET)
     dataloader = BananaDataManager.get_full_dataloader(path_to_data, img_details, file_names_ok=True)
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)

@@ -2,10 +2,16 @@
 output_size: 4
 num_seeds: 10
 
-color_features: "treviso-market-224_224-seg-RGB.csv"
-bsa_features: "treviso-market-224_224-seg_bsa.csv"
+# "treviso-market-224_224-seg-RGB.csv"
+# "treviso-market-224_224-seg_augmented_additive-RGB.csv"
+# "treviso-market-224_224-seg_augmented_substitutive-RGB.csv"
+color_features: "treviso-market-224_224-seg_augmented_substitutive-RGB.csv"
+# "treviso-market-224_224-seg_bsa.csv"
+# "treviso-market-224_224-seg_augmented_additive_bsa.csv"
+# "treviso-market-224_224-seg_augmented_substitutive_bsa.csv"
+bsa_features: "treviso-market-224_224-seg_augmented_substitutive_bsa.csv"
 
 features:
   color: true
-  bsa: false
+  bsa: true
   # contrast: None
