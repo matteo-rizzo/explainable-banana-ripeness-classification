@@ -141,7 +141,7 @@ def main():
     g_range = (0.35, 0.70)
     b_range = (0.13, 0.40)
     # Number of cubes for each axis. Each cube represent a different color.
-    cube_n = 80
+    cube_n = 24
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
 

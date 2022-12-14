@@ -5,8 +5,6 @@ from typing import Dict, List, Tuple, Any
 import numpy as np
 import pandas as pd
 import torch
-from matplotlib import pyplot as plt
-from matplotlib.pyplot import gcf
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from torchmetrics.functional.classification import multiclass_precision, multiclass_recall, multiclass_f1_score
@@ -93,10 +91,12 @@ def train_dt():
     return decision_tree, color_feature_names, num_classes
 
 
-def merge_rules(per_class_rules: List[List[List[Tuple[float, float]]]], new_rules: Dict[str, List[Tuple[float, bool]]], class_idx: int, max_val: float, min_val: float) -> None:
+def merge_rules(per_class_rules: List[List[List[Tuple[float, float]]]], new_rules: Dict[str, List[Tuple[float, bool]]],
+                class_idx: int, max_val: float, min_val: float, feature_names: List[Any]) -> None:
     to_update: List[List[Tuple[float, float]]] = per_class_rules[class_idx]
 
-    feature_ranges: List[Tuple[float, float]] = list()
+    # We'll store the min and max threshold for each feature and save it in this dictionary
+    condensed_rule: Dict[str, Tuple[float, bool]] = dict()
     for feature_name, path in new_rules.items():
         node_min = min_val
         node_max = max_val
@@ -109,10 +109,10 @@ def merge_rules(per_class_rules: List[List[List[Tuple[float, float]]]], new_rule
                 # >
                 if node_threshold > node_min:
                     node_min = node_threshold
-
-            feature_ranges.append((node_min, node_max))
-        if not path:
-            feature_ranges.append((node_min, node_max))
+        condensed_rule[feature_name] = (node_min, node_max)
+    assert len(condensed_rule.keys()) == len(feature_names), "Wrong size"
+    # Ensure features are in desired order, as explicit in "feature_names"
+    feature_ranges: List[Tuple[float, float]] = [condensed_rule[fn] for fn in feature_names]
     to_update.append(feature_ranges)
 
 
@@ -166,7 +166,7 @@ def get_leaf_constraints(clf: tree.DecisionTreeClassifier, feature_names: List[A
                 # RGB in [0, 1]
                 max_val = 1.0
                 min_val = .0
-            merge_rules(per_class_rules, rule_path, prediction[node_id], max_val=max_val, min_val=min_val)
+            merge_rules(per_class_rules, rule_path, prediction[node_id], max_val=max_val, min_val=min_val, feature_names=feature_names)
 
     assert sum([len(a) for a in per_class_rules]) == clf.tree_.n_leaves, "Wrong number of leaves and outputs"
     return per_class_rules
