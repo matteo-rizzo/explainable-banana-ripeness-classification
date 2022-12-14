@@ -1,4 +1,11 @@
+import time
 from typing import List, Tuple
+import time
+from pathlib import Path
+from typing import List, Tuple
+
+import matplotlib as mpl
+import matplotlib.style as mplstyle
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -17,7 +24,8 @@ def explode(data):
     return data_e
 
 
-def create_bins_range(value_range: Tuple[float, float], rule: Tuple[float, float], n: int) -> Tuple[np.ndarray, np.ndarray]:
+def create_bins_range(value_range: Tuple[float, float], rule: Tuple[float, float], n: int) -> Tuple[
+    np.ndarray, np.ndarray]:
     """
     Return discretized bins indices for a rule, considering only values in a range
 
@@ -60,8 +68,8 @@ def create_plot(n_voxels, face_colors) -> Axes:
     y[:, 1::2, :] += 0.95
     z[:, :, 1::2] += 0.95
 
-    ax = plt.figure(figsize=(10, 10), dpi=200).add_subplot(projection="3d")
-    ax.voxels(x, y, z, filled, facecolors=face_colors, edgecolors=face_colors)
+    ax = plt.figure(figsize=(10, 10), dpi=100).add_subplot(projection="3d")
+    ax.voxels(x, y, z, filled, facecolors=face_colors, edgecolors=face_colors,)
     ax.set_aspect("equal")
     ax.axes.set_xlim3d(left=0.000001, right=cubes_n + 0.9999999)
     ax.axes.set_ylim3d(bottom=0.000001, top=cubes_n + 0.9999999)
@@ -73,7 +81,9 @@ def create_plot(n_voxels, face_colors) -> Axes:
 
 
 def plot_rgb_explanation(rule: List[Tuple[float, float]], cubes_n: int, alpha: float,
-                         r_range: Tuple[float, float], g_range: Tuple[float, float], b_range: Tuple[float, float]) -> Tuple[np.ndarray, np.ndarray]:
+                         r_range: Tuple[float, float],
+                         g_range: Tuple[float, float],
+                         b_range: Tuple[float, float]) -> Tuple[np.ndarray, np.ndarray]:
     """
     Produce voxel plot "filled" and "facecolors" parameters for a single decision rule.
 
@@ -91,7 +101,8 @@ def plot_rgb_explanation(rule: List[Tuple[float, float]], cubes_n: int, alpha: f
     colors = np.stack([r_colors, g_colors, b_colors], axis=1)  # (cubes_n, 3)
 
     # bins = np.linspace(start=0.0, stop=1.0, num=cubes_n + 1, endpoint=True)
-    # np_rule = np.clip(np.digitize(rule, bins) - 1, a_min=0, a_max=cubes_n - 1)  # (feature_n, 2), values in [0, max_value)
+    # np_rule = np.clip(np.digitize(rule, bins) - 1, a_min=0, a_max=cubes_n - 1)
+    # (feature_n, 2), values in [0, max_value)
     # Average RGB color in each consecutive interval
     # indices = np.array([[i, i + 1] for i in range(bins.shape[0] - 1)])
     # colors = bins[indices].mean(axis=-1)  # max_value colors
@@ -126,7 +137,9 @@ def plot_rgb_explanation(rule: List[Tuple[float, float]], cubes_n: int, alpha: f
 
 
 def interpret_decision_tree(decision_tree: DecisionTreeClassifier, feature_names: List, num_classes: int):
-    rules_extracted: List[List[List[Tuple[float, float]]]] = get_leaf_constraints(decision_tree, feature_names=feature_names, num_classes=num_classes)
+    rules_extracted: List[List[List[Tuple[float, float]]]] = get_leaf_constraints(decision_tree,
+                                                                                  feature_names=feature_names,
+                                                                                  num_classes=num_classes)
 
     if feature_names == ["u", "v"]:
         raise ValueError("Explanation with YUV unsupported at the moment.")
@@ -145,13 +158,19 @@ def main():
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
 
-    dt, feature_names, classes = train_dt()
-    rules: List[List[List[Tuple[float, float]]]] = interpret_decision_tree(dt, feature_names, classes)
+    dt, feature_names, num_classes = train_dt()
+    print("-----------------------------------------------------------")
+    print("Interpreting DT...")
+    start = time.perf_counter()
+    rules: List[List[List[Tuple[float, float]]]] = interpret_decision_tree(dt, feature_names, num_classes)
     for ripeness, class_rules in enumerate(rules):
-        voxels, face_colors = np.zeros((cube_n, cube_n, cube_n), dtype=bool), np.zeros((cube_n, cube_n, cube_n, 4), dtype=float)
+        start_partial = time.perf_counter()
+        voxels, face_colors = np.zeros((cube_n, cube_n, cube_n), dtype=bool), np.zeros((cube_n, cube_n, cube_n, 4),
+                                                                                       dtype=float)
         # Accumulate voxels representation from each leaf in a single vector
         for leaf_rule in class_rules:
-            voxels_leaf, face_colors_leaf = plot_rgb_explanation(leaf_rule, cubes_n=cube_n, r_range=r_range, g_range=g_range, b_range=b_range, alpha=alpha_channel)
+            voxels_leaf, face_colors_leaf = plot_rgb_explanation(leaf_rule, cubes_n=cube_n, r_range=r_range,
+                                                                 g_range=g_range, b_range=b_range, alpha=alpha_channel)
             # Union of cubes from different leaves
             voxels |= voxels_leaf
             assert np.all(face_colors.shape == face_colors_leaf.shape), "Wrong shapes to unite"
@@ -160,10 +179,18 @@ def main():
         fig.set_title(f"RGB area for ripeness value {ripeness}", fontsize=18)
         plt.tight_layout()
         # plt.show()
-        plt.savefig(f"{ripeness}_rgb.png")
+        plots_path: Path = Path("plots")
+        plots_path.mkdir(exist_ok=True)
+
+        plt.savefig(plots_path / f"{ripeness}_{cube_n}_rgb.png")
+        plt.cla()
         fig.clear()
         plt.clf()
         plt.close()
+        end_partial = time.perf_counter()
+        print(f"Finished a figure in {(end_partial - start_partial):.3f}s.")
+    end = time.perf_counter()
+    print(f"\nFinished all figures in {(end - start):.3f}s.")
 
 
 if __name__ == "__main__":

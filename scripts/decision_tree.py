@@ -73,8 +73,8 @@ def train_dt():
         avg_metrics["recall"].append(metrics["recall"])
         avg_metrics["f1"].append(metrics["f1"])
 
-    print("\n-----------------------------------------------------------\n")
-    print(f"\nAverage Test Metrics Over {num_rand_states} Random Seeds:")
+    print("-----------------------------------------------------------")
+    print(f"Average Test Metrics Over {num_rand_states} Random Seeds:")
     for metric, value in avg_metrics.items():
         print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {np.mean(value):.4f} ({np.std(value):.4f})")
 
