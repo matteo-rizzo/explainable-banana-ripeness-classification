@@ -19,11 +19,11 @@ DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
 
 def rgb_mean(x: np.ndarray, data: Dict[str, List[float]]):
     # TODO: check if all this nanmean are correct
-    x[np.where(x == 0)] = np.nan
-    avg_color_row = np.nanmean(x, axis=0)
-    avg_color_row[np.isnan(avg_color_row)] = 0
-    avg_color = np.nanmean(avg_color_row, axis=0)
-    avg_color[np.isnan(avg_color)] = 0
+    # Put channels to nan where they are all masked
+    x[~x.any(axis=-1)] = np.nan
+    # Take mean, resulting in mean over 3 channels for each image
+    avg_color = np.nanmean(x, axis=(0, 1))
+    avg_color[np.isnan(avg_color)] = .0
 
     if not data:
         data = {"r": [], "g": [], "b": [], "y": []}
@@ -41,11 +41,9 @@ def uv_mean(x: np.ndarray, data: Dict[str, List[float]]):
     # plt.imshow(x[:, :, 2])
     # plt.show()
 
-    x[np.where(x == 0)] = np.nan
-    avg_color_row = np.nanmean(x, axis=0)
-    avg_color_row[np.isnan(avg_color_row)] = 0
-    avg_color = np.nanmean(avg_color_row, axis=0)
-    avg_color[np.isnan(avg_color)] = 0
+    x[~x.any(axis=-1)] = np.nan
+    avg_color = np.nanmean(x, axis=(0, 1))
+    avg_color[np.isnan(avg_color)] = .0
 
     if not data:
         data = {"u": [], "v": [], "y": []}
