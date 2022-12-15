@@ -1,18 +1,14 @@
 import time
-from typing import List, Tuple
-import time
 from pathlib import Path
 from typing import List, Tuple
-
-import matplotlib as mpl
-import matplotlib.style as mplstyle
 
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from sklearn.tree import DecisionTreeClassifier
 
-from scripts.decision_tree import get_leaf_constraints, train_dt
+from scripts.decision_tree.decision_tree import train_dt
+from scripts.decision_tree.extract_rules import get_leaf_constraints
 
 
 def explode(data):

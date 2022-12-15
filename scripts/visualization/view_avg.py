@@ -9,9 +9,13 @@ FILE = data[1]
 
 
 def main():
+    n_rows: int = 31
+    n_cols: int = 30
     df = pd.read_csv(FILE)
-    fig, axs = plt.subplots(nrows=31, ncols=30)
-
+    fig, axs = plt.subplots(nrows=n_rows, ncols=n_cols)
+    df = df.append([pd.DataFrame([[1.0, 1.0, 1.0, 0.0]],
+                                 columns=["r", "g", "b", "y"])] * ((n_cols*n_rows) - len(df)),
+                   ignore_index=True)
     for (index, image), ax in zip(df.iterrows(), axs.flatten()):
         # color = yuv2rgb(image.to_numpy())
         color = image.to_numpy()[:3]
