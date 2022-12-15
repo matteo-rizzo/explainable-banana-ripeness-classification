@@ -23,16 +23,16 @@ grid_search_params:
   # The strategy used to choose the split at each node
   # Supported strategies are “best” to choose the best split and “random” to choose the best random split
   splitter: ["best", "random"]
-  # The maximum depth of the tree
-  max_depth: [None, 2, 3, 4, 5, 10, 15, 30]
+  # The maximum depth of the tree # null = None
+  max_depth: [null, 2, 3, 4, 5, 10, 15, 30]
   # The minimum number of samples required to split an internal node
   min_samples_split: [2, 3, 4, 5, 6, 10, 15, 30]
   # The minimum number of samples required to be at a leaf node
   min_samples_leaf: [1, 2, 3, 4, 5]
-  # The number of features to consider when looking for the best split
-  max_features: [None, "sqrt", "log2"]
-  # Grow a tree with max_leaf_nodes in best-first fashion
-  max_leaf_nodes: [None, 5, 10, 15, 30, 50]
+  # The number of features to consider when looking for the best split # null = None
+  max_features: [null, "sqrt", "log2"]
+  # Grow a tree with max_leaf_nodes in best-first fashion # null = None
+  max_leaf_nodes: [null, 5, 10, 15, 30, 50]
   # A node will be split if this split induces a decrease of the impurity greater than or equal to this value.
   min_impurity_decrease: [0.0]
   # Complexity parameter used for Minimal Cost-Complexity Pruning
