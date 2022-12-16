@@ -41,12 +41,20 @@ def create_bins_range(value_range: Tuple[float, float], rule: Tuple[float, float
     return binned_rule, colors
 
 
-def create_plot(n_voxels, face_colors) -> Axes:
+def binarize_color(color: Tuple[float, float, float], ranges: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float]], n: int) -> Tuple[int, int, int]:
+    bins = [np.linspace(start=ranges[0][0], stop=ranges[0][1], num=n + 1, endpoint=True),  # r
+            np.linspace(start=ranges[1][0], stop=ranges[1][1], num=n + 1, endpoint=True),  # g
+            np.linspace(start=ranges[2][0], stop=ranges[2][1], num=n + 1, endpoint=True)]  # b
+    return tuple([int(np.clip(np.digitize(color[i], bins[i]) - 1, a_min=0, a_max=n - 1)) for i in range(len(color))])
+
+
+def create_plot(n_voxels, face_colors, edge_colors) -> Axes:
     """
     Create a voxel plot with specified cubes and colors
 
     :param n_voxels: bool 3D array with cubes to be filled with color
     :param face_colors: 4D RGBA colors for each cube
+    :param edge_colors: 4D RGBA colors for the edges of each cube
     :return: matplotlib axes of the produced plot
     """
     cubes_n = n_voxels.shape[0]
@@ -54,6 +62,7 @@ def create_plot(n_voxels, face_colors) -> Axes:
     # Upscale the above voxel image, leaving gaps
     filled = explode(filled)
     face_colors = explode(face_colors)
+    edge_colors = explode(edge_colors)
 
     # Shrink the gaps
     x, y, z = np.indices(np.array(filled.shape) + 1).astype(float) // 2
@@ -65,7 +74,7 @@ def create_plot(n_voxels, face_colors) -> Axes:
     z[:, :, 1::2] += 0.95
 
     ax = plt.figure(figsize=(10, 10), dpi=100).add_subplot(projection="3d")
-    ax.voxels(x, y, z, filled, facecolors=face_colors, edgecolors=face_colors,)
+    ax.voxels(x, y, z, filled, facecolors=face_colors, edgecolors=edge_colors)
     ax.set_aspect("equal")
     ax.axes.set_xlim3d(left=0.000001, right=cubes_n + 0.9999999)
     ax.axes.set_ylim3d(bottom=0.000001, top=cubes_n + 0.9999999)
@@ -153,6 +162,8 @@ def main():
     cube_n = 24
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
+    # Set whether a cube should be highlighted, or None if not
+    highlight_color = None  # es: (0.5, 0.6, 0.3)
 
     dt, feature_names, num_classes = train_dt()
     print("-----------------------------------------------------------")
@@ -171,7 +182,30 @@ def main():
             voxels |= voxels_leaf
             assert np.all(face_colors.shape == face_colors_leaf.shape), "Wrong shapes to unite"
             face_colors = np.where(face_colors > 0, face_colors, face_colors_leaf)
-        fig = create_plot(voxels, face_colors)
+
+        edge_colors = face_colors
+
+        # HIGHLIGHT OF A SINGLE CUBE IN THE PLOT
+        if highlight_color is not None:
+            # Find bin for color tuple
+            rh, gh, bh = binarize_color(color=highlight_color, ranges=(r_range, g_range, b_range), n=cube_n)
+            edge_colors = np.copy(face_colors)
+            # Find indices for colored cubes in 3D
+            colored_indices = np.unique(np.argwhere(face_colors > 0)[:, :-1], axis=0)  # (N, 3)
+            # Set edges of cube to red for that single cube
+            edge_colors[rh, gh, bh] = np.array([1, 0, 0, 1], dtype=float)  # color of target cube
+            # Set high face transparency for all other cubes
+            tmp = face_colors[tuple(colored_indices.T)]
+            tmp[:, -1] = 0.05
+            face_colors[tuple(colored_indices.T)] = tmp
+            face_colors[rh, gh, bh, -1] = 1.0  # alpha for FACE of target cube
+            # Adjust edge transparency
+            tmp = edge_colors[tuple(colored_indices.T)]
+            tmp[:, -1] = 0.1
+            edge_colors[tuple(colored_indices.T)] = tmp
+            edge_colors[rh, gh, bh, -1] = 1.0  # alpha for EDGE of target cube
+
+        fig = create_plot(voxels, face_colors, edge_colors)
         fig.set_title(f"RGB area for ripeness value {ripeness}", fontsize=18)
         plt.tight_layout()
         # plt.show()
