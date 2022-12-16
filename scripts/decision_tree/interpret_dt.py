@@ -146,11 +146,11 @@ def interpret_decision_tree(decision_tree: DecisionTreeClassifier, feature_names
 
 def main():
     # Range of colors to plot
-    r_range = (0.41, 0.65)
-    g_range = (0.35, 0.70)
-    b_range = (0.13, 0.40)
+    r_range = (0.42, 0.80)
+    g_range = (0.42, 0.75)
+    b_range = (0.15, 0.45)
     # Number of cubes for each axis. Each cube represent a different color.
-    cube_n = 64
+    cube_n = 24
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
 

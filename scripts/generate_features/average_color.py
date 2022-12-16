@@ -14,7 +14,7 @@ from classes.utils.Params import Params
 # Select color space and dataset
 MODE = ["YUV", "RGB"][1]
 DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
-           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][0]
+           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][2]
 
 
 def rgb_mean(x: np.ndarray, data: Dict[str, List[float]]):

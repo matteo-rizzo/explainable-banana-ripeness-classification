@@ -1,8 +1,8 @@
 ---
 device: "cuda:0"
-num_seeds: 1
+num_seeds: 10
 
-dataset_name: "treviso-market-224_224" # [fruit-360, fruit-224_224  treviso-market, treviso-market-224_224]
+dataset_name: "treviso-market-224_224" # [treviso-market-224_224-seg]
 
 train:
   network_type: "pre_trained_vit" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']

@@ -10,7 +10,7 @@ from classes.data.managers import BananaDataManager
 from classes.utils.Params import Params
 
 DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
-           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][3]
+           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][2]
 
 
 def rgb_to_scaled_lab(image_rgb):
