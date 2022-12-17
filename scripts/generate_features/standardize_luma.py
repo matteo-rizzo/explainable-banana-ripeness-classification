@@ -10,6 +10,8 @@ DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
 
 OUT_NAME = "standard"
 
+STANDARD_LUMA: float = 0.5  # in (0, 1)
+
 
 def standardize():
     data_folder = Path("dataset") / DATASET
@@ -18,11 +20,23 @@ def standardize():
         for file in files:
             tmp = os.path.splitext(file)
             if len(tmp) == 2 and tmp[1] == ".png":
-                img = imread(os.path.join(subdir, file), as_gray=False)[:, :, :-1] / 255  # (224, 224, 3)
+                img = imread(os.path.join(subdir, file), as_gray=False) / 255
+                if img.shape[-1] > 3:
+                    img = img[:, :, :-1]  # (224, 224, 3)
                 assert 0 <= img.max() <= 1.0
+
+                # Get pixels masked by segmentation
+                masked_pixels = ~img.any(axis=-1)
+
+                # Convert to YUV
                 img = rgb2yuv(img)
-                img[:, :, 0] = 0.5
+                # Set luma (Y) to standard value
+                img[:, :, 0] = STANDARD_LUMA
+                # Convert in RGB
                 img = yuv2rgb(img)
+
+                # Masked pixels should be set to 0
+                img[masked_pixels] = .0
 
                 img = (img * 255).astype(np.uint8)
                 out_path = target_folder / subdir
