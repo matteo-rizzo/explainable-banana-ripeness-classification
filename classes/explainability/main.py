@@ -12,10 +12,10 @@ from functional.yaml_manager import load_yaml
 # ------------------------------------------ PARAMETERS ------------------------------------------
 
 # Folder name inside "results" folder
-experiment_name = "treviso-market-224_224_pre_trained_vit_Fri_Dec__9_11-23-07_2022"
+experiment_name = "treviso-market-224_224-seg_augmented_additive_mobilenet_v2_Mon_Dec_19_08-18-49_2022"
 
 # Set filename of the dump (i.e. the ".pth" file inside the "seed_x/models" folder)
-model_pth = "pre_trained_vit_fold_0.pth"
+model_pth = "mobilenet_v2_fold_0.pth"
 
 # Set seed and fold to use for explanations
 seed_n = 1
@@ -55,7 +55,7 @@ def explain_main():
     model.load(str(model_path))
 
     # Cannot use more than 10 as 'num_train_images' on my GPU, should be set to 100 at least
-    shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability", num_train_images=10)
+    shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability", num_train_images=100)
     shap_model.explain(data["test"], data["train"], label_names=LABELS)
 
     # Cannot use more than 10 as 'num_train_images' on my GPU, should be set to 400 at least

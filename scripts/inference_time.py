@@ -3,6 +3,7 @@ import sys
 import time
 
 import numpy as np
+import pandas as pd
 import torch
 from tqdm import tqdm
 
@@ -19,29 +20,25 @@ def infer(model: Model, data_params, path_to_data: str, device: torch.device):
     tqdm_bar.set_description_str(" Evaluating  ")
 
     execution_times = []
-
     with torch.no_grad():
         for x, y_true in dataloader:
             tqdm_bar.update(1)
             start_time = time.perf_counter()
-            y_pred = torch.softmax(model.predict(x).to(device), dim=1)
+            _ = torch.softmax(model.predict(x).to(device), dim=1)
             end_time = time.perf_counter()
-            print(y_true, y_pred)
             execution_times.append(end_time - start_time)
 
         tqdm_bar.close()
-
     print("----------------------------------------------------------------")
-    print("\n Overview: ")
+    print(" Inference Time Overview: ")
     print(f"\t - Number of items .......... : {len(dataloader)}")
     print(f"\t - Avg execution_time........ : {(np.mean(execution_times)):.4f}ms")
     print(f"\t - Std Dev execution time ... : {(np.std(execution_times)):.4f}ms")
     print("----------------------------------------------------------------")
 
-
 def main():
     # --- Parameters ---
-    device_type = "cpu"
+    device_type = "cuda:0"
     model_type = "mobilenet_v2"
     dataset = "treviso-market-224_224-seg_augmented_additive"
     data_params = Params.load_dataset_params(dataset)

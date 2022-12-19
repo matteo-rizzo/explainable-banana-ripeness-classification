@@ -1,15 +1,15 @@
 ---
 device: "cuda:0"
-num_seeds: 1
+num_seeds: 10
 
 dataset_name: "treviso-market-224_224-seg_augmented_additive" # [treviso-market-224_224]
 
 train:
-  network_type: "mobilenet_v2" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
+  network_type: "pre_trained_vit" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
   epochs: 10
   optimizer: "AdamW" # SGD, Adam, AdamW
   criterion: "CrossEntropyLoss" # NLLLoss, CrossEntropyLoss
-  batch_size: 8
+  batch_size: 16
   learning_rate: 1.5e-05
   log_every: 1
   evaluate_every: 1

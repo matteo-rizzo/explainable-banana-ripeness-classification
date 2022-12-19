@@ -51,4 +51,4 @@ class ModelSHAP(InterpretabilityModel):
         # plt.gcf().axes[-1].set_aspect("auto")
         # plt.tight_layout()
 
-        plt.savefig(self._save_path / "SHAP_DeepExplainer.png", dpi=500, bbox_inches="tight")
+        plt.savefig(self._save_path / "SHAP_DeepExplainer.png", dpi=300, bbox_inches="tight")

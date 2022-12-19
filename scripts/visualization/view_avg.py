@@ -1,17 +1,23 @@
+from math import sqrt, floor, ceil
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 data = ["dataset/treviso-market-224_224-RGB.csv",
-        "dataset/treviso-market-224_224-seg-RGB.csv", ]
+        "dataset/treviso-market-224_224-seg-RGB.csv",
+        "dataset/treviso-market-224_224-seg_augmented_additive-RGB.csv",
+        "dataset/treviso-market-224_224-seg_augmented_additive_standard-RGB.csv"]
 
-FILE = data[1]
+FILE = data[3]
 
 
 def main():
-    n_rows: int = 31
-    n_cols: int = 30
     df = pd.read_csv(FILE)
+
+    n_rows: int = ceil(sqrt(len(df)))
+    n_cols: int = floor(sqrt(len(df)))
+
     fig, axs = plt.subplots(nrows=n_rows, ncols=n_cols)
     df = df.append([pd.DataFrame([[1.0, 1.0, 1.0, 0.0]],
                                  columns=["r", "g", "b", "y"])] * ((n_cols*n_rows) - len(df)),

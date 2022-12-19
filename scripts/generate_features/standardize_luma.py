@@ -4,11 +4,12 @@ from pathlib import Path
 import numpy as np
 from skimage.color import rgb2yuv, yuv2rgb
 from skimage.io import imread, imsave
+from tqdm import tqdm
 
 DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
-           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][2]
+           "treviso-market-224_224-seg_augmented_additive"][2]
 
-OUT_NAME = "standard"
+OUT_NAME = "standard_05"
 
 STANDARD_LUMA: float = 0.5  # in (0, 1)
 
@@ -16,8 +17,9 @@ STANDARD_LUMA: float = 0.5  # in (0, 1)
 def standardize():
     data_folder = Path("dataset") / DATASET
     target_folder = Path("dataset") / f"{DATASET}_{OUT_NAME}"
+
     for subdir, dirs, files in os.walk(data_folder):
-        for file in files:
+        for file in tqdm(files):
             tmp = os.path.splitext(file)
             if len(tmp) == 2 and tmp[1] == ".png":
                 img = imread(os.path.join(subdir, file), as_gray=False) / 255

@@ -90,4 +90,4 @@ class ModelLIME(InterpretabilityModel):
 
         # f.suptitle("LIME output", fontsize=16)
         self._save_path.mkdir(parents=True, exist_ok=True)
-        plt.savefig(self._save_path / "LIME_ImageExplainer.png", dpi=500, bbox_inches="tight")
+        plt.savefig(self._save_path / "LIME_ImageExplainer.png", dpi=300, bbox_inches="tight")
