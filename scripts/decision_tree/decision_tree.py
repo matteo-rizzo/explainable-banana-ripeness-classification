@@ -65,7 +65,7 @@ def grid_search_best_params():
 
         # Setup and train classifier
         grid_clf = GridSearchCV(tree.DecisionTreeClassifier(), n_jobs=-1,
-                                param_grid=train_config["grid_search_params"], verbose=10,)
+                                param_grid=train_config["grid_search_params"], verbose=10, )
         grid_clf.fit(x_train, y_train)
         y_pred = grid_clf.predict(x_test).tolist()
 

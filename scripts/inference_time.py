@@ -12,8 +12,8 @@ from classes.factories.ModelFactory import ModelFactory
 from classes.utils.Params import Params
 
 
-def main(model: Model, path_to_data: str, device: torch.device):
-    dataloader = BananaDataManager.get_full_dataloader(path_to_data)
+def infer(model: Model, data_params, path_to_data: str, device: torch.device):
+    dataloader = BananaDataManager.get_full_dataloader(path_to_data, data_params)
 
     tqdm_bar = tqdm(dataloader, total=len(dataloader), unit="batch", file=sys.stdout)
     tqdm_bar.set_description_str(" Evaluating  ")
@@ -21,11 +21,12 @@ def main(model: Model, path_to_data: str, device: torch.device):
     execution_times = []
 
     with torch.no_grad():
-        for x, _ in dataloader:
+        for x, y_true in dataloader:
             tqdm_bar.update(1)
             start_time = time.perf_counter()
-            _ = torch.softmax(model.predict(x).to(device), dim=1)
+            y_pred = torch.softmax(model.predict(x).to(device), dim=1)
             end_time = time.perf_counter()
+            print(y_true, y_pred)
             execution_times.append(end_time - start_time)
 
         tqdm_bar.close()
@@ -38,20 +39,27 @@ def main(model: Model, path_to_data: str, device: torch.device):
     print("----------------------------------------------------------------")
 
 
-if __name__ == "__main__":
+def main():
+    # --- Parameters ---
     device_type = "cpu"
-    device = torch.device(device_type)
-
     model_type = "mobilenet_v2"
+    dataset = "treviso-market-224_224-seg_augmented_additive"
+    data_params = Params.load_dataset_params(dataset)
     model_params = Params.load_network_params(model_type)
+    device = torch.device(device_type)
+    # --- Load model ---
     model_params["device"] = device
     model = ModelFactory().get(model_type, model_params)
     model.load(os.path.join("trained_models", "mobilenet_v2.pth"))
     model.evaluation_mode()
+    # --- Proceed to inference ---
+    path_to_data = os.path.join("dataset", dataset)
 
-    path_to_data = os.path.join("dataset", "treviso-market", "preprocessed")
-
-    print(f"\n\t Computing inference time for model {model_type} on {device_type}")
+    print(f"\t Computing inference time for model {model_type} on {device_type}")
     print(f"\t -> Using data at {path_to_data}")
 
-    main(model, path_to_data, device)
+    infer(model, data_params, path_to_data, device)
+
+
+if __name__ == "__main__":
+    main()

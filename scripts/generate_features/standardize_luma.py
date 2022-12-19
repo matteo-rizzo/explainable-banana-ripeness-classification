@@ -6,7 +6,7 @@ from skimage.color import rgb2yuv, yuv2rgb
 from skimage.io import imread, imsave
 
 DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
-           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][0]
+           "treviso-market-224_224-seg_augmented_additive", "treviso-market-224_224-seg_augmented_substitutive"][2]
 
 OUT_NAME = "standard"
 
