@@ -6,7 +6,7 @@ test_size: 0.2
 # "treviso-market-224_224-seg-RGB.csv"
 # "treviso-market-224_224-seg_augmented_additive-RGB.csv"
 # "treviso-market-224_224-seg_augmented_substitutive-RGB.csv"
-color_features: "treviso-market-224_224-seg_augmented_additive_standard-RGB.csv"
+color_features: "treviso-market-224_224-seg_augmented_additive_standard_08-RGB.csv"
 # "treviso-market-224_224-seg_bsa.csv"
 # "treviso-market-224_224-seg_augmented_additive_bsa.csv"
 # "treviso-market-224_224-seg_augmented_substitutive_bsa.csv"
@@ -21,7 +21,7 @@ tree_params:
   criterion: "entropy"
   splitter: "random"
   min_samples_split: 2
-  ccp_alpha: 0.0012
+  ccp_alpha: 0.0016
 
 grid_search_params:
   # The function to measure the quality of a split
@@ -30,21 +30,21 @@ grid_search_params:
   # Supported strategies are “best” to choose the best split and “random” to choose the best random split
   splitter: ["best", "random"]
   # The maximum depth of the tree # null = None
-  max_depth: [null, 2, 3, 4, 5, 10, 12, 13, 14, 15, 16, 17, 18, 20]
+  # max_depth: [null, 2, 3, 4, 5, 10, 12, 13, 14, 15, 16, 17, 18, 20]
   # The minimum number of samples required to split an internal node
   min_samples_split: [2, 3, 4]
   # The minimum number of samples required to be at a leaf node
-  min_samples_leaf: [1, 2, 3, 4, 5]
+  # min_samples_leaf: [1, 2, 3, 4, 5]
   # The number of features to consider when looking for the best split # null = None
   # max_features: [null, "sqrt", "log2"] # Not very impactful
   # Grow a tree with max_leaf_nodes in best-first fashion # null = None
-  max_leaf_nodes: [null, 5, 10, 15, 30, 50, 75, 100]
+  # max_leaf_nodes: [null, 5, 10, 15, 30, 50, 75, 100]
   # Complexity parameter used for Minimal Cost-Complexity Pruning
   # The subtree with the largest cost complexity that is smaller than ccp_alpha will be chosen
   # By default, no pruning is performed
   ccp_alpha: [0.0, 0.001, 0.0012, 0.0014, 0.0016, 0.0018,
               0.002, 0.0025, 0.0026, 0.0026,
               0.0026, 0.0028, 0.003,
-              0.005, 0.0075
+              0.005, 0.0075,
               0.01, 0.1
               ]

@@ -7,7 +7,7 @@ import pandas as pd
 data = ["dataset/treviso-market-224_224-RGB.csv",
         "dataset/treviso-market-224_224-seg-RGB.csv",
         "dataset/treviso-market-224_224-seg_augmented_additive-RGB.csv",
-        "dataset/treviso-market-224_224-seg_augmented_additive_standard-RGB.csv"]
+        "dataset/treviso-market-224_224-seg_augmented_additive_standard_08-RGB.csv"]
 
 FILE = data[3]
 

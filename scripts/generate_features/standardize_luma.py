@@ -9,9 +9,9 @@ from tqdm import tqdm
 DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
            "treviso-market-224_224-seg_augmented_additive"][2]
 
-OUT_NAME = "standard_05"
+OUT_NAME = "standard_08"
 
-STANDARD_LUMA: float = 0.5  # in (0, 1)
+STANDARD_LUMA: float = 0.8  # in (0, 1)
 
 
 def standardize():

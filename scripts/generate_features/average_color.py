@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 from typing import Dict, List
 
 import numpy as np
@@ -13,9 +12,12 @@ from classes.utils.Params import Params
 
 # Select color space and dataset
 MODE = ["YUV", "RGB"][1]
-DATASET = ["treviso-market-224_224-seg", "treviso-market-224_224",
-           "treviso-market-224_224-seg_augmented_additive",
-           "treviso-market-224_224-seg_augmented_additive_standard"][3]
+DATASET = ["treviso-market-224_224-seg",  # 0
+           "treviso-market-224_224",  # 1
+           "treviso-market-224_224-seg_augmented_additive",  # 2
+           "treviso-market-224_224-seg_augmented_additive_standard_05",  # 3
+           "treviso-market-224_224-seg_augmented_additive_standard_065",  # 4
+           "treviso-market-224_224-seg_augmented_additive_standard_08"][5]  # 5
 
 
 def rgb_mean(x: np.ndarray, data: Dict[str, List[float]]):
