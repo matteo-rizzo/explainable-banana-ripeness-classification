@@ -4,6 +4,7 @@ from typing import Optional, List, Tuple
 
 import numpy as np
 import torch
+from PIL import Image
 from lime import lime_image
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
@@ -64,13 +65,28 @@ class ModelLIME(InterpretabilityModel):
     def explain(self, test_loader: DataLoader, train_loader: DataLoader, label_names: List) -> None:
         test_images, true_labels = ModelLIME.get_batch_from_loader(test_loader, classes=label_names, num_per_class=1)
 
+        # ************** REMOVE THIS TO USE DATA LOADERS **************
+        # Read a PIL image
+        bp = Path("dataset") / "treviso-market-224_224-seg_augmented_additive"
+        images = [bp / f"{i}" / "97.png" for i in range(4)]
+        tensprs = list()
+        for img in images:
+            image = Image.open(img).convert("RGB").rotate(270)
+            transform = transforms.Compose([transforms.PILToTensor()])
+            # Convert the PIL image to Torch tensor
+            img_tensor = transform(image)
+            tensprs.append(img_tensor)
+        test_images = torch.stack(tensprs).to(self._device)
+        # ************** END REMOVE THIS **************
+
         explainer = lime_image.LimeImageExplainer()
 
         f, axs = create_figure(test_images.size(0), len(label_names) + 1)
 
         # transformations = get_pil_transform()
         for i, img in enumerate(test_images):
-            img = (img.transpose(0, -1).detach().cpu().numpy() * 255).astype(np.uint8)
+            img = (img.transpose(0, -1).detach().cpu().numpy()).astype(np.uint8)
+            # img = (img.transpose(0, -1).detach().cpu().numpy() * 255).astype(np.uint8) # USE THIS TO USE DATA LOADERS
             explanation = explainer.explain_instance(img,
                                                      lambda data: batch_predict(data, model=self._model),  # classification function
                                                      labels=label_names,

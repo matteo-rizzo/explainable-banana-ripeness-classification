@@ -5,8 +5,10 @@ from typing import Optional, List
 import numpy as np
 import shap
 import torch
+from PIL import Image
 from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
+from torchvision.transforms import transforms
 
 from classes.explainability.InterpretabilityModel import InterpretabilityModel
 
@@ -32,8 +34,23 @@ class ModelSHAP(InterpretabilityModel):
         train_images, _ = ModelSHAP.get_batch_from_loader(train_loader, classes=label_names, num_per_class=num_class)
         test_images, true_labels = ModelSHAP.get_batch_from_loader(test_loader, classes=label_names, num_per_class=1)
 
+        # ************** REMOVE THIS TO USE DATA LOADERS **************
+        # Read a PIL image
+        bp = Path("dataset") / "treviso-market-224_224-seg_augmented_additive"
+        images = [bp / f"{i}" / "97.png" for i in range(4)]
+        tensprs = list()
+        for img in images:
+            image = Image.open(img).convert("RGB")
+            transform = transforms.Compose([transforms.PILToTensor()])
+            # transform = transforms.PILToTensor()
+            # Convert the PIL image to Torch tensor
+            img_tensor = transform(image)
+            tensprs.append(img_tensor)
+        # ************** END REMOVE THIS **************
+
         background = train_images.to(self._device)
-        test_images = test_images.to(self._device)
+        # test_images = test_images.to(self._device) # USE THIS TO USE DATA LOADERS
+        test_images = torch.stack(tensprs).to(self._device)
 
         # self._model.eval()
         e = shap.DeepExplainer(self._model, background)

@@ -99,4 +99,4 @@ class Model:
         :param path_to_model: the path where to load the model from
         """
         print(" Loading model... ")
-        self._network.load_state_dict(torch.load(path_to_model))
+        self._network.load_state_dict(torch.load(path_to_model, map_location=self._device))
