@@ -72,7 +72,8 @@ def create_plot(n_voxels, face_colors, edge_colors) -> Axes:
     x[1::2, :, :] += 0.95
     y[:, 1::2, :] += 0.95
     z[:, :, 1::2] += 0.95
-
+    # TODO Need to create uneven plots. 1/3 format.
+    # TODO: gridspec?
     ax = plt.figure(figsize=(10, 10), dpi=100).add_subplot(projection="3d")
     ax.voxels(x, y, z, filled, facecolors=face_colors, edgecolors=edge_colors)
     ax.set_aspect("equal")
@@ -82,6 +83,25 @@ def create_plot(n_voxels, face_colors, edge_colors) -> Axes:
     ax.set_xlabel("R", fontsize=18)
     ax.set_ylabel("G", fontsize=18)
     ax.set_zlabel("B", fontsize=18)
+    # if rotate:
+    # angle = 450
+    # # for angle in range(0, 360 * 4 + 1):
+    # # Normalize the angle to the range [-180, 180] for display
+    # angle_norm = (angle + 180) % 360 - 180
+    #
+    # # Cycle through a full rotation of elevation, then azimuth, roll, and all
+    # elev = azim = roll = 0
+    # if angle <= 360:
+    #     elev = angle_norm
+    # elif angle <= 360 * 2:
+    #     azim = angle_norm
+    # elif angle <= 360 * 3:
+    #     roll = angle_norm
+    # else:
+    #     elev = azim = roll = angle_norm
+    #
+    # # Update the axis view and title
+    # ax.view_init(elev, azim, roll)
     return ax
 
 
@@ -155,11 +175,11 @@ def interpret_decision_tree(decision_tree: DecisionTreeClassifier, feature_names
 
 def main():
     # Range of colors to plot
-    r_range = (0.40, 0.62)
-    g_range = (0.48, 0.60)
-    b_range = (0.12, 0.32)
+    r_range = (0.70, 0.92)
+    g_range = (0.78, 0.92)
+    b_range = (0.42, 0.58)
     # Number of cubes for each axis. Each cube represent a different color.
-    cube_n = 24
+    cube_n = 12
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
     # Set whether a cube should be highlighted, or None if not
