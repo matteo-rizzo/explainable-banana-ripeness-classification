@@ -1,3 +1,5 @@
+import os
+from pathlib import PureWindowsPath
 from typing import Dict, Callable
 
 import torch
@@ -78,7 +80,8 @@ class ImageLoader(Loader):
         :param split: For augmentation purposes [train, test, val, ignore]
         :return: the image data item as a tensor
         """
-        # path_to_input = os.path.join(*(PureWindowsPath(path_to_input)).parts)
+        # Comment or uncomment based on need
+        path_to_input = os.path.join(*(PureWindowsPath(path_to_input)).parts)
         image = Image.open(path_to_input).convert('RGB')
         transformations = self.__get_transformations(split)
         # Note: if self.__num_channels = 3, it is the same as no indexing

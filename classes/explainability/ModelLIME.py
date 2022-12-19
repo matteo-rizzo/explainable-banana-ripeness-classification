@@ -4,7 +4,7 @@ from typing import Optional, List, Tuple
 
 import numpy as np
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
 from lime import lime_image
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
@@ -71,7 +71,7 @@ class ModelLIME(InterpretabilityModel):
         images = [bp / f"{i}" / "97.png" for i in range(4)]
         tensprs = list()
         for img in images:
-            image = Image.open(img).convert("RGB").rotate(270)
+            image = ImageOps.flip(Image.open(img).convert("RGB").rotate(270))
             transform = transforms.Compose([transforms.PILToTensor()])
             # Convert the PIL image to Torch tensor
             img_tensor = transform(image)
