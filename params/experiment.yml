@@ -5,7 +5,7 @@ num_seeds: 10
 dataset_name: "treviso-market-224_224-seg_augmented_additive" # [treviso-market-224_224]
 
 train:
-  network_type: "pre_trained_vit" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
+  network_type: "mobilenet_v2" # ['cnn', 'mobilenet_v2', 'pre_trained_vit']
   epochs: 10
   optimizer: "AdamW" # SGD, Adam, AdamW
   criterion: "CrossEntropyLoss" # NLLLoss, CrossEntropyLoss
