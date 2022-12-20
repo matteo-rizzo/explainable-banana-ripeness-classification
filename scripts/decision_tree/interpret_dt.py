@@ -183,7 +183,7 @@ def main():
     g_range = (0.74, 0.92)
     b_range = (0.40, 0.64)
     # Number of cubes for each axis. Each cube represent a different color.
-    cube_n = 24
+    cube_n = 48
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
     # Set whether a cube should be highlighted, or None if not
@@ -230,7 +230,7 @@ def main():
             edge_colors[rh, gh, bh, -1] = 1.0  # alpha for EDGE of target cube
 
         gs = gridspec.GridSpec(4, 4)
-        fig = plt.figure(figsize=(10, 10), dpi=100)
+        fig = plt.figure(figsize=(14, 10), dpi=150)
         ax_main = fig.add_subplot(gs[:3, :], projection="3d")
         ax_sub_1 = fig.add_subplot(gs[3, :2], projection="3d")
         ax_sub_2 = fig.add_subplot(gs[3, 2:4], projection="3d")
