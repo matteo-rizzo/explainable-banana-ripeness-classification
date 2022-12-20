@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 import numpy as np
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, gridspec
 from matplotlib.axes import Axes
 from sklearn.tree import DecisionTreeClassifier
 
@@ -41,14 +41,15 @@ def create_bins_range(value_range: Tuple[float, float], rule: Tuple[float, float
     return binned_rule, colors
 
 
-def binarize_color(color: Tuple[float, float, float], ranges: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float]], n: int) -> Tuple[int, int, int]:
+def binarize_color(color: Tuple[float, float, float],
+                   ranges: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float]], n: int):
     bins = [np.linspace(start=ranges[0][0], stop=ranges[0][1], num=n + 1, endpoint=True),  # r
             np.linspace(start=ranges[1][0], stop=ranges[1][1], num=n + 1, endpoint=True),  # g
             np.linspace(start=ranges[2][0], stop=ranges[2][1], num=n + 1, endpoint=True)]  # b
     return tuple([int(np.clip(np.digitize(color[i], bins[i]) - 1, a_min=0, a_max=n - 1)) for i in range(len(color))])
 
 
-def create_plot(n_voxels, face_colors, edge_colors) -> Axes:
+def create_plot(ax, n_voxels, face_colors, edge_colors):
     """
     Create a voxel plot with specified cubes and colors
 
@@ -74,35 +75,38 @@ def create_plot(n_voxels, face_colors, edge_colors) -> Axes:
     z[:, :, 1::2] += 0.95
     # TODO Need to create uneven plots. 1/3 format.
     # TODO: gridspec?
-    ax = plt.figure(figsize=(10, 10), dpi=100).add_subplot(projection="3d")
+    # ax = plt.figure(figsize=(10, 10), dpi=100).add_subplot(projection="3d")
     ax.voxels(x, y, z, filled, facecolors=face_colors, edgecolors=edge_colors)
     ax.set_aspect("equal")
     ax.axes.set_xlim3d(left=0.000001, right=cubes_n + 0.9999999)
     ax.axes.set_ylim3d(bottom=0.000001, top=cubes_n + 0.9999999)
     ax.axes.set_zlim3d(bottom=0.000001, top=cubes_n + 0.9999999)
-    ax.set_xlabel("R", fontsize=18)
-    ax.set_ylabel("G", fontsize=18)
-    ax.set_zlabel("B", fontsize=18)
-    # if rotate:
-    # angle = 450
-    # # for angle in range(0, 360 * 4 + 1):
-    # # Normalize the angle to the range [-180, 180] for display
-    # angle_norm = (angle + 180) % 360 - 180
-    #
-    # # Cycle through a full rotation of elevation, then azimuth, roll, and all
-    # elev = azim = roll = 0
+    ax.set_xlabel("R", fontsize=12)
+    ax.set_ylabel("G", fontsize=12)
+    ax.set_zlabel("B", fontsize=12)
+
+    return ax
+
+
+def rotate_ax(ax, angle, azim, roll):
+    # for angle in range(0, 360 * 4 + 1):
+    # Normalize the angle to the range [-180, 180] for display
+    angle_norm = (angle + 180) % 360 - 180
+
+    # Cycle through a full rotation of elevation, then azimuth, roll, and all
     # if angle <= 360:
-    #     elev = angle_norm
+    elev = angle_norm
     # elif angle <= 360 * 2:
     #     azim = angle_norm
     # elif angle <= 360 * 3:
     #     roll = angle_norm
     # else:
     #     elev = azim = roll = angle_norm
-    #
-    # # Update the axis view and title
-    # ax.view_init(elev, azim, roll)
-    return ax
+
+    # Update the axis view and title
+    ax.view_init(elev, azim, roll)
+
+    # return ax
 
 
 def plot_rgb_explanation(rule: List[Tuple[float, float]], cubes_n: int, alpha: float,
@@ -179,7 +183,7 @@ def main():
     g_range = (0.78, 0.92)
     b_range = (0.42, 0.58)
     # Number of cubes for each axis. Each cube represent a different color.
-    cube_n = 12
+    cube_n = 24
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
     # Set whether a cube should be highlighted, or None if not
@@ -225,10 +229,26 @@ def main():
             edge_colors[tuple(colored_indices.T)] = tmp
             edge_colors[rh, gh, bh, -1] = 1.0  # alpha for EDGE of target cube
 
-        fig = create_plot(voxels, face_colors, edge_colors)
-        fig.set_title(f"RGB area for ripeness value {ripeness}", fontsize=18)
-        plt.tight_layout()
+        gs = gridspec.GridSpec(4, 4)
+        fig = plt.figure(figsize=(10, 10), dpi=100)
+        ax_main = fig.add_subplot(gs[:3, :], projection="3d")
+        ax_sub_1 = fig.add_subplot(gs[3, :2], projection="3d")
+        ax_sub_2 = fig.add_subplot(gs[3, 2:4], projection="3d")
+        # ax_sub_3 = fig.add_subplot(gs[3, 2], projection="3d")
+
+        create_plot(ax_main, voxels, face_colors, edge_colors)
+        create_plot(ax_sub_1, voxels, face_colors, edge_colors)
+        create_plot(ax_sub_2, voxels, face_colors, edge_colors)
+        # create_plot(ax_sub_3, voxels, face_colors, edge_colors)
+
+        rotate_ax(ax_sub_1, angle=135, azim=90, roll=180)
+        rotate_ax(ax_sub_2, angle=45, azim=0, roll=0)
+
+        # rotate_ax(ax_sub_3, angle=90, azim=0, roll=90)
+        fig.suptitle(f"RGB area for ripeness value {ripeness}", fontsize=18)
+        # plt.tight_layout()
         # plt.show()
+        # break
         plots_path: Path = Path("plots")
         plots_path.mkdir(exist_ok=True)
 
