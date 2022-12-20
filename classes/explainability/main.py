@@ -39,7 +39,7 @@ def explain_main():
     }
 
     # Setup devices and seeds for training
-    device = torch.device("cpu")  # get_device(experiment_params["device"])
+    device = torch.device("cuda:0")  # get_device(experiment_params["device"])
 
     network_type = network_params["architecture"]
     # dataset_name = data_params["dataset"]["name"]
@@ -55,11 +55,11 @@ def explain_main():
     model.load(str(model_path))
 
     # Cannot use more than 10 as 'num_train_images' on my GPU, should be set to 100 at least
-    shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability", num_train_images=100)
+    shap_model = ModelSHAP(model._network, device, save_path=result_folder / "interpretability", num_train_images=200)
     shap_model.explain(data["test"], data["train"], label_names=LABELS)
 
     # Cannot use more than 10 as 'num_train_images' on my GPU, should be set to 400 at least
-    lime_model = ModelLIME(model._network, device, save_path=result_folder / "interpretability", num_train_images=100)
+    lime_model = ModelLIME(model._network, device, save_path=result_folder / "interpretability", num_train_images=200)
     lime_model.explain(data["test"], data["train"], label_names=LABELS)
 
 
