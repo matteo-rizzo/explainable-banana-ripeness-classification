@@ -177,6 +177,12 @@ def interpret_decision_tree(decision_tree: DecisionTreeClassifier, feature_names
     return rules_extracted
 
 
+IMGS = [[0.79197663, 0.8625892, 0.47860467],
+        [0.8111009, 0.84216195, 0.53676605],
+        [0.85316503, 0.82352686, 0.5224761],
+        [0.8699858, 0.81373686, 0.5289033]]
+
+
 def main():
     # Range of colors to plot
     r_range = (0.68, 0.93)
@@ -195,6 +201,7 @@ def main():
     start = time.perf_counter()
     rules: List[List[List[Tuple[float, float]]]] = interpret_decision_tree(dt, feature_names, num_classes)
     for ripeness, class_rules in enumerate(rules):
+        highlight_color = IMGS[ripeness]
         start_partial = time.perf_counter()
         voxels, face_colors = np.zeros((cube_n, cube_n, cube_n), dtype=bool), np.zeros((cube_n, cube_n, cube_n, 4),
                                                                                        dtype=float)
@@ -252,7 +259,7 @@ def main():
         plots_path: Path = Path("plots")
         plots_path.mkdir(exist_ok=True)
 
-        plt.savefig(plots_path / f"{ripeness}_{cube_n}_rgb.png")
+        plt.savefig(plots_path / f"{ripeness}_{cube_n}_{'no-hl' if highlight_color is None else 'yes-hl'}_rgb.png")
         plt.cla()
         fig.clear()
         plt.clf()

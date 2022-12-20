@@ -23,11 +23,9 @@ def main():
         x = (torch.unsqueeze(x, 0)).permute(0, 3, 2, 1).squeeze().numpy()
         data = rgb_mean(x, data)
         data["y"].append(i)
-    df_data = pd.DataFrame(data)
 
     df_data = pd.DataFrame(data)
     df_data.to_csv(f"plots/{IMG_ID}_averages.csv", index=False)
-
 
 
 if __name__ == "__main__":
