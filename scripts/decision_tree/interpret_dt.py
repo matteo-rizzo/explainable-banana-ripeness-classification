@@ -189,7 +189,7 @@ def main():
     g_range = (0.74, 0.92)
     b_range = (0.40, 0.64)
     # Number of cubes for each axis. Each cube represent a different color.
-    cube_n = 48
+    cube_n = 16
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
     # Set whether a cube should be highlighted, or None if not
@@ -201,7 +201,7 @@ def main():
     start = time.perf_counter()
     rules: List[List[List[Tuple[float, float]]]] = interpret_decision_tree(dt, feature_names, num_classes)
     for ripeness, class_rules in enumerate(rules):
-        # highlight_color = IMGS[ripeness]
+        highlight_color = IMGS[1]
         start_partial = time.perf_counter()
         voxels, face_colors = np.zeros((cube_n, cube_n, cube_n), dtype=bool), np.zeros((cube_n, cube_n, cube_n, 4),
                                                                                        dtype=float)
