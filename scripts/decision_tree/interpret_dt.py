@@ -201,7 +201,7 @@ def main():
     start = time.perf_counter()
     rules: List[List[List[Tuple[float, float]]]] = interpret_decision_tree(dt, feature_names, num_classes)
     for ripeness, class_rules in enumerate(rules):
-        highlight_color = IMGS[1]
+        highlight_color = IMGS[ripeness]
         start_partial = time.perf_counter()
         voxels, face_colors = np.zeros((cube_n, cube_n, cube_n), dtype=bool), np.zeros((cube_n, cube_n, cube_n, 4),
                                                                                        dtype=float)

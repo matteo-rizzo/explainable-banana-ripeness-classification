@@ -12,10 +12,10 @@ from functional.yaml_manager import load_yaml
 # ------------------------------------------ PARAMETERS ------------------------------------------
 
 # Folder name inside "results" folder
-experiment_name = "treviso-market-224_224-seg_augmented_additive_pre_trained_vit_Mon_Dec_19_12-28-18_2022"
+experiment_name = "treviso-market-224_224-seg_augmented_additive_mobilenet_v2_Tue_Dec_20_15-02-46_2022"
 
 # Set filename of the dump (i.e. the ".pth" file inside the "seed_x/models" folder)
-model_pth = "pre_trained_vit_fold_0.pth"
+model_pth = "mobilenet_v2_fold_0.pth"
 
 # Set seed and fold to use for explanations
 seed_n = 1
@@ -39,7 +39,7 @@ def explain_main():
     }
 
     # Setup devices and seeds for training
-    device = torch.device("cuda:0")  # get_device(experiment_params["device"])
+    device = torch.device("cpu")  # get_device(experiment_params["device"])
 
     network_type = network_params["architecture"]
     # dataset_name = data_params["dataset"]["name"]

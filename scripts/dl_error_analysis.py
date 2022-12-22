@@ -67,7 +67,7 @@ def analyze_errors(model: Model, data_params, train_params, device: torch.device
 def main():
     # --- Parameters ---
     device_type = "cuda:0"
-    model_type = "mobilenet_v2"
+    model_type = "cnn"
     train_params, data_params, _, _ = Params.load()
     # data_params = Params.load_dataset_params(dataset)
     model_params = Params.load_network_params(model_type)
@@ -75,7 +75,7 @@ def main():
     # --- Load model ---
     model_params["device"] = device
     model = ModelFactory().get(model_type, model_params)
-    model.load(os.path.join("trained_models", "mobilenet_v2.pth"))
+    model.load('results/treviso-market-224_224-seg_augmented_additive_cnn_Tue_Dec_20_11-46-15_2022/seed_3/models/cnn_fold_0.pth')
     model.evaluation_mode()
     # --- Proceed to inference ---
     print(f"\t Computing inference time for model {model_type} on {device_type}")
