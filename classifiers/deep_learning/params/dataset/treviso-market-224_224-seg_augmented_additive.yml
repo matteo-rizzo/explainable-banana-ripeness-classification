@@ -1,0 +1,32 @@
+---
+manager: "bananas" # ["bananas" "fruit-360"]
+
+num_classes: 4
+classes:
+  '0': '0'
+  '1': '1'
+  '2': '2'
+  '3': '3'
+
+paths:
+  dataset_dir: "dataset/treviso-market-224_224-seg_augmented_additive"
+  dataset_metadata: "metadata"
+  cv_metadata: "metadata/cv_splits"
+
+img_details:
+  file_format: "png"
+  num_channels: 3
+  size:
+    width: 224
+    height: 224
+
+transformations:
+  at_train: false
+  at_val: false
+  at_test: false
+
+  all: false # Only viable in decision tree
+
+  manual: false
+  auto: false
+  transformations_preset: "preset_1"
