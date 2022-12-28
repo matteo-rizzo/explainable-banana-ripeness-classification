@@ -189,7 +189,7 @@ def main():
     g_range = (0.74, 0.92)
     b_range = (0.40, 0.64)
     # Number of cubes for each axis. Each cube represent a different color.
-    cube_n = 16
+    cube_n = 6
     # Transparency of the cubes. 0 is completely transparent, 1 is opaque.
     alpha_channel = .3
     # Set whether a cube should be highlighted, or None if not
@@ -236,20 +236,20 @@ def main():
             edge_colors[tuple(colored_indices.T)] = tmp
             edge_colors[rh, gh, bh, -1] = 1.0  # alpha for EDGE of target cube
 
-        gs = gridspec.GridSpec(4, 4)
+        gs = gridspec.GridSpec(1, 1)
         fig = plt.figure(figsize=(14, 10), dpi=150)
-        ax_main = fig.add_subplot(gs[:3, :], projection="3d")
-        ax_sub_1 = fig.add_subplot(gs[3, :2], projection="3d")
-        ax_sub_2 = fig.add_subplot(gs[3, 2:4], projection="3d")
+        ax_main = fig.add_subplot(gs[0,0], projection="3d")
+        # ax_sub_1 = fig.add_subplot(gs[3, :2], projection="3d")
+        # ax_sub_2 = fig.add_subplot(gs[3, 2:4], projection="3d")
         # ax_sub_3 = fig.add_subplot(gs[3, 2], projection="3d")
 
         create_plot(ax_main, voxels, face_colors, edge_colors)
-        create_plot(ax_sub_1, voxels, face_colors, edge_colors)
-        create_plot(ax_sub_2, voxels, face_colors, edge_colors)
+        # create_plot(ax_sub_1, voxels, face_colors, edge_colors)
+        # create_plot(ax_sub_2, voxels, face_colors, edge_colors)
         # create_plot(ax_sub_3, voxels, face_colors, edge_colors)
 
-        rotate_ax(ax_sub_1, angle=135, azim=90, roll=180)
-        rotate_ax(ax_sub_2, angle=45, azim=0, roll=0)
+        # rotate_ax(ax_sub_1, angle=135, azim=90, roll=180)
+        # rotate_ax(ax_sub_2, angle=45, azim=0, roll=0)
 
         # rotate_ax(ax_sub_3, angle=90, azim=0, roll=90)
         fig.suptitle(f"RGB area for ripeness value {ripeness}", fontsize=18)
