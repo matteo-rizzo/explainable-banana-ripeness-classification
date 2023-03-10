@@ -1,0 +1,105 @@
+---
+output_size: 4
+num_seeds: 10
+test_size: 0.2
+
+# "treviso-market-224_224-seg-RGB.csv"
+# "treviso-market-224_224-seg_augmented_additive-RGB.csv"
+# "treviso-market-224_224-seg_augmented_substitutive-RGB.csv"
+color_features: "treviso-market-224_224-seg_augmented_additive_standard_08-RGB.csv"
+# "treviso-market-224_224-seg_bsa.csv"
+# "treviso-market-224_224-seg_augmented_additive_bsa.csv"
+# "treviso-market-224_224-seg_augmented_substitutive_bsa.csv"
+bsa_features: "treviso-market-224_224-seg_augmented_additive_bsa.csv"
+
+features:
+  color: true
+  bsa: false
+  # contrast: None
+
+params:
+  tree:
+    criterion: "entropy"
+    splitter: "random"
+    min_samples_split: 2
+    ccp_alpha: 0.0016
+  linear-svm:
+    penalty: "l2"
+    loss: "squared_hinge"
+    dual: true
+    tol: 0.01
+    C: 1.0
+    multi_class: "ovr"
+    intercept_scaling: 1.0
+    max_iter: 100000
+  naive:
+    alpha: 0.6
+    fit_prior: false
+  svm:
+    C: 0.01
+    kernel: "poly"
+    degree: 8
+    gamma: "scale"
+    shrinking: true
+    max_iter: 1000000
+    tol: 0.1
+    decision_function_shape: "ovo"
+
+
+grid_search_params:
+  tree:
+    # The function to measure the quality of a split
+    criterion: [ "gini", "entropy", "log_loss" ]
+    # The strategy used to choose the split at each node
+    # Supported strategies are “best” to choose the best split and “random” to choose the best random split
+    splitter: [ "best", "random" ]
+    # The maximum depth of the tree # null = None
+    # max_depth: [null, 2, 3, 4, 5, 10, 12, 13, 14, 15, 16, 17, 18, 20]
+    # The minimum number of samples required to split an internal node
+    min_samples_split: [ 2, 3, 4, 0.1, 0.5, 0.8 ]
+    # The minimum number of samples required to be at a leaf node
+    # min_samples_leaf: [1, 2, 3, 4, 5]
+    # The number of features to consider when looking for the best split # null = None
+    # max_features: [null, "sqrt", "log2"] # Not very impactful
+    # Grow a tree with max_leaf_nodes in best-first fashion # null = None
+    # max_leaf_nodes: [null, 5, 10, 15, 30, 50, 75, 100]
+    # Complexity parameter used for Minimal Cost-Complexity Pruning
+    # The subtree with the largest cost complexity that is smaller than ccp_alpha will be chosen
+    # By default, no pruning is performed
+    ccp_alpha: [ 0.0, 0.001, 0.0012, 0.0014, 0.0016, 0.0018,
+                 0.002, 0.0025, 0.0026, 0.0026,
+                 0.0026, 0.0028, 0.003,
+                 0.005, 0.0075,
+                 0.01, 0.1
+    ]
+
+  #    max_features: [null, "auto", "sqrt", "log2"]
+  #    max_depth: [None, 10, 20, 30]
+
+
+  linear-svm:
+    penalty: [ "l1", "l2" ]
+    loss: [ "hinge", "squared_hinge" ]
+    dual: [ true, false ]
+    tol: [ 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4 ]
+    C: [ 1.0e-2, 1.0e-1, 1.0, 1.0e1, 1.0e2 ]
+    multi_class: [ "ovr", "crammer_singer" ]
+    intercept_scaling: [ 1.0, 10.0 ]
+    max_iter: [ 10000, 100000, 1000000 ]
+
+  svm:
+    C: [ 1.0e-2, 1.0e-1, 1.0, 1.0e1, 1.0e2 ]
+    kernel: [ "poly", "rbf" ]
+    degree: [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+    gamma: [ "scale", "auto" ]
+    shrinking: [ true, false ]
+    max_iter: [ 10000, 100000, 1000000 ]
+    tol: [ 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4 ]
+    decision_function_shape: [ "ovo", "ovr" ]
+
+  naive:
+    alpha: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5,  1.0e-6,  1.0e-7,  1.0e-8 ]
+    #    force_alpha: [ true, false ]
+    fit_prior: [ true, false ]
+
+# dataset_name: "treviso-market-224_224-seg_augmented_additive_standard_08"

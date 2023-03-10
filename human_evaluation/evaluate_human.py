@@ -12,8 +12,8 @@ def evaluate(file_name: Path):
     gt = torch.Tensor(df["gt"].tolist())
     names_sorted = ["mm", "az", "mr"]
 
-    assert df.min() == 0, f"Error, wrong min class value: {df.min()}"
-    assert df.max() == 3, f"Error, wrong min class value: {df.max()}"
+    assert df.min(axis=0).max() == 0, f"Error, wrong min class value: {df.min()}"
+    assert df.max(axis=0).min() == 3, f"Error, wrong min class value: {df.max()}"
 
     num_classes = 4
 
@@ -35,6 +35,8 @@ def evaluate(file_name: Path):
     res = pd.DataFrame.from_dict(metrics, orient="index", columns=names_sorted)
 
     res["avg"] = res.mean(axis=1)
+
+    print(res)
 
     res.to_csv(Path("human_evaluation") / "results.csv", sep=",")
 
