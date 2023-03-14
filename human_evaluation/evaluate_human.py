@@ -35,6 +35,8 @@ def evaluate(file_name: Path):
     res = pd.DataFrame.from_dict(metrics, orient="index", columns=names_sorted)
 
     res["avg"] = res.mean(axis=1)
+    res["std"] = res.std(axis=1)
+    res = res.round(4)
 
     print(res)
 
