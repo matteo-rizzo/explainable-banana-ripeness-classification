@@ -41,7 +41,8 @@ To install the required packages, please run `pip3 install -r requirements` with
 
 ## Accessing the Dataset
 
-To download the dataset that was used for the experiments reported in the paper please use the following link:
+To download the dataset that was used for the experiments reported in the paper please use the following link: 
+https://tinyurl.com/5n8h2vkr
 
 ## Running the Deep Learning Models
 
