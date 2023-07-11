@@ -1,7 +1,7 @@
 # Explainable Fruit Ripeness Classification
 
 This repository contains the code related to the paper "Stop overkilling simple tasks with black-box models and use
-transparent models instead", which has been submitted to ITNNS.
+transparent models instead".
 
 # Method
 
