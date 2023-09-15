@@ -8,9 +8,9 @@ torchvision==0.14.1
 transformers==4.25.1
 pyyaml~=6.0
 scikit-image~=0.19.2
-matplotlib~=3.6.2
-tqdm~=4.64.1
+matplotlib
+tqdm
 scipy~=1.9.3
-torchmetrics~=0.11.0
+torchmetrics
 lime~=0.2.0.1
 shap~=0.41.0
