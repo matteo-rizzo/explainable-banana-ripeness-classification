@@ -9,11 +9,11 @@ class Loader:
 
     def __init__(self, img_details: Dict):
         experiment_params = Params.load_experiment_params()
-        dataset_params = Params.load_dataset_params(experiment_params["dataset_name"])
-        self._network_type = experiment_params["train"]["network_type"]
-
-        self._path_to_data = dataset_params["paths"]["dataset_dir"]
-        self._file_format = img_details["file_format"]
+        # dataset_params = Params.load_dataset_params(experiment_params["dataset_name"])
+        # self._network_type = experiment_params["train"]["network_type"]
+        #
+        # self._path_to_data = dataset_params["paths"]["dataset_dir"]
+        # self._file_format = img_details["file_format"]
 
     def load(self, path_to_input: str, split: str) -> torch.Tensor:
         """
