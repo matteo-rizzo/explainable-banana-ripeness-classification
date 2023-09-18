@@ -6,13 +6,13 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 
-from src.classifiers.decision_tree.main import train_dt, prepare_features
+from src.classifiers.decision_tree.run_dt_experiments import train_dt, prepare_features
 from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 
 def analyze_tree_errors():
     # Load configuration
-    train_config: Dict = load_yaml("config/networks/experiment.yml")
+    train_config: Dict = load_yaml("params/networks/experiment.yml")
     num_rand_states: int = train_config["num_seeds"]
     test_size: float = train_config["test_size"]
 

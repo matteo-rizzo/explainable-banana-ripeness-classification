@@ -6,8 +6,7 @@ test_size: 0.2
 # "treviso-market-224_224-seg-RGB.csv"
 # "treviso-market-224_224-seg_augmented_additive-RGB.csv"
 # "treviso-market-224_224-seg_augmented_substitutive-RGB.csv"
-#color_features: "treviso-market-224_224-seg_augmented_additive_standard_08-RGB.csv"
-color_features: "treviso-market-224_224-seg_augmented_additive-YUV.csv"
+color_features: "treviso-market-224_224-seg_augmented_additive_standard_08-RGB.csv"
 # "treviso-market-224_224-seg_bsa.csv"
 # "treviso-market-224_224-seg_augmented_additive_bsa.csv"
 # "treviso-market-224_224-seg_augmented_substitutive_bsa.csv"
@@ -24,27 +23,20 @@ params:
     splitter: "random"
     min_samples_split: 2
     ccp_alpha: 0.0016
+
   linear-svm:
-    penalty: "l2"
+    penalty: "l1"
     loss: "squared_hinge"
-    dual: true
-    tol: 0.01
-    C: 1.0
+    dual: false
+    tol: 0.0001
+    C: 50.0
     multi_class: "ovr"
     intercept_scaling: 1.0
-    max_iter: 100000
+    max_iter: 1000000
+
   naive:
     alpha: 0.6
     fit_prior: false
-  svm:
-    C: 0.01
-    kernel: "poly"
-    degree: 8
-    gamma: "scale"
-    shrinking: true
-    max_iter: 1000000
-    tol: 0.1
-    decision_function_shape: "ovo"
 
 
 grid_search_params:
@@ -79,28 +71,30 @@ grid_search_params:
 
 
   linear-svm:
-    penalty: [ "l1", "l2" ]
-    loss: [ "hinge", "squared_hinge" ]
-    dual: [ true, false ]
-    tol: [ 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4 ]
-    C: [ 1.0e-2, 1.0e-1, 1.0, 1.0e1, 1.0e2 ]
-    multi_class: [ "ovr", "crammer_singer" ]
-    intercept_scaling: [ 1.0, 10.0 ]
-    max_iter: [ 10000, 100000, 1000000 ]
-
-  svm:
-    C: [ 1.0e-2, 1.0e-1, 1.0, 1.0e1, 1.0e2 ]
-    kernel: [ "poly", "rbf" ]
-    degree: [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
-    gamma: [ "scale", "auto" ]
-    shrinking: [ true, false ]
-    max_iter: [ 10000, 100000, 1000000 ]
-    tol: [ 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4 ]
-    decision_function_shape: [ "ovo", "ovr" ]
+#    penalty: [ "l1", "l2" ]
+#    loss: [ "hinge", "squared_hinge" ]
+#    dual: [ true, false ]
+#    tol: [ 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4 ]
+#    C: [ 1.0e-2, 1.0e-1, 0.5,
+#         1.0, 2.0, 3.0, 4.0, 5.0,
+#         6.0, 7.0, 8.0,
+#         1.0e1, 1.0e2 ]
+#    multi_class: [ "ovr", "crammer_singer" ]
+#    max_iter: [ 10000, 100000, 1000000 ]
+      penalty: [ "l1" ]
+      loss: [ "squared_hinge" ]
+      dual: [ false ]
+      tol: [ 0.0001 ]
+      C: [ 0.001, 0.01, 0.1, 0.5, 1.0, 10.0, 25.0, 50.0, 100.0 ]
+      multi_class: [ "ovr" ]
+      max_iter: [ 100000 ]
 
   naive:
-    alpha: [ 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0e-1, 1.0e-2, 1.0e-3, 1.0e-4, 1.0e-5,  1.0e-6,  1.0e-7,  1.0e-8 ]
-    #    force_alpha: [ true, false ]
+    alpha: [0.00001, 0.0001, 0.001, 0.01,
+            0.1, 0.25, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0,
+            10, 100, 1000, 10000,
+    ]
+    force_alpha: [ true, false ]
     fit_prior: [ true, false ]
 
 # dataset_name: "treviso-market-224_224-seg_augmented_additive_standard_08"

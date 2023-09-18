@@ -7,7 +7,7 @@ import yaml
 
 
 class Params:
-    base_param_path: Path = Path("config")
+    base_param_path: Path = Path("params")
 
     @staticmethod
     def load() -> Tuple:
@@ -26,7 +26,7 @@ class Params:
     @staticmethod
     def load_experiment_params() -> Dict:
         """
-        Loads the parameters stored in the config/experiment.yaml file
+        Loads the parameters stored in the params/experiment.yaml file
         :return: the loaded experiment parameters in a Dict
         """
         experiments_path: Path = Params.base_param_path / "experiment.yml"
@@ -36,14 +36,14 @@ class Params:
     @staticmethod
     def load_network_params(network_type: str) -> Dict:
         """
-        Loads and preprocesses the parameters stored in the config/modules/network_type.yaml file
+        Loads and preprocesses the parameters stored in the params/modules/network_type.yaml file
         :param network_type: the type of network to be loaded
         :return: the loaded network parameters in a Dict
         """
         path_to_params: Path = Params.base_param_path / "networks" / f"{network_type}.yml"
         if not path_to_params.is_file():
             raise ValueError(f"Params file '{str(path_to_params)}' for network '{network_type}' not found!"
-                             f"\n Available config files are: {os.listdir(Params.base_param_path / 'networks')}")
+                             f"\n Available params files are: {os.listdir(Params.base_param_path / 'networks')}")
         network_params = yaml.load(open(path_to_params, "r"), Loader=yaml.SafeLoader)
         network_params["architecture"] = network_type
         network_params["batch_size"] = Params.load_experiment_params()["train"]["batch_size"]
@@ -52,7 +52,7 @@ class Params:
     @staticmethod
     def load_dataset_params(dataset_name: str) -> Dict:
         """
-        Loads the parameters stored in the config/modules/dataset_name.yml file merging the paths
+        Loads the parameters stored in the params/modules/dataset_name.yml file merging the paths
         :param dataset_name: the type of data to be loaded
         :return: the loaded data parameters in a Dict
         """
@@ -60,7 +60,7 @@ class Params:
         if not path_to_params.is_file():
             raise ValueError(
                 f"Params file '{path_to_params}' for dataset '{dataset_name}' not found! "
-                f"\n Available config files are: {os.listdir(Params.base_param_path / 'dataset')}")
+                f"\n Available params files are: {os.listdir(Params.base_param_path / 'dataset')}")
         with open(path_to_params, "r") as f:
             params = yaml.load(f, Loader=yaml.SafeLoader)
         params["name"] = dataset_name

@@ -12,7 +12,7 @@ class Trainer:
 
     def __init__(self, train_params: Dict, path_to_best_model: str):
         """
-        :param train_params: the train related config in the experiment.yml file
+        :param train_params: the train related params in the experiment.yml file
         :param path_to_best_model: the path at which the best model is saved during train
         """
         self.__path_to_best_model = path_to_best_model

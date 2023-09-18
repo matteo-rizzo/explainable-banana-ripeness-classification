@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt, gridspec
 from sklearn.tree import DecisionTreeClassifier
 
-from src.classifiers.decision_tree.main import train_dt
+from src.classifiers.decision_tree.run_dt_experiments import train_dt
 from src.classifiers.decision_tree.scripts.extract_rules import get_leaf_constraints
 
 

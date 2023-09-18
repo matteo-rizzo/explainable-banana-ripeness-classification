@@ -17,7 +17,6 @@ https://scikit-learn.org/stable/modules/tree.html
 method_mapping = {
     "tree": tree.DecisionTreeClassifier,
     "linear-svm": svm.LinearSVC,
-    "svm": svm.SVC,
     "naive": naive_bayes.MultinomialNB,
 }
 
@@ -54,7 +53,7 @@ def prepare_features(train_config):
 
 def grid_search_best_params(method: str):
     # Load configuration
-    train_config: Dict = load_yaml("config/baseline-experiment.yml")
+    train_config: Dict = load_yaml("src/classifiers/baselines/params/baseline-experiment.yml")
     num_classes: int = train_config["output_size"]
     num_rand_states: int = train_config["num_seeds"]
     test_size: float = train_config["test_size"]
@@ -75,7 +74,7 @@ def grid_search_best_params(method: str):
 
         # Setup and train classifier
         grid_clf = GridSearchCV(clf_instance, n_jobs=-1,
-                                param_grid=train_config["grid_search_params"][method], verbose=10)
+                                param_grid=train_config["grid_search_params"][method], verbose=5)
         grid_clf.fit(x_train, y_train)
         y_pred = grid_clf.predict(x_test).tolist()
 
@@ -109,7 +108,7 @@ def grid_search_best_params(method: str):
 
 def train_baseline(method: str):
     # Load configuration
-    train_config: Dict = load_yaml("config/baseline-experiment.yml")
+    train_config: Dict = load_yaml("src/classifiers/baselines/params/baseline-experiment.yml")
     num_classes: int = train_config["output_size"]
     num_rand_states: int = train_config["num_seeds"]
     test_size: float = train_config["test_size"]
@@ -129,7 +128,7 @@ def train_baseline(method: str):
         y_train, y_test = y_train["y"].tolist(), y_test["y"].tolist()
 
         # Setup and train classifier
-        classifier_instance = clf_class(random_state=rs, **train_config["config"][method])
+        classifier_instance = clf_class(random_state=rs, **train_config["params"][method])
         classifier_instance.fit(x_train, y_train)
         y_pred = classifier_instance.predict(x_test).tolist()
 
@@ -160,9 +159,10 @@ def train_baseline(method: str):
     return classifier_instance, color_feature_names, num_classes
 
 
-classifier = ["linear-svm", "svm", "tree", "naive"][1]
+classifier = ["linear-svm", "tree", "naive"][2]
 
 if __name__ == "__main__":
     grid_search_best_params(classifier)
+    # train_baseline(classifier)
     # dt, f, c = train_baseline(classifier)
     # leaves = get_leaf_constraints(dt, f, c)

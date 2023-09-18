@@ -32,7 +32,7 @@ def get_transform(params: Dict, img_size: Tuple):
         T.Compose([apply_with_p(T.RandomCrop, params["random_crop"]),
                    T.Resize(img_size)]),
         # Randomly changes the brightness, saturation, and other properties of an image
-        # apply_with_p(T.ColorJitter, config["color_jitter"]),
+        # apply_with_p(T.ColorJitter, params["color_jitter"]),
         # Performs gaussian blur transform on an image
         apply_with_p(T.GaussianBlur, params["gaussian_blur"]),
         # Randomly selects a rectangle region in a torch Tensor image and erases its pixels (already has p)
@@ -48,7 +48,7 @@ def main():
     path_to_destination.mkdir(exist_ok=True, parents=True)
 
     img_details = Params.load_dataset_params(DATASET)["img_details"]
-    params = load_yaml("config/augmentations/preset_1.yml")
+    params = load_yaml("params/augmentations/preset_1.yml")
     transform = get_transform(params, (img_details["size"]["width"],
                                        img_details["size"]["height"]))
 

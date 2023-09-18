@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 def main(folder: str = "treviso-market"):
     # ------------------
-    with open("config/images.yml", 'r') as f:
+    with open("params/images.yml", 'r') as f:
         image_parameters: Dict = yaml.load(f, Loader=yaml.SafeLoader)
     width, height = image_parameters["size"].values()
     # ------------------

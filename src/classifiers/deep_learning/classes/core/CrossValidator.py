@@ -18,7 +18,7 @@ class CrossValidator:
         """
         :param data_manager: an instance of DataManager to load the folds from the filesystem
         :param path_to_results: the path to the directory with the results for the current experiment
-        :param train_params: the config to be submitted to the Trainer instance
+        :param train_params: the params to be submitted to the Trainer instance
         """
         self.data_manager = data_manager
         self.__path_to_results = path_to_results
