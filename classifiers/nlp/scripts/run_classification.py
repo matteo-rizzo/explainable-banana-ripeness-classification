@@ -6,13 +6,17 @@ import pandas as pd
 from sklearn.linear_model import RidgeClassifier
 
 from classifiers.nlp.scripts.pipeline import compute_metrics, train_val_test, naive_classifier
+from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 classifier_type = RidgeClassifier
 
 if __name__ == "__main__":
+    train_config: dict = load_yaml("params/experiment.yml")
+    clf_params = train_config[classifier_type.__name__]
+
     print("*** Misogyny task")
     data = train_val_test(target="M")
-    m_pred = naive_classifier(classifier_type(), data)
+    m_pred = naive_classifier(classifier_type(**clf_params), data)
     m_f1 = compute_metrics(m_pred, data["test"]["y"], classifier_type.__name__)["f1"]
 
     # Get rows with predicted misogyny
@@ -30,7 +34,7 @@ if __name__ == "__main__":
     #     } for k, v in data.items()
     # }
 
-    a_pred = naive_classifier(classifier_type(), data)
+    a_pred = naive_classifier(classifier_type(**clf_params), data)
     a_true = data["test"]["y"]
     a_ids = data["test"]["ids"]
     # a_pred = [0] * len(m_pred)
