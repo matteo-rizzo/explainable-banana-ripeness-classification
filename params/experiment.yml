@@ -25,7 +25,7 @@ tree_params:
 
 RidgeClassifier:
   solver: auto
-  tol: 1.0e-3
+  tol: 1.0e-4
   alpha: 4.642
 
 LogisticRegression:

@@ -34,6 +34,7 @@ class TextFeatureExtractor:
     def preprocessing_tokenizer(self, string: str) -> list[str]:
         string_clean = re.sub("<MENTION_.>", "", string, flags=re.RegexFlag.IGNORECASE).strip()
         string_clean = re.sub(" +", " ", string_clean)
+        string_clean = re.sub(r"[^a-zA-Z0-9!? ]", "", string_clean)
 
         doc = self.__spacy_model(string_clean)
         # print(doc.text)
