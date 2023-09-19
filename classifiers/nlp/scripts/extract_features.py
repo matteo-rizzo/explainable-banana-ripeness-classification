@@ -1,21 +1,20 @@
-import zipfile
-from operator import itemgetter
 from pathlib import Path
+from typing import Type
 
 import numpy as np
 import pandas as pd
+from sklearn import metrics
 from sklearn.base import ClassifierMixin
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import RidgeClassifier
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
 
 from classifiers.nlp.scripts.text_features import TextFeatureExtractor
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression, LinearRegression, RidgeClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn import metrics
+from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 
-def train_val_test(target: str = "M", validation: float = .0) -> dict[str, dict[str, list]]:
+def train_val_test(target: str = "M", validation: float = .0, random_state: int = 0) -> dict[str, dict[str, list]]:
     base_dataset = Path("dataset/AMI2020")
 
     target = "misogynous" if target == "M" else "aggressiveness"
@@ -30,7 +29,7 @@ def train_val_test(target: str = "M", validation: float = .0) -> dict[str, dict[
     add_val = dict()
 
     if validation > 0:
-        train_x, val_x, train_y, val_y, train_ids, val_ids = train_test_split(train_x, train_y, train_ids, test_size=validation)
+        train_x, val_x, train_y, val_y, train_ids, val_ids = train_test_split(train_x, train_y, train_ids, test_size=validation, random_state=random_state)
         add_val = {
             "val": {
                 "x": val_x,
@@ -54,26 +53,30 @@ def train_val_test(target: str = "M", validation: float = .0) -> dict[str, dict[
     }
 
 
-def compute_metrics(sk_classifier: ClassifierMixin, y_pred, y_true) -> float:
-    classifier_name = sk_classifier.__class__.__name__
+def compute_metrics(y_pred, y_true, sk_classifier_name: str = None) -> dict[str, float]:
     precision, recall, f1_score, _ = metrics.precision_recall_fscore_support(y_true, y_pred, average="macro", pos_label=1)
-    print(f"{classifier_name} accuracy:", metrics.accuracy_score(y_true, y_pred))
-    print(f"{classifier_name} precision:", precision)
-    print(f"{classifier_name} recall:", recall)
-    print(f"{classifier_name} F1-score:", f1_score)
+    acc = metrics.accuracy_score(y_true, y_pred)
+    if sk_classifier_name:
+        print(f"{sk_classifier_name} accuracy:", acc)
+        print(f"{sk_classifier_name} precision:", precision)
+        print(f"{sk_classifier_name} recall:", recall)
+        print(f"{sk_classifier_name} F1-score:", f1_score)
 
-    return f1_score
+    return {"f1": f1_score, "accuracy": acc, "precision": precision, "recall": recall}
 
 
-def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]]) -> np.ndarray:
-    # x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.25)
-
+def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
     fex = TextFeatureExtractor()
     bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer, ngram_range=(1, 3), max_features=10000, token_pattern=None)
 
     # Create a pipeline using TF-IDF
     pipe = Pipeline([('vectorizer', bow_vectorizer),
                      ('classifier', sk_classifier)])
+    return pipe
+
+
+def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]]) -> np.ndarray:
+    pipe = make_pipeline(sk_classifier)
 
     print("------ Training")
 
@@ -87,51 +90,58 @@ def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, di
     return predicted
 
 
+def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: str = "M"):
+    # Load configuration
+    train_config: dict = load_yaml("params/experiment.yml")
+    num_rand_states: int = train_config["num_seeds"]
+    test_size: float = train_config["test_size"]
+
+    # Initiate training
+    avg_metrics: dict[str, list] = {"accuracy": [], "precision": [], "recall": [], "f1": []}
+    grid_clf = None
+
+    # Per seed training
+    for rs in range(num_rand_states):
+        # Prepare splits
+        val_data = train_val_test(target=target, random_state=rs, validation=test_size)
+
+        # Setup and train classifier
+        params = train_config["grid_search_params"][sk_classifier_type.__name__]
+        params = {
+            **params,
+            "alpha": np.logspace(-6, 6, 10)
+        }
+
+        gs = GridSearchCV(sk_classifier_type(), param_grid=params, verbose=10, refit=True)
+        grid_clf = make_pipeline(gs)
+
+        grid_clf.fit(val_data["train"]["x"], val_data["train"]["y"])
+        y_pred = grid_clf.predict(val_data["val"]["x"]).tolist()
+
+        # Calculate metrics
+        metrics = compute_metrics(y_pred, val_data["val"]["y"])
+
+        # Print results
+        print(f"Random Seed {rs} - Validation Metrics:")
+        for metric, value in metrics.items():
+            print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {value:.4f}")
+
+        avg_metrics["accuracy"].append(metrics["accuracy"])
+        avg_metrics["precision"].append(metrics["precision"])
+        avg_metrics["recall"].append(metrics["recall"])
+        avg_metrics["f1"].append(metrics["f1"])
+
+    print("-----------------------------------------------------------")
+    print(f"Average Validation Metrics Over {num_rand_states} Random Seeds:")
+    for metric, value in avg_metrics.items():
+        print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {np.mean(value):.4f} ({np.std(value):.4f})")
+
+    print("-----------------------------------------------------------")
+    print(grid_clf.best_params_)
+
+
 if __name__ == "__main__":
     classifier = RidgeClassifier()
-    # Read data
-    print("*** Misogyny task")
-    data = train_val_test(target="M")
-    m_pred = naive_classifier(classifier, data)
-    m_f1 = compute_metrics(classifier, m_pred, data["test"]["y"])
 
-    # Get rows with predicted misogyny
-    misogyny_indexes, misogyny_ids = zip(*[(i, pid) for i, (p, pid) in enumerate(zip(m_pred, data["test"]["ids"])) if p > 0])
-    non_misogyny_ids: set[int] = set(data["test"]["ids"]) - set(misogyny_ids)
-
-    print("*** Aggressiveness task")
-    data = train_val_test(target="A")
-
-    # data_aggressiveness = {
-    #     k: {
-    #         "x": list(itemgetter(*misogyny_indexes)(v["x"])),
-    #         "y": list(itemgetter(*misogyny_indexes)(v["y"])),
-    #         "ids": list(itemgetter(*misogyny_indexes)(v["ids"]))
-    #     } for k, v in data.items()
-    # }
-
-    classifier = RidgeClassifier()
-    a_pred = naive_classifier(classifier, data)
-    a_true = data["test"]["y"]
-    a_ids = data["test"]["ids"]
-    # a_pred = [0] * len(m_pred)
-
-    # a_pred = np.concatenate([a_pred, np.array([0] * len(non_misogyny_ids))])
-    # a_ids = data_aggressiveness["test"]["ids"] + list(non_misogyny_ids)
-    # a_true = data_aggressiveness["test"]["y"] + ([0] * len(non_misogyny_ids))
-
-    a_f1 = compute_metrics(classifier, a_pred, a_true)
-
-    a_score = (m_f1 + a_f1) / 2
-    print(f"\n*** Task A score: {a_score:.5f} ***")
-
-    f = "results/bestTeam.A.r.u.run1"
-    Path(f).parent.mkdir(exist_ok=True, parents=True)
-    pd.DataFrame([m_pred, a_pred], columns=a_ids).T.to_csv(f, header=False, sep="\t")
-
-    # create a ZipFile object in write mode
-    with zipfile.ZipFile(f"{f}.zip", "w", zipfile.ZIP_DEFLATED) as zipf:
-        # add the file to the zip file
-        zipf.write(f)
-
-    # Best task A score: 0.707
+    print("*** GRID SEARCH ")
+    grid_search_best_params(RidgeClassifier, target="M")
