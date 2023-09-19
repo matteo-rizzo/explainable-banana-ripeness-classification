@@ -117,7 +117,7 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
         params = train_config["grid_search_params"][sk_classifier_type.__name__]
         params = {
             **params,
-            "alpha": np.logspace(-6, 6, 5)
+            "alpha": np.logspace(-6, 6, 10)
         }
 
         gs = GridSearchCV(sk_classifier_type(), param_grid=params, verbose=10, refit=True)

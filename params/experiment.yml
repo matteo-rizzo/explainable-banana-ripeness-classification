@@ -1,6 +1,6 @@
 ---
 output_size: 4
-num_seeds: 10
+num_seeds: 5
 test_size: 0.2
 
 # "treviso-market-224_224-seg-RGB.csv"
@@ -24,9 +24,9 @@ tree_params:
   ccp_alpha: 0.0016
 
 RidgeClassifier:
-  solver: lsqr
+  solver: auto
   tol: 1.0e-3
-  alpha: 1.0
+  alpha: 4.642
 
 LogisticRegression:
   penalty: l2
