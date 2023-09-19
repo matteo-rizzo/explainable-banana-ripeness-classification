@@ -68,7 +68,10 @@ def compute_metrics(y_pred, y_true, sk_classifier_name: str = None) -> dict[str,
 
 def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
     fex = TextFeatureExtractor()
-    bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer, ngram_range=(1, 3), max_features=10000, token_pattern=None)
+    bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
+                                     ngram_range=(1, 3),
+                                     max_features=10000,
+                                     token_pattern=None)
 
     # Create a pipeline using TF-IDF
     pipe = Pipeline([('vectorizer', bow_vectorizer),
@@ -76,7 +79,8 @@ def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
     return pipe
 
 
-def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]]) -> np.ndarray:
+def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]],
+                     return_pipe: bool = False) -> np.ndarray | tuple[np.ndarray, Pipeline]:
     pipe = make_pipeline(sk_classifier)
 
     print("------ Training")
@@ -88,7 +92,10 @@ def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, di
     # Predicting with a test dataset
     predicted = pipe.predict(training_data["test"]["x"])
 
-    return predicted
+    if not return_pipe:
+        return predicted
+    else:
+        return predicted, pipe
 
 
 def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: str = "M"):
