@@ -92,6 +92,7 @@ if __name__ == '__main__':
     # a_pred = [0] * len(m_pred)
 
     f = "results/bestTeam.A.r.u.run1"
+    Path(f).parent.mkdir(exist_ok=True, parents=True)
     pd.DataFrame([m_pred, a_pred], columns=data["test"]["ids"]).T.to_csv(f, header=False, sep="\t")
 
     # create a ZipFile object in write mode
