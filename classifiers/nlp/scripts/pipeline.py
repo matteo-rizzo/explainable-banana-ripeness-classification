@@ -1,4 +1,5 @@
 from pathlib import Path
+from pprint import pprint
 from typing import Type
 
 import numpy as np
@@ -98,7 +99,7 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
 
     # Initiate training
     avg_metrics: dict[str, list] = {"accuracy": [], "precision": [], "recall": [], "f1": []}
-    grid_clf = None
+    best_params = list()
 
     # Per seed training
     for rs in range(num_rand_states):
@@ -109,7 +110,7 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
         params = train_config["grid_search_params"][sk_classifier_type.__name__]
         params = {
             **params,
-            "alpha": np.logspace(-6, 6, 10)
+            "alpha": np.logspace(-6, 6, 5)
         }
 
         gs = GridSearchCV(sk_classifier_type(), param_grid=params, verbose=10, refit=True)
@@ -131,13 +132,15 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
         avg_metrics["recall"].append(metrics["recall"])
         avg_metrics["f1"].append(metrics["f1"])
 
+        best_params.append(gs.best_params_)
+
     print("-----------------------------------------------------------")
     print(f"Average Validation Metrics Over {num_rand_states} Random Seeds:")
     for metric, value in avg_metrics.items():
         print(f"\t {metric} - {''.join(['.'] * (15 - len(metric)))} : {np.mean(value):.4f} ({np.std(value):.4f})")
 
     print("-----------------------------------------------------------")
-    print(grid_clf.best_params_)
+    pprint(best_params)
 
 
 if __name__ == "__main__":
