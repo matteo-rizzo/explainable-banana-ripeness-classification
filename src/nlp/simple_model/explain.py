@@ -6,16 +6,13 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
-from sklearn.linear_model import RidgeClassifier
 
-from src.nlp.scripts.pipeline import train_val_test, naive_classifier, compute_metrics
-from src.nlp.scripts.run_classification import classifier_type
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
+from src.nlp.simple_model.pipeline import train_val_test, naive_classifier, compute_metrics
+from src.nlp.simple_model.run_classification import classifier_type
 
 # Ignore all warnings
 warnings.filterwarnings('ignore')
-
-classifier_type = RidgeClassifier
 
 
 def plot_global_coeffs(df: pd.DataFrame, title: str = "default_title",
@@ -62,46 +59,56 @@ def plot_global_coeffs(df: pd.DataFrame, title: str = "default_title",
     # -----------------------------------------
 
 
-def plot_local_coeffs(df: pd.DataFrame, title: str = "default_title",
+def plot_local_coeffs(df: pd.DataFrame, a_pred, m_pred,
+                      title: str = "default_title",
                       folder: Path = Path(""), max_values: int = 10, msg=""):
     # Set dark grid background
     sns.set_style("darkgrid")
     # Keep most impactful
     if len(df) > max_values:
-        df = df.nlargest(max_values, 'Coefficient')
+        df = df.nlargest(max_values, 'Aggressiveness Coefficient')
     # Create a subplot
     fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Define bar width. We'll use this to offset the second bar.
+    bar_width = 0.4
+
+    # Positions of the left bar-boundaries
+    bar_l = [i for i in range(len(df['Feature']))]
+
+    # Positions of the x-axis ticks (center of the bars as bar labels)
+    tick_pos = [i + (bar_width / 2) for i in bar_l]
+
     # Create a bar plot of the coefficients
-    bars = ax.barh(df['Feature'], df['Coefficient'])
-    # Color the bars and add labels
-    for bar in bars:
-        # Width is the value
-        if bar.get_width() > 0:
-            bar.set_color('blue')
-        else:
-            bar.set_color('red')
-    ax.bar_label(bars, fmt='%.2f')
+    bars1 = ax.barh(bar_l, df['Aggressiveness Coefficient'], height=bar_width,
+                    color='red', label='Aggressiveness Coefficient')
+    bars2 = ax.barh([p + bar_width for p in bar_l], df['Misogyny Coefficient'], height=bar_width,
+                    color='pink', label='Misogyny Coefficient')
 
-    # Create custom patches for the legend
-    red_patch = mpatches.Patch(color='red', label='Negative Contribution')
-    blue_patch = mpatches.Patch(color='blue', label='Positive Contribution')
+    ax.bar_label(bars1, fmt='%.2f')
+    ax.bar_label(bars2, fmt='%.2f')
 
-    # Add the legend with custom patches
-    plt.legend(handles=[red_patch, blue_patch])
+    plt.legend()
+
+    # Set the ticks to be first names
+    plt.yticks(tick_pos, df['Feature'])
 
     plt.xlabel('Coefficient')
     plt.ylabel('Feature')
 
     # Add logarithmic scale to x-axis
-    fig.suptitle(f"{title}")
-    ax.title.set_text(msg)
+    fig.suptitle(f"{title} [Pred {m_pred} {a_pred}]")
+    _title = ax.title
+    _title.set_text(msg)
+    _title.set_fontsize(9)
+    _title.set_color('blue')
 
     plt.savefig(folder / f'{title.lower().replace(" ", "_")}.png')
     # -----------------------------------------
 
 
 def naive_explained_classifier(target: str = "M"):
-    train_config: dict = load_yaml("params/experiment.yml")
+    train_config: dict = load_yaml("src/nlp/params/experiment.yml")
     clf_params = train_config[classifier_type.__name__]
 
     print(f"Training {'Aggressiveness' if target == 'A' else 'Misogyny'}...")
@@ -144,7 +151,7 @@ def naive_explained_classifier(target: str = "M"):
     return pipe.named_steps['vectorizer'], pipe.named_steps['classifier']
 
 
-def local_prediction_features(doc: str, vectorizer, model):
+def local_prediction_features(doc: str, vectorizer, model, clf_type: str):
     # Transform the document into TF-IDF features
     X = vectorizer.transform([doc])
 
@@ -157,16 +164,26 @@ def local_prediction_features(doc: str, vectorizer, model):
     # Get the corresponding coefficients
     coeffs = model.coef_[0, nz_features]
 
+    # Get preds
+    pred = model.predict(X)
+
     # Create a DataFrame for easy visualization
-    df = pd.DataFrame({'Feature': np.array(feature_names)[nz_features], 'Coefficient': coeffs})
+    df = pd.DataFrame({'Feature': np.array(feature_names)[nz_features], f'{clf_type} Coefficient': coeffs})
 
     # Sort DataFrame by Coefficient value
-    df = df.sort_values(by='Coefficient', ascending=False)
+    df = df.sort_values(by=f'{clf_type} Coefficient', ascending=False)
 
-    return df
+    return df, pred
 
 
-def sample_examples(vectorizer, classifier, clf_type: str):
+def merge_dfs(a_df, m_df):
+    merged_df = a_df.merge(m_df, on='Feature')
+    sorted_df = merged_df.sort_values(by=['Aggressiveness Coefficient', 'Misogyny Coefficient'])
+
+    return sorted_df
+
+
+def sample_examples(vectorizers, classifiers):
     # -------------------------------------------------------
     coeff_folder = Path("results/coefficients/examples")
     coeff_folder.mkdir(parents=True, exist_ok=True)
@@ -181,21 +198,27 @@ def sample_examples(vectorizer, classifier, clf_type: str):
     both_samples = both.sample(2)["text"]
     # -------------------------------------------------------
     for idx, neither_sample in neither_samples.iteritems():
-        df = local_prediction_features(neither_sample, vectorizer, classifier)
-        plot_local_coeffs(df,
-                          f"{idx} {clf_type} Log Odds Coefficients 0 0",
+        a_df, a_pred = local_prediction_features(neither_sample, vectorizers[0], classifiers[0], "Aggressiveness")
+        m_df, m_pred = local_prediction_features(neither_sample, vectorizers[1], classifiers[1], "Misogyny")
+        df = merge_dfs(a_df, m_df)
+        plot_local_coeffs(df, a_pred, m_pred,
+                          f"{idx} Log Odds Coefficients [Target 0 0]",
                           coeff_folder, msg=neither_sample)
     # -------------------------------------------------------
     for idx, misogynous_sample in misogynous_samples.iteritems():
-        df = local_prediction_features(misogynous_sample, vectorizer, classifier)
-        plot_local_coeffs(df,
-                          f"{idx} {clf_type} Log Odds Coefficients 1 0",
+        a_df, a_pred = local_prediction_features(misogynous_sample, vectorizers[0], classifiers[0], "Aggressiveness")
+        m_df, m_pred = local_prediction_features(misogynous_sample, vectorizers[1], classifiers[1], "Misogyny")
+        df = merge_dfs(a_df, m_df)
+        plot_local_coeffs(df, a_pred, m_pred,
+                          f"{idx} Log Odds Coefficients [Target 1 0]",
                           coeff_folder, msg=misogynous_sample)
     # -------------------------------------------------------
     for idx, both_sample in both_samples.iteritems():
-        df = local_prediction_features(both_sample, vectorizer, classifier)
-        plot_local_coeffs(df,
-                          f"{idx} {clf_type} Log Odds Coefficients 1 1",
+        a_df, a_pred = local_prediction_features(both_sample, vectorizers[0], classifiers[0], "Aggressiveness")
+        m_df, m_pred = local_prediction_features(both_sample, vectorizers[1], classifiers[1], "Misogyny")
+        df = merge_dfs(a_df, m_df)
+        plot_local_coeffs(df, a_pred, m_pred,
+                          f"{idx} Log Odds Coefficients [Target 1 1]",
                           coeff_folder, msg=both_sample)
     # -------------------------------------------------------
 
@@ -204,5 +227,4 @@ if __name__ == '__main__':
     a_vectorizer, a_classifier = naive_explained_classifier("A")
     m_vectorizer, m_classifier = naive_explained_classifier("M")
 
-    sample_examples(a_vectorizer, a_classifier, "Aggressiveness")
-    sample_examples(m_vectorizer, m_classifier, "Mysogyny")
+    sample_examples((a_vectorizer, m_vectorizer), (a_classifier, m_classifier))

@@ -1,6 +1,6 @@
 ---
 # Path to install folder of TreeTagger (on Linux the one where you executed the installation script)
-tree_tagger_path: /home/alessandro/opt/treetagger
+tree_tagger_path: /treetagger
 
 RidgeClassifier:
   solver: auto # lbfgs when positive = True
