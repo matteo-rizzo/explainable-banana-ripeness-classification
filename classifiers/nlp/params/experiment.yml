@@ -1,0 +1,68 @@
+---
+# Path to install folder of TreeTagger (on Linux the one where you executed the installation script)
+tree_tagger_path: /home/alessandro/opt/treetagger
+
+RidgeClassifier:
+  solver: auto # lbfgs when positive = True
+  tol: 1.0e-4
+  alpha: 10.0
+  positive: false
+
+LogisticRegression:
+  solver: liblinear
+  tol: 1.0e-4
+  dual: true
+  penalty: l2
+  C: 1.0
+  max_iter: 10000
+
+DecisionTreeClassifier:
+  criterion: "entropy"
+  splitter: "random"
+  min_samples_split: 2
+  ccp_alpha: 0.0016
+
+
+
+grid_search_params:
+  num_seeds: 5
+  test_size: 0.2
+
+  RidgeClassifier:
+    solver: [ auto, lsqr, sparse_cg ]
+    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
+    alpha: [ 1.0e-06, 1.0e-05,  1.0e-04, 1.0e-03, 1.0e-02, 1.0e-01, 1.0, 1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6 ]
+
+  LogisticRegression:
+    solver: [ liblinear, newton-cg, lbfgs ]
+    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
+    dual: [ true, false ]
+    penalty: [ l1, l2 ]
+    C: [ 0.001, 0.01, 0.1, 1.0, 10, 100, 1000 ]
+    max_iter: [ 500 ]
+
+  DecisionTreeClassifier:
+    # The function to measure the quality of a split
+    criterion: [ "gini", "entropy", "log_loss" ]
+    # The strategy used to choose the split at each node
+    # Supported strategies are “best” to choose the best split and “random” to choose the best random split
+    splitter: [ "best", "random" ]
+    # The maximum depth of the tree # null = None
+    # max_depth: [null, 2, 3, 4, 5, 10, 12, 13, 14, 15, 16, 17, 18, 20]
+    # The minimum number of samples required to split an internal node
+    min_samples_split: [ 2, 3, 4 ]
+    # The minimum number of samples required to be at a leaf node
+    # min_samples_leaf: [1, 2, 3, 4, 5]
+    # The number of features to consider when looking for the best split # null = None
+    # max_features: [null, "sqrt", "log2"] # Not very impactful
+    # Grow a tree with max_leaf_nodes in best-first fashion # null = None
+    # max_leaf_nodes: [null, 5, 10, 15, 30, 50, 75, 100]
+    # Complexity parameter used for Minimal Cost-Complexity Pruning
+    # The subtree with the largest cost complexity that is smaller than ccp_alpha will be chosen
+    # By default, no pruning is performed
+    ccp_alpha: [ 0.0, 0.001, 0.0012, 0.0014, 0.0016, 0.0018,
+                 0.002, 0.0025, 0.0026, 0.0026,
+                 0.0026, 0.0028, 0.003,
+                 0.005, 0.0075,
+                 0.01, 0.1
+    ]

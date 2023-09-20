@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn import metrics
 from sklearn.base import ClassifierMixin
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import RidgeClassifier
+from sklearn.linear_model import RidgeClassifier, LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
 
@@ -100,9 +100,9 @@ def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, di
 
 def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: str = "M"):
     # Load configuration
-    train_config: dict = load_yaml("params/experiment.yml")
-    num_rand_states: int = train_config["num_seeds"]
-    test_size: float = train_config["test_size"]
+    train_config: dict = load_yaml("classifiers/nlp/params/experiment.yml")
+    num_rand_states: int = train_config["grid_search_params"]["num_seeds"]
+    test_size: float = train_config["grid_search_params"]["test_size"]
 
     # Initiate training
     avg_metrics: dict[str, list] = {"accuracy": [], "precision": [], "recall": [], "f1": []}
@@ -115,10 +115,6 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
 
         # Setup and train classifier
         params = train_config["grid_search_params"][sk_classifier_type.__name__]
-        params = {
-            **params,
-            "alpha": np.logspace(-6, 6, 10)
-        }
 
         gs = GridSearchCV(sk_classifier_type(), param_grid=params, verbose=10, refit=True)
         grid_clf = make_pipeline(gs)
@@ -151,7 +147,5 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
 
 
 if __name__ == "__main__":
-    classifier = RidgeClassifier()
-
     print("*** GRID SEARCH ")
     grid_search_best_params(RidgeClassifier, target="M")
