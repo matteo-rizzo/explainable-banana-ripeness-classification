@@ -5,7 +5,8 @@ from pathlib import Path
 import pandas as pd
 from sklearn.linear_model import RidgeClassifier
 
-from src.nlp.scripts.pipeline import compute_metrics, train_val_test, naive_classifier
+from src.nlp.simple_model.pipeline import naive_classifier
+from src.nlp.dataset import train_val_test, compute_metrics
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 classifier_type = RidgeClassifier
