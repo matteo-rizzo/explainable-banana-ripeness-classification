@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 
 import evaluate
@@ -12,14 +14,6 @@ from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.deep_learning.create_dataset import create_hf_dataset
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-
-# def compute_metrics(eval_pred):
-#     logits, labels = eval_pred
-#
-#     predictions = np.argmax(logits, axis=-1)
-#
-#     return metric.compute(predictions=predictions, references=labels)
 
 
 def compute_metrics(eval_pred):
@@ -39,14 +33,14 @@ if __name__ == "__main__":
     assert torch.cuda.is_available()
 
     config: dict = load_yaml("src/nlp/params/deep_learning.yml")
-    bs: int = config["batch_size"]
-    base_model: str = config["model_name"]
-    test_size: float = config["test_size"]
-    model_max_length: int = config["model_max_length"]
-    batch_size: int = config["batch_size"]
-    freeze_base: bool = config["freeze_base"]
+    base_model: str = config["training"]["model_name"]
+    test_size: float = config["training"]["test_size"]
+    model_max_length: int = config["training"]["model_max_length"]
+    batch_size: int = config["training"]["batch_size"]
+    freeze_base: bool = config["training"]["freeze_base"]
+    epochs: bool = config["training"]["epochs"]
+    resume: bool = config["training"]["resume"]
 
-    # dataset = load_dataset("yelp_review_full")
     train_ds, test_ds = create_hf_dataset()
 
     tokenizer = AutoTokenizer.from_pretrained(base_model)
@@ -71,7 +65,7 @@ if __name__ == "__main__":
             param.requires_grad = False
 
     training_args = TrainingArguments(output_dir="dumps/nlp_models", evaluation_strategy="steps",
-                                      logging_dir="dumps/nlp_models/logs", num_train_epochs=3,
+                                      logging_dir="dumps/nlp_models/logs", num_train_epochs=epochs,
                                       per_device_train_batch_size=batch_size,
                                       per_device_eval_batch_size=batch_size,
                                       dataloader_num_workers=4, dataloader_pin_memory=True)
@@ -85,4 +79,8 @@ if __name__ == "__main__":
         tokenizer=tokenizer
     )
 
-    trainer.train()
+    checkpoint_reload: str | bool = False
+    if resume:
+        checkpoint_reload = config["training"]["checkpoint"]
+
+    trainer.train(resume_from_checkpoint=checkpoint_reload)

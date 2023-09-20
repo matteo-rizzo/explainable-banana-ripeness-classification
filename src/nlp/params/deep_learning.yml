@@ -1,11 +1,19 @@
-model_name: MilaNLProc/hate-ita # "Hate-speech-CNERG/dehatebert-mono-italian
-target_label: hateful # only for inference
-test_size: 0.2
+training:
+  model_name: MilaNLProc/hate-ita
 
-model_max_length: 128
+  test_size: 0.2
+  model_max_length: 128
 
-device: 0
-batch_size: 8
-learning_rate: 1.0e-4
-freeze_base: false
+  batch_size: 4
+  test_batch_size: 4
+  learning_rate: 1.0e-4 # Not used currently
+  freeze_base: true
+  epochs: 4
 
+  resume: true
+  checkpoint: dumps/nlp_models/checkpoint-500
+
+testing:
+  task_m_model_name: dumps/nlp_models/checkpoint-500 # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
+  task_a_model_name: MilaNLProc/hate-ita # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
+  target_label: hateful # target for inference
