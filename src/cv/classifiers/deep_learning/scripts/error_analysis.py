@@ -3,10 +3,11 @@ import sys
 import numpy as np
 import pandas as pd
 import torch
-from classes.core.Model import Model
-from classes.data.managers import BananaDataManager
-from classes.factories.ModelFactory import ModelFactory
-from classes.utils.Params import Params
+
+from src.cv.classifiers.deep_learning.classes.core.Model import Model
+from src.cv.classifiers.deep_learning.classes.data.managers import BananaDataManager
+from src.cv.classifiers.deep_learning.classes.factories.ModelFactory import ModelFactory
+from src.cv.classifiers.deep_learning.classes.utils.Params import Params
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from tqdm import tqdm

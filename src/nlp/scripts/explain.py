@@ -8,8 +8,8 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.linear_model import RidgeClassifier
 
-from classifiers.nlp.scripts.pipeline import train_val_test, naive_classifier, compute_metrics
-from classifiers.nlp.scripts.run_classification import classifier_type
+from src.nlp.scripts.pipeline import train_val_test, naive_classifier, compute_metrics
+from src.nlp.scripts.run_classification import classifier_type
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 # Ignore all warnings

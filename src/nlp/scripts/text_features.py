@@ -7,10 +7,9 @@ from spacy import Language
 from treetaggerwrapper import TreeTagger
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
+import html.entities
 
 punctuation = r"""!"'()*+,-./:;<=>?[\]^_`{|}~"""  # r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
-
-import html.entities
 
 
 def char_to_unicode(char):

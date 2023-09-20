@@ -1,9 +1,9 @@
 import random
 
 from PIL import ImageDraw, ImageFont, Image
-from data.managers import BananaDataManager
+from src.cv.classifiers.deep_learning.classes.data.managers import BananaDataManager
 from torchvision.transforms import ToPILImage
-from utils.Params import Params
+from src.cv.classifiers.deep_learning.classes.utils.Params import Params
 
 
 def show_examples(ds, split: str, examples_per_class: int = 3, size=(224, 224)):
