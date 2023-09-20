@@ -2,7 +2,11 @@ import json
 import re
 from collections import defaultdict
 import spacy
+from spacy import Language
 from spacy.lang.it import STOP_WORDS
+from treetaggerwrapper import TreeTagger
+
+TREETAGGER = TreeTagger(TAGDIR="/home/alessandro/opt/treetagger", TAGLANG="it")
 
 punctuation = r"""!"'()*+,-./:;<=>?[\]^_`{|}~"""  # r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
 
@@ -48,9 +52,30 @@ def replace_with_unicode(text, mapping: dict):
     return text
 
 
+@Language.component("tree_tagger")
+def tree_tagger(doc):
+    """ Tagger component of TreeTagger compatible with Spacy pipeline """
+    tokens = [token.text for token in doc if not token.is_space]
+
+    tags = TREETAGGER.tag_text(tokens, tagonly=True)
+    lemmas = [tag.split("\t")[2].split("|")[0] for tag in tags]
+
+    j = 0
+    for token in doc:
+        if not token.is_space:
+            token.lemma_ = lemmas[j]
+            j += 1
+        else:
+            token.lemma_ = " "
+
+    return doc
+
+
 class TextFeatureExtractor:
     def __init__(self):
-        self.__spacy_model = spacy.load("it_core_news_sm")
+        self.__spacy_model = spacy.load("it_core_news_lg")
+        if TREETAGGER is not None:
+            self.__spacy_model.replace_pipe("lemmatizer", "tree_tagger")
         with open("classifiers/nlp/full-emoji-list.json", mode="r") as f:
             emap = json.load(f)
         emap = [a for v in emap.values() for a in v]
@@ -91,8 +116,9 @@ class TextFeatureExtractor:
         # Remove double spaces
         string_clean = re.sub(" +", " ", string_clean)
 
-        # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9, _, !, ? and all strings made of ":A-Z:"
+        # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9, _, !, ? and all strings made of ":A-Z:", removing the colons
         string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s!?]", "", string_clean)
+        string_clean = re.sub(r":", "", string_clean)
         # string_clean = re.sub(r"[^a-zA-Z0-9!?' ]", "", string_clean)
 
         doc = self.__spacy_model(string_clean)
@@ -100,8 +126,8 @@ class TextFeatureExtractor:
         # entities = [(i, i.label_, i.label) for i in doc.ents]
         # Lemmatizing each token and converting each token into lowercase
         # tokens = [token.lemma_.lower().strip() if token.lemma_ != "-PRON-" else token.lower_ for token in doc if not token.is_stop]
-        tokens = [token.text.lower().strip() for token in doc if not token.is_stop]
-        tokens = [t for t in tokens if t and (t.isalnum() and len(t) > 2)]
+        tokens = [token.lemma_.lower().strip() for token in doc if not token.is_stop]
+        tokens = [t for t in tokens if t and (not t.isalnum() or len(t) > 2)]
         # print(tokens)
         # pos_token = [token.pos_ for token in doc if not token.is_stop]
 
@@ -113,3 +139,12 @@ class TextFeatureExtractor:
         # print(token.text, token.pos_, token.dep_, token.tag_)
 
         return tokens
+
+
+if __name__ == '__main__':
+    fex = TextFeatureExtractor()
+    s = "<MENTION_1> So che tu sei acida&#x1f602; a"
+    s = "Porca troia che gran pezzo di figa"
+    s = "Ti sfonderei tutta&#x1f61c;&#x1f61c;as dc"
+    rs = fex.preprocessing_tokenizer(s)
+    pass
