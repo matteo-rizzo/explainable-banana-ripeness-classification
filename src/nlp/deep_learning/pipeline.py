@@ -4,8 +4,6 @@ from transformers import pipeline
 # Load model directly
 # from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
-
 
 def create_hf_pipeline(model_name: str, device: int, batch_size: int = None) -> pipeline:
     # tokenizer = AutoTokenizer.from_pretrained(model_name)

@@ -8,7 +8,7 @@ from transformers import AutoTokenizer
 from transformers import TrainingArguments
 from transformers.trainer import Trainer
 
-from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
+from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.deep_learning.create_dataset import create_hf_dataset
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -36,7 +36,7 @@ def compute_metrics(eval_pred):
 
 
 if __name__ == "__main__":
-    # assert torch.cuda.is_available()
+    assert torch.cuda.is_available()
 
     config: dict = load_yaml("src/nlp/params/deep_learning.yml")
     bs: int = config["batch_size"]

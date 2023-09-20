@@ -1,4 +1,4 @@
-from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
+from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.dataset import train_val_test, compute_metrics
 from src.nlp.deep_learning.pipeline import create_hf_pipeline
 

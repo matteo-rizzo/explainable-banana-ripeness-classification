@@ -12,7 +12,7 @@ from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 classifier_type = RidgeClassifier
 
 if __name__ == "__main__":
-    train_config: dict = load_yaml("params/experiment.yml")
+    train_config: dict = load_yaml("src/nlp/params/experiment.yml")
     clf_params = train_config[classifier_type.__name__]
 
     print("*** Misogyny task")
