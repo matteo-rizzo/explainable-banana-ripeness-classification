@@ -1,3 +1,5 @@
+import torch.cuda
+
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.dataset import train_val_test, compute_metrics
 from src.nlp.deep_learning.pipeline import create_hf_pipeline
@@ -14,6 +16,10 @@ if __name__ == "__main__":
     metrics = compute_metrics(y_pred=results, y_true=dataset_m["test"]["y"])
     print(metrics)
     m_f1 = metrics["f1"]
+
+    del pipe_m
+    del results
+    torch.cuda.empty_cache()
 
     pipe_a = create_hf_pipeline(config["testing"]["task_a_model_name"], device=0, batch_size=bs)
     dataset_a = train_val_test(target="A")

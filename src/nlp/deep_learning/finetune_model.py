@@ -9,6 +9,7 @@ from transformers import AutoModelForSequenceClassification
 from transformers import AutoTokenizer
 from transformers import TrainingArguments
 from transformers.trainer import Trainer
+from transformers.optimization import AdamW
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.deep_learning.create_dataset import create_hf_dataset
@@ -29,6 +30,12 @@ def compute_metrics(eval_pred):
     return {"precision": precision, "recall": recall, "accuracy": accuracy}
 
 
+def create_optimizer_args(model_obj, lr: float = 1.0e-3, wd: float = .0) -> tuple:
+    optimizer = AdamW(model_obj.parameters(), lr=lr, weight_decay=wd)
+    # lr_scheduler = AdafactorSchedule(optimizer)
+    return optimizer, None
+
+
 if __name__ == "__main__":
     assert torch.cuda.is_available()
 
@@ -40,6 +47,7 @@ if __name__ == "__main__":
     freeze_base: bool = config["training"]["freeze_base"]
     epochs: bool = config["training"]["epochs"]
     resume: bool = config["training"]["resume"]
+    learning_rate: bool = config["training"]["learning_rate"]
 
     train_ds, test_ds = create_hf_dataset()
 
@@ -70,16 +78,22 @@ if __name__ == "__main__":
                                       per_device_eval_batch_size=batch_size,
                                       dataloader_num_workers=4, dataloader_pin_memory=True)
 
+    optim = None, None
+    if learning_rate:
+        opt, lr_sc = create_optimizer_args(model, lr=learning_rate)
+        optim = opt, lr_sc
+
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=small_train_dataset,
         eval_dataset=small_eval_dataset,
         compute_metrics=compute_metrics,
-        tokenizer=tokenizer
+        tokenizer=tokenizer,
+        optimizers=optim
     )
 
-    checkpoint_reload: str | bool = False
+    checkpoint_reload: str | None = None
     if resume:
         checkpoint_reload = config["training"]["checkpoint"]
 
