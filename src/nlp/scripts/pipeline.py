@@ -11,7 +11,7 @@ from sklearn.linear_model import RidgeClassifier, LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
 
-from classifiers.nlp.scripts.text_features import TextFeatureExtractor
+from src.nlp.scripts.text_features import TextFeatureExtractor
 from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 
@@ -100,7 +100,7 @@ def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, di
 
 def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: str = "M"):
     # Load configuration
-    train_config: dict = load_yaml("classifiers/nlp/params/experiment.yml")
+    train_config: dict = load_yaml("src/nlp/params/experiment.yml")
     num_rand_states: int = train_config["grid_search_params"]["num_seeds"]
     test_size: float = train_config["grid_search_params"]["test_size"]
 

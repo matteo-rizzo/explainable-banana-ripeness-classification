@@ -55,7 +55,7 @@ def replace_with_unicode(text, mapping: dict):
 
 class TextFeatureExtractor:
     def __init__(self):
-        experiment_config: dict = load_yaml("classifiers/nlp/params/experiment.yml")
+        experiment_config: dict = load_yaml("src/nlp/params/experiment.yml")
 
         global TREETAGGER
         if experiment_config["tree_tagger_path"]:
@@ -69,7 +69,7 @@ class TextFeatureExtractor:
         self.__spacy_model = spacy.load("it_core_news_lg")
         if TREETAGGER is not None:
             self.__spacy_model.replace_pipe("lemmatizer", "tree_tagger")
-        with open("classifiers/nlp/full-emoji-list.json", mode="r", encoding="utf-8") as f:
+        with open("src/nlp/full-emoji-list.json", mode="r", encoding="utf-8") as f:
             emap = json.load(f)
         emap = [a for v in emap.values() for a in v]
 
