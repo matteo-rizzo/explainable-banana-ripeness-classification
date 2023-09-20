@@ -4,10 +4,9 @@ import re
 from collections import defaultdict
 import spacy
 from spacy import Language
-from spacy.lang.it import STOP_WORDS
 from treetaggerwrapper import TreeTagger
 
-from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
+from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 punctuation = r"""!"'()*+,-./:;<=>?[\]^_`{|}~"""  # r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
 

@@ -7,12 +7,12 @@ import pandas as pd
 from sklearn import metrics
 from sklearn.base import ClassifierMixin
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import RidgeClassifier, LogisticRegression
+from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
 
 from src.nlp.scripts.text_features import TextFeatureExtractor
-from src.classifiers.deep_learning.functional.yaml_manager import load_yaml
+from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 
 def train_val_test(target: str = "M", validation: float = .0, random_state: int = 0) -> dict[str, dict[str, list]]:
