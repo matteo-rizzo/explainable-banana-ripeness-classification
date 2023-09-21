@@ -8,6 +8,15 @@ RidgeClassifier:
   alpha: 10.0
   positive: false
 
+BayesianRidgeClassifier:
+#  max_iter: None
+  tol: 1.0e-4
+  alpha_1: 1.0e-6
+  alpha_2: 1.0e-6
+  lambda_1: 1.0e-6
+  lambda_2: 1.0e-6
+#  alpha_init: None
+
 LogisticRegression:
   solver: liblinear
   tol: 1.0e-4

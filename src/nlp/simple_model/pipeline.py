@@ -8,9 +8,9 @@ from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
+from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.dataset import train_val_test, compute_metrics
 from src.nlp.simple_model.text_features import TextFeatureExtractor
-from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
 
 def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:

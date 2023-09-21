@@ -3,13 +3,13 @@ import zipfile
 from pathlib import Path
 
 import pandas as pd
-from sklearn.linear_model import RidgeClassifier
+from sklearn.linear_model import RidgeClassifier, BayesianRidge
 
-from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
+from src.nlp.simple_model.pipeline import naive_classifier, BayesianRidgeClassifier
 from src.nlp.dataset import train_val_test, compute_metrics
-from src.nlp.simple_model.pipeline import naive_classifier
+from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 
-classifier_type = RidgeClassifier
+classifier_type = BayesianRidgeClassifier
 
 if __name__ == "__main__":
     train_config: dict = load_yaml("src/nlp/params/experiment.yml")
@@ -21,8 +21,7 @@ if __name__ == "__main__":
     m_f1 = compute_metrics(m_pred, data["test"]["y"], classifier_type.__name__)["f1"]
 
     # Get rows with predicted misogyny
-    misogyny_indexes, misogyny_ids = zip(
-        *[(i, pid) for i, (p, pid) in enumerate(zip(m_pred, data["test"]["ids"])) if p > 0])
+    misogyny_indexes, misogyny_ids = zip(*[(i, pid) for i, (p, pid) in enumerate(zip(m_pred, data["test"]["ids"])) if p > 0])
     non_misogyny_ids: set[int] = set(data["test"]["ids"]) - set(misogyny_ids)
 
     print("*** Aggressiveness task")
