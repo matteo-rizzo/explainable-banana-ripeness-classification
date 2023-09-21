@@ -35,6 +35,18 @@ def fit_pipeline(sk_classifier: ClassifierMixin, X, y) -> ClassifierMixin:
 
     return sk_classifier
 
+def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
+    fex = TextFeatureExtractor()
+    bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
+                                     ngram_range=(1, 3),
+                                     max_features=10000,
+                                     token_pattern=None)
+
+    # Create a pipeline using TF-IDF
+    pipe = Pipeline([('vectorizer', bow_vectorizer),
+                     ('to_dense', DenseTransformer()),
+                     ('classifier', sk_classifier)])
+    return pipe
 
 def bayesian_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]],
                         return_pipe: bool = False) -> np.ndarray | tuple[np.ndarray, Pipeline]:

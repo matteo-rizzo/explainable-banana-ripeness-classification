@@ -6,7 +6,7 @@ from sklearn.base import ClassifierMixin
 from sklearn.model_selection import GridSearchCV
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.bayesian_model.bayesian_pipeline import fit_pipeline
+from src.nlp.bayesian_model.bayesian_pipeline import make_pipeline
 from src.nlp.bayesian_model.bayesian_ridge_classifier import BayesianRidgeClassifier
 from src.nlp.dataset import train_val_test, compute_metrics
 
@@ -30,7 +30,7 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
         params = train_config["grid_search_params"][sk_classifier_type.__name__]
 
         gs = GridSearchCV(sk_classifier_type(), param_grid=params, verbose=10, refit=True)
-        grid_clf = fit_pipeline(gs)
+        grid_clf = make_pipeline(gs)
 
         grid_clf.fit(val_data["train"]["x"], val_data["train"]["y"])
         y_pred = grid_clf.predict(val_data["val"]["x"]).tolist()
