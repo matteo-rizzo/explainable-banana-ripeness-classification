@@ -30,7 +30,7 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
         params = train_config["grid_search_params"][sk_classifier_type.__name__]
 
         gs = GridSearchCV(sk_classifier_type(), param_grid=params, verbose=10, refit=True)
-        grid_clf = make_pipeline(gs)
+        grid_clf = fit_pipeline(gs)
 
         grid_clf.fit(val_data["train"]["x"], val_data["train"]["y"])
         y_pred = grid_clf.predict(val_data["val"]["x"]).tolist()
