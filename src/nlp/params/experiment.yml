@@ -9,6 +9,12 @@ RidgeClassifier:
   alpha: 10.0
   positive: false
 
+RidgePriorClassifier:
+  solver: auto # lbfgs when positive = True
+  tol: 1.0e-4
+  alpha: 10.0
+  positive: false
+
 BayesianRidgeClassifier:
   #  max_iter: None
   tol: 1.0e-4

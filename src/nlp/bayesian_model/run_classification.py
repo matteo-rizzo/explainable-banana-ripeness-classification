@@ -6,10 +6,10 @@ import pandas as pd
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.bayesian_model.bayesian_pipeline import bayesian_classifier
-from src.nlp.bayesian_model.bayesian_ridge_classifier import BayesianRidgeClassifier
+from src.nlp.bayesian_model.bayesian_ridge_classifier import BayesianRidgeClassifier, RidgePriorClassifier
 from src.nlp.dataset import train_val_test, compute_metrics
 
-classifier_type = BayesianRidgeClassifier
+classifier_type = RidgePriorClassifier
 
 if __name__ == "__main__":
     train_config: dict = load_yaml("src/nlp/params/experiment.yml")

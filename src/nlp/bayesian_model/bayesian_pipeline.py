@@ -16,7 +16,7 @@ class DenseTransformer(TransformerMixin):
         return X.toarray()
 
 
-def fit_pipeline(sk_classifier: ClassifierMixin, X, y) -> ClassifierMixin:
+def fit_pipeline(sk_classifier: ClassifierMixin, X, y):
     fex = TextFeatureExtractor()
     bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
                                      ngram_range=(1, 3),
@@ -28,12 +28,15 @@ def fit_pipeline(sk_classifier: ClassifierMixin, X, y) -> ClassifierMixin:
     X_transformed = bow_vectorizer.fit_transform(X)
 
     # Step 2: Conversion to dense array
-    X_dense = DenseTransformer().fit_transform(X_transformed)
+    X_dense = X_transformed.toarray()
 
     # Step 3: Classification
-    sk_classifier.fit(X_dense, y)
+    # Neutral prior (no knowledge)
+    prior = np.zeros(10000)
+    sk_classifier.fit_with_prior(X_dense, y, prior=prior)
 
-    return sk_classifier
+    return sk_classifier, bow_vectorizer
+
 
 def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
     fex = TextFeatureExtractor()
@@ -48,17 +51,18 @@ def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
                      ('classifier', sk_classifier)])
     return pipe
 
+
 def bayesian_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]],
                         return_pipe: bool = False) -> np.ndarray | tuple[np.ndarray, Pipeline]:
     print("------ Training")
-    pipe = fit_pipeline(sk_classifier, training_data["train"]["x"], training_data["train"]["y"])
+    clf, vect = fit_pipeline(sk_classifier, training_data["train"]["x"], training_data["train"]["y"])
 
     print("------ Testing")
 
     # Predicting with a test dataset
-    predicted = pipe.predict(training_data["test"]["x"])
+    predicted = clf.predict(vect.transform(training_data["test"]["x"]).toarray())
 
     if not return_pipe:
         return predicted
     else:
-        return predicted, pipe
+        return predicted, clf, vect

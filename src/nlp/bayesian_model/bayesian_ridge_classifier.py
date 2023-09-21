@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.base import ClassifierMixin
-from sklearn.linear_model import BayesianRidge
+from sklearn.linear_model import BayesianRidge, RidgeClassifier
 
 
 class BayesianRidgeClassifier(BayesianRidge, ClassifierMixin):
@@ -30,12 +30,37 @@ class BayesianRidgeClassifier(BayesianRidge, ClassifierMixin):
 
     def fit_with_prior(self, X, y, sample_weight=None, prior=None):
         """Fit a regularized model with a nonzero prior"""
+        # https://stats.stackexchange.com/questions/24889/bayesion-priors-in-ridge-regression-with-scikit-learns-linear-model
         assert prior is not None, "you need to specify a prior"
+        # Scale based on prior
         new_y = y - np.sum(prior * X, axis=1)
         super().fit(X, new_y, sample_weight=sample_weight)
+        # Shift back to original scale
         super().coef_ += prior  # modifying underlying model's coefficients
-        # what about the intercept?
 
     def predict(self, X, return_std=False):
         y_pred = super().predict(X, return_std)
         return (y_pred > self.threshold).astype(int)
+
+
+class RidgePriorClassifier(ClassifierMixin):
+    def __init__(self, **kwargs):
+        self.model = RidgeClassifier(**kwargs)
+
+    def fit(self, X, y, sample_weight=None):
+        self.model.fit(X, y, sample_weight)
+        return self
+
+    def fit_with_prior(self, X, y, sample_weight=None, prior=None):
+        """Fit a regularized model with a nonzero prior"""
+        # https://stats.stackexchange.com/questions/24889/bayesion-priors-in-ridge-regression-with-scikit-learns-linear-model
+        assert prior is not None, "you need to specify a prior"
+        # Scale based on prior
+        new_y = y - np.sum(prior * X, axis=1)
+        self.model.fit(X, new_y, sample_weight=sample_weight)
+        # Shift back to original scale
+        self.model.coef_ += prior  # modifying underlying model's coefficients
+        return self
+
+    def predict(self, X):
+        return self.model.predict(X)
