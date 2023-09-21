@@ -21,7 +21,7 @@ def create_hf_dataset(target: str = "M", add_synthetic: bool = False) -> tuple[D
     """
     dataset = train_val_test(target=target, add_synthetic_train=add_synthetic)
 
-    data_hf = {k: {"text": v["x"][:200], "label": v["y"][:200]} for k, v in dataset.items()}
+    data_hf = {k: {"text": v["x"], "label": v["y"]} for k, v in dataset.items()}
 
     feat = Features({
         "text": Value("string"),
