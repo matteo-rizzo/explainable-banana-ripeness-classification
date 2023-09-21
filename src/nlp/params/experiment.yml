@@ -35,8 +35,8 @@ DecisionTreeClassifier:
 
 
 grid_search_params:
-  num_seeds: 5
-  test_size: 0.25
+  num_seeds: 1
+  test_size: 0.2
 
   RidgeClassifier:
     solver: [ auto, lsqr, sparse_cg ]
@@ -50,6 +50,15 @@ grid_search_params:
     penalty: [ l1, l2 ]
     C: [ 0.001, 0.01, 0.1, 1.0, 10, 100, 1000 ]
     max_iter: [ 500 ]
+
+  BayesianRidgeClassifier:
+    #  max_iter: None
+    tol: [ 1.0e-4, 1.0e-3 ]
+    alpha_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+    alpha_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+    lambda_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+    lambda_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+  #  alpha_init: None
 
   DecisionTreeClassifier:
     # The function to measure the quality of a split
