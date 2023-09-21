@@ -42,7 +42,7 @@ def finetune(hyperparameters) -> Trainer:
     else:
         checkpoint_model_path = get_next_run_name(base_model_path, base_model.replace("/", "_"))
 
-    train_ds, _ = create_hf_dataset(target="M")
+    train_ds, _ = create_hf_dataset(target="M", add_synthetic=hyperparameters["training"]["add_synthetic"])
 
     tokenizer = AutoTokenizer.from_pretrained(base_model)
 

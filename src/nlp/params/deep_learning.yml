@@ -3,6 +3,7 @@ use_gpu: true
 training:
   model_name: MilaNLProc/hate-ita
 
+  add_synthetic: false # Add also synthetic examples to training set
   eval_size: 0.25
   model_max_length: 256 # max is 512 for XMLRoberta, so it depends on the backbone model
 

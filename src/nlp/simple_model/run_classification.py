@@ -16,7 +16,7 @@ if __name__ == "__main__":
     clf_params = train_config[classifier_type.__name__]
 
     print("*** Misogyny task")
-    data = train_val_test(target="M")
+    data = train_val_test(target="M", add_synthetic_train=train_config["add_synthetic"])
     m_pred = naive_classifier(classifier_type(**clf_params), data)
     m_f1 = compute_metrics(m_pred, data["test"]["y"], classifier_type.__name__)["f1"]
 

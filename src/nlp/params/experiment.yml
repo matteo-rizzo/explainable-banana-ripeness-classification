@@ -1,6 +1,7 @@
 ---
 # Path to install folder of TreeTagger (on Linux the one where you executed the installation script)
 tree_tagger_path: /treetagger
+add_synthetic: false
 
 RidgeClassifier:
   solver: auto # lbfgs when positive = True
@@ -9,7 +10,7 @@ RidgeClassifier:
   positive: false
 
 BayesianRidgeClassifier:
-#  max_iter: None
+  #  max_iter: None
   tol: 1.0e-4
   alpha_1: 1.0e-6
   alpha_2: 1.0e-6

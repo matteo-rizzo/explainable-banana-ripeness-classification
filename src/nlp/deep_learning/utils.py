@@ -12,13 +12,13 @@ from transformers import Trainer
 from src.nlp.dataset import train_val_test
 
 
-def create_hf_dataset(target: str = "M") -> tuple[Dataset, Dataset]:
+def create_hf_dataset(target: str = "M", add_synthetic: bool = False) -> tuple[Dataset, Dataset]:
     """
     Load AMI dataset with specify binary target and prepare HuggingFace Dataset wrapper
 
     :return: training and test dataset
     """
-    dataset = train_val_test(target=target)
+    dataset = train_val_test(target=target, add_synthetic_train=add_synthetic)
 
     data_hf = {k: {"text": v["x"][:200], "label": v["y"][:200]} for k, v in dataset.items()}
 
