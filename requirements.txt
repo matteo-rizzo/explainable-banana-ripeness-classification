@@ -14,7 +14,9 @@ scipy~=1.9.3
 torchmetrics
 lime~=0.2.0.1
 shap~=0.41.0
+
 spacy
 treetaggerwrapper
 accelerate
 evaluate
+datasets
