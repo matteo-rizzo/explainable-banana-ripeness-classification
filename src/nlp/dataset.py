@@ -49,10 +49,10 @@ def compute_metrics(y_pred, y_true, sk_classifier_name: str = None) -> dict[str,
     precision, recall, f1_score, _ = metrics.precision_recall_fscore_support(y_true, y_pred, average="macro", pos_label=1)
     acc = metrics.accuracy_score(y_true, y_pred)
     if sk_classifier_name:
-        print(f"{sk_classifier_name} accuracy:", acc)
-        print(f"{sk_classifier_name} precision:", precision)
-        print(f"{sk_classifier_name} recall:", recall)
-        print(f"{sk_classifier_name} F1-score:", f1_score)
+        print(f"{sk_classifier_name} accuracy: {acc:.3f}")
+        print(f"{sk_classifier_name} precision: {precision:.3f}")
+        print(f"{sk_classifier_name} recall: {recall:.3f}")
+        print(f"{sk_classifier_name} F1-score: {f1_score:.3f}")
 
     return {"f1": f1_score, "accuracy": acc, "precision": precision, "recall": recall}
 
