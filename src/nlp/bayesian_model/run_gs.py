@@ -6,7 +6,7 @@ from sklearn.base import ClassifierMixin
 from sklearn.model_selection import GridSearchCV
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.bayesian_model.bayesian_pipeline import make_pipeline
+from src.nlp.bayesian_model.bayesian_pipeline import fit_pipeline
 from src.nlp.bayesian_model.bayesian_ridge_classifier import BayesianRidgeClassifier
 from src.nlp.dataset import train_val_test, compute_metrics
 
