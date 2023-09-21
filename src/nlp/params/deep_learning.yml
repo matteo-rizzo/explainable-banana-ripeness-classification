@@ -8,10 +8,11 @@ training:
 
   batch_size: 8
   test_batch_size: 16
-  learning_rate: 5.0e-5
+  learning_rate: 5.0e-3
   decay: 0.0
   freeze_base: true
-  epochs: 3
+  epochs: 2
+  es_patience: 2
 
   resume: false
   checkpoint: dumps/nlp_models/MilaNLProc_hate-ita_5 # path to folder with checkpoints (last epoch will be loaded)
@@ -20,3 +21,11 @@ testing:
   task_m_model_name: dumps/nlp_models/MilaNLProc_hate-ita_2/checkpoint-160 # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
   task_a_model_name: dumps/nlp_models/MilaNLProc_hate-ita_2/checkpoint-160 # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
   target_label: hateful # target for inference, depends on pre-trained model
+
+
+grid_search_params:
+  model_max_length: [ 128, 256, 512 ]
+  batch_size: [ 8, 16, 32 ]
+  learning_rate: [ 1.0e-3, 5.0e-3, 1.0e-4, 5.0e-4, 1.0e-5, 5.0e-5, 1.0e-6 ]
+  decay: [ 0.0, 0.01, 0.001 ]
+  epochs: [ 2, 3, 4 ]

@@ -35,7 +35,7 @@ DecisionTreeClassifier:
 
 grid_search_params:
   num_seeds: 5
-  test_size: 0.2
+  test_size: 0.25
 
   RidgeClassifier:
     solver: [ auto, lsqr, sparse_cg ]

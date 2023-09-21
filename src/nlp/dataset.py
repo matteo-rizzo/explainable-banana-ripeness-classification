@@ -21,7 +21,8 @@ def train_val_test(target: str = "M", validation: float = .0, random_state: int 
     add_val = dict()
 
     if validation > 0:
-        train_x, val_x, train_y, val_y, train_ids, val_ids = train_test_split(train_x, train_y, train_ids, test_size=validation, random_state=random_state)
+        train_x, val_x, train_y, val_y, train_ids, val_ids = train_test_split(train_x, train_y, train_ids, test_size=validation, random_state=random_state,
+                                                                              shuffle=True, stratify=train_y)
         add_val = {
             "val": {
                 "x": val_x,
