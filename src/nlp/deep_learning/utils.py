@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 from pathlib import Path
 
 import evaluate
@@ -94,3 +95,16 @@ def log_results(trainer_results, trainer: Trainer):
     # dataset statistics
     metrics["train_samples"] = len(trainer.train_dataset)  # min(max_val_samples, len(small_eval_dataset))
     metrics["eval_samples"] = len(trainer.eval_dataset)  # min(max_val_samples, len(small_eval_dataset))
+
+
+def delete_checkpoints(path: Path | str) -> None:
+    """ Remove HF-formatted checkpoints 'checkpoint-XX' from a path """
+    path = Path(path)
+    # Iterate over all items in the directory
+    for item in os.listdir(path):
+        # Construct the full path
+        item_path = path / item
+        # Check if it's a directory and matches the pattern 'checkpoint-X'
+        if item_path.is_dir() and re.match(r"^checkpoint-\d+$", item):
+            # Delete the directory
+            shutil.rmtree(item_path)

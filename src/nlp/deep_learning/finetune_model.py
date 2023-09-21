@@ -11,7 +11,7 @@ from transformers import TrainingArguments
 from transformers.trainer import Trainer
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml, dump_yaml
-from src.nlp.deep_learning.utils import create_hf_dataset, compute_metrics, get_next_run_name, log_results
+from src.nlp.deep_learning.utils import create_hf_dataset, compute_metrics, get_next_run_name, log_results, delete_checkpoints
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -23,6 +23,7 @@ DO_GRID_SEARCH: bool = True
 def finetune(hyperparameters) -> Trainer:
     """ Start LM fine-tuning using HuggingFace Trainer and utilities """
     base_model: str = hyperparameters["training"]["model_name"]
+    keep_n_best_models: int = hyperparameters["training"].get("keep_n_best_models", 1)
     eval_size: float = hyperparameters["training"]["eval_size"]
     model_max_length: int = hyperparameters["training"]["model_max_length"]
     batch_size: int = hyperparameters["training"]["batch_size"]
@@ -70,7 +71,7 @@ def finetune(hyperparameters) -> Trainer:
                                       optim=optim, learning_rate=lr, weight_decay=wd,
                                       use_cpu=not use_gpu, seed=943, data_seed=3211,
                                       save_strategy="epoch", evaluation_strategy="epoch", logging_strategy="epoch",
-                                      metric_for_best_model="eval_loss", save_total_limit=3, load_best_model_at_end=True)
+                                      metric_for_best_model="eval_loss", save_total_limit=keep_n_best_models, load_best_model_at_end=True)
 
     trainer = Trainer(
         model=model,
@@ -98,14 +99,20 @@ def grid_search_finetune(hyperparameters) -> None:
     gs_params = hyperparameters["grid_search_params"]
     # Get all possible combinations of hyperparameters
     combinations = [dict(zip(gs_params.keys(), cs)) for cs in itertools.product(*gs_params.values())]
+    # We do not need to save checkpoints for this
+    hyperparameters["training"]["keep_n_best_models"] = 1
 
     for c in combinations:
         # Update config
         hyperparameters["training"].update(c)
         # Train and evaluate
         trainer: Trainer = finetune(hyperparameters)
+
         # Save the used config for reference
-        dump_yaml(hyperparameters["training"], Path(trainer.args.output_dir) / "gs_params.yml")
+        dumps_dir = Path(trainer.args.output_dir)
+        dump_yaml(hyperparameters["training"], dumps_dir / "gs_params.yml")
+        # Delete heavy dumps
+        delete_checkpoints(dumps_dir)
 
 
 if __name__ == "__main__":

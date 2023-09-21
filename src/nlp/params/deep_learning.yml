@@ -14,6 +14,7 @@ training:
   freeze_base: true
   epochs: 2
   es_patience: 2
+  keep_n_best_models: 2
 
   resume: false
   checkpoint: dumps/nlp_models/MilaNLProc_hate-ita_5 # path to folder with checkpoints (last epoch will be loaded)
