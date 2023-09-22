@@ -114,6 +114,9 @@ def grid_search_finetune(hyperparameters) -> None:
         # Delete heavy dumps
         delete_checkpoints(dumps_dir)
 
+        del trainer
+        torch.cuda.empty_cache()
+
 
 if __name__ == "__main__":
     assert torch.cuda.is_available(), "CUDA is not available :("
