@@ -8,9 +8,9 @@ from transformers import pipeline
 # from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 
-def create_hf_pipeline(model_name: str, device: int | str, batch_size: int = None) -> pipeline:
+def create_hf_pipeline(model_name: str, device: int | str, batch_size: int = None, top_k=None) -> pipeline:
     # tokenizer = AutoTokenizer.from_pretrained(model_name)
     # model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
-    pipe = pipeline("text-classification", model=model_name, device=device, batch_size=batch_size)
+    pipe = pipeline("text-classification", model=model_name, device=device, batch_size=batch_size, top_k=top_k)
     return pipe
