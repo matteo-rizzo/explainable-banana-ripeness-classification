@@ -1,7 +1,11 @@
 import argparse
 import zipfile
 import pandas as pd
-import evaluation_utils
+
+# import evaluation_utils
+
+
+from src.nlp.ami2020_utils import evaluation_utils
 
 
 def read_input(submission_path, task):

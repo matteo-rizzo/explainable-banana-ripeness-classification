@@ -1,62 +1,107 @@
 # Read data
-import zipfile
 from pathlib import Path
 
 import pandas as pd
 from sklearn.linear_model import RidgeClassifier
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
+from src.nlp.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
 from src.nlp.dataset import train_val_test, compute_metrics
 from src.nlp.simple_model.pipeline import naive_classifier
 
 classifier_type = RidgeClassifier
 
+TEAM_NAME = "myTeam"
+
+
+def create_ami_submission(predictions: pd.DataFrame | pd.Series, task_type: str, data_type: str, run_type: str, run_id: str, team_name: str) -> str:
+    f = f"results/{team_name}.{task_type.upper()}.{data_type}.{run_type}.{run_id}"
+    Path(f).parent.mkdir(exist_ok=True, parents=True)
+
+    predictions.to_csv(f, header=False, sep="\t")
+    return f
+
+
 if __name__ == "__main__":
     train_config: dict = load_yaml("src/nlp/params/experiment.yml")
     clf_params = train_config[classifier_type.__name__]
+    synthetic_add = train_config["add_synthetic"]
+    task = train_config["task"]
 
     print("*** Misogyny task")
-    data = train_val_test(target="M", add_synthetic_train=train_config["add_synthetic"])
-    m_pred = naive_classifier(classifier_type(**clf_params), data)
+    data = train_val_test(target="M", add_synthetic_train=synthetic_add)
+    m_pred, pipe_m = naive_classifier(classifier_type(**clf_params), data, return_pipe=True)
     m_f1 = compute_metrics(m_pred, data["test"]["y"], classifier_type.__name__)["f1"]
 
-    # Get rows with predicted misogyny
-    misogyny_indexes, misogyny_ids = zip(
-        *[(i, pid) for i, (p, pid) in enumerate(zip(m_pred, data["test"]["ids"])) if p > 0])
-    non_misogyny_ids: set[int] = set(data["test"]["ids"]) - set(misogyny_ids)
+    match task:
+        case "B":
+            print("*** Misogyny task B ")
+            if not synthetic_add:
+                test_synt: dict = train_val_test(target="M", add_synthetic_train=True)["test_synt"]
+            else:
+                test_synt = data["test_synt"]
+            m_synt_pred = pipe_m.predict(test_synt["x"])
 
-    print("*** Aggressiveness task")
-    data = train_val_test(target="A")
+            df_pred = pd.Series(m_pred, index=pd.Index(data["test"]["ids"], dtype=str))
+            df_pred_synt = pd.Series(m_synt_pred, index=pd.Index(test_synt["ids"], dtype=str))
 
-    # data_aggressiveness = {
-    #     k: {
-    #         "x": list(itemgetter(*misogyny_indexes)(v["x"])),
-    #         "y": list(itemgetter(*misogyny_indexes)(v["y"])),
-    #         "ids": list(itemgetter(*misogyny_indexes)(v["ids"]))
-    #     } for k, v in data.items()
-    # }
+            # Preparing data for evaluation
+            df_pred = df_pred.to_frame().reset_index().rename(columns={"index": "id", 0: "misogynous"})
+            df_pred_synt = df_pred_synt.to_frame().reset_index().rename(columns={"index": "id", 0: "misogynous"})
+            # Read gold test set
+            test_set_base_path = data["test_set_path"]
+            raw_data_gold, synt_data_gold, identityterms = read_gold(test_set_base_path / "AMI2020_test_raw_gold_anon.tsv",
+                                                                     test_set_base_path / "AMI2020_test_synt_gold.tsv",
+                                                                     test_set_base_path / "AMI2020_test_identityterms.txt",
+                                                                     "b")
+            evaluate_task_b_singlefile(df_pred, df_pred_synt, raw_data_gold, synt_data_gold, identityterms)
 
-    a_pred = naive_classifier(classifier_type(**clf_params), data)
-    a_true = data["test"]["y"]
-    a_ids = data["test"]["ids"]
-    # a_pred = [0] * len(m_pred)
+            # USE BELOW to create submission files for the competition
+            # fr = create_ami_submission(df_pred, task_type="B", data_type="r", run_type="c", run_id="run1", team_name=TEAM_NAME)
+            # fs = create_ami_submission(df_pred_synt, task_type="B", data_type="s", run_type="c", run_id="run1", team_name=TEAM_NAME)
+            # # create a ZipFile object in write mode
+            # with zipfile.ZipFile(f"results/{TEAM_NAME}.zip", "w", zipfile.ZIP_DEFLATED) as zipf:
+            #     # add the file to the zip file
+            #     zipf.write(fr)
+            #     zipf.write(fs)
 
-    # a_pred = np.concatenate([a_pred, np.array([0] * len(non_misogyny_ids))])
-    # a_ids = data_aggressiveness["test"]["ids"] + list(non_misogyny_ids)
-    # a_true = data_aggressiveness["test"]["y"] + ([0] * len(non_misogyny_ids))
+        case "A":
+            # Get rows with predicted misogyny
+            # misogyny_indexes, misogyny_ids = zip(
+            #     *[(i, pid) for i, (p, pid) in enumerate(zip(m_pred, data["test"]["ids"])) if p > 0])
+            # non_misogyny_ids: set[int] = set(data["test"]["ids"]) - set(misogyny_ids)
 
-    a_f1 = compute_metrics(a_pred, a_true, classifier_type.__name__)["f1"]
+            print("*** Aggressiveness task")
+            data = train_val_test(target="A")
 
-    a_score = (m_f1 + a_f1) / 2
-    print(f"\n*** Task A score: {a_score:.5f} ***")
+            # data_aggressiveness = {
+            #     k: {
+            #         "x": list(itemgetter(*misogyny_indexes)(v["x"])),
+            #         "y": list(itemgetter(*misogyny_indexes)(v["y"])),
+            #         "ids": list(itemgetter(*misogyny_indexes)(v["ids"]))
+            #     } for k, v in data.items()
+            # }
 
-    f = "results/bestTeam.A.r.u.run1"
-    Path(f).parent.mkdir(exist_ok=True, parents=True)
-    pd.DataFrame([m_pred, a_pred], columns=a_ids).T.to_csv(f, header=False, sep="\t")
+            a_pred = naive_classifier(classifier_type(**clf_params), data)
+            a_true = data["test"]["y"]
+            a_ids = data["test"]["ids"]
+            # a_pred = [0] * len(m_pred)
 
-    # create a ZipFile object in write mode
-    with zipfile.ZipFile(f"{f}.zip", "w", zipfile.ZIP_DEFLATED) as zipf:
-        # add the file to the zip file
-        zipf.write(f)
+            # a_pred = np.concatenate([a_pred, np.array([0] * len(non_misogyny_ids))])
+            # a_ids = data_aggressiveness["test"]["ids"] + list(non_misogyny_ids)
+            # a_true = data_aggressiveness["test"]["y"] + ([0] * len(non_misogyny_ids))
+
+            a_f1 = compute_metrics(a_pred, a_true, classifier_type.__name__)["f1"]
+
+            a_score = (m_f1 + a_f1) / 2
+            print(f"\n*** Task A score: {a_score:.5f} ***")
+
+            # df_pred = pd.DataFrame([m_pred, a_pred], columns=a_ids).T
+            # fo = create_ami_submission(df_pred, task_type="A", data_type="r", run_type="c", run_id="run1", team_name=TEAM_NAME)
+            # with zipfile.ZipFile(f"results/{TEAM_NAME}.zip", "w", zipfile.ZIP_DEFLATED) as zipf:
+            #     zipf.write(fo)
+
+        case _:
+            raise ValueError(f"Unsupported task '{task}'. Only 'A' or 'B' are possible values.")
 
     # Best task A score: 0.707

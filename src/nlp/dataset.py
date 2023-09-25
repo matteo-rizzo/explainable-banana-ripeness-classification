@@ -15,10 +15,14 @@ def train_val_test(target: str = "M", validation: float = .0, random_state: int 
     train_df = pd.read_csv(base_dataset / "trainingset" / "AMI2020_training_raw_anon.tsv", sep="\t", usecols=["id", "text", target])
     test_df = pd.read_csv(base_dataset / "testset" / "AMI2020_test_raw_gold_anon.tsv", sep="\t", usecols=["id", "text", target])
 
+    synt_test_x, synt_test_y, synt_test_ids = None, None, None  # Synthetic test set, only returned if add_synthetic_train = True
     if add_synthetic_train and target == "misogynous":
         train_df_synt = pd.read_csv(base_dataset / "trainingset" / "AMI2020_training_synt.tsv", sep="\t", usecols=["id", "text", "misogynous"])
         train_df_synt["id"] = "s_" + train_df_synt["id"].astype(str)
         train_df = pd.concat([train_df, train_df_synt])
+
+        test_df_synt = pd.read_csv(base_dataset / "testset" / "AMI2020_test_synt_gold.tsv", sep="\t", usecols=["id", "text", "misogynous"])
+        synt_test_x, synt_test_y, synt_test_ids = test_df_synt["text"].tolist(), test_df_synt[target].tolist(), test_df_synt["id"].tolist()
 
     train_x, train_y, train_ids = train_df["text"].tolist(), train_df[target].tolist(), train_df["id"].tolist()
     test_x, test_y, test_ids = test_df["text"].tolist(), test_df[target].tolist(), test_df["id"].tolist()
@@ -36,7 +40,17 @@ def train_val_test(target: str = "M", validation: float = .0, random_state: int 
             }
         }
 
+    if add_synthetic_train:
+        add_val.update({
+            "test_synt": {
+                "x": synt_test_x,
+                "y": synt_test_y,
+                "ids": synt_test_ids
+            }
+        })
+
     return {
+        "test_set_path": base_dataset / "testset",  # used for task B evaluation
         "train": {
             "x": train_x,
             "y": train_y,
