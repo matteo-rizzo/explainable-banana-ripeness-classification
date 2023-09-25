@@ -20,3 +20,4 @@ treetaggerwrapper
 accelerate
 evaluate
 datasets
+nlpaug
