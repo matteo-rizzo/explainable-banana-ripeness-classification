@@ -1,4 +1,6 @@
 use_gpu: true
+add_synthetic: true
+task: B # A or B
 
 training:
   model_name: facebook/xlm-v-base # google/flan-t5-base # MilaNLProc/hate-ita
@@ -20,9 +22,9 @@ training:
   checkpoint: dumps/nlp_models/MilaNLProc_hate-ita_5 # path to folder with checkpoints (last epoch will be loaded)
 
 testing:
-  task_m_model_name: dumps/nlp_models/MilaNLProc_hate-ita_2/checkpoint-160 # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
-  task_a_model_name: dumps/nlp_models/MilaNLProc_hate-ita_2/checkpoint-160 # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
-  target_label: hateful # target for inference, depends on pre-trained model
+  task_m_model_name: dumps/nlp_models/MilaNLProc_hate-ita_2/checkpoint-828 # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
+  task_a_model_name: dumps/nlp_models/MilaNLProc_hate-ita_2/checkpoint-828 # "Hate-speech-CNERG/dehatebert-mono-italian OR path to existing checkpoint
+  target_label: hateful # LABEL_1 # hateful # target for inference, depends on pre-trained model
 
 
 grid_search_params:

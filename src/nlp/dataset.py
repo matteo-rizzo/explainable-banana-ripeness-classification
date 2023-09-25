@@ -5,6 +5,8 @@ from sklearn import metrics
 from sklearn.model_selection import train_test_split
 from typing import Iterable
 
+from src.nlp.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
+
 
 def train_val_test(target: str = "M", validation: float = .0, random_state: int = 0, add_synthetic_train: bool = False) -> dict[str, dict[str, list]]:
     base_dataset = Path("dataset/AMI2020")
@@ -88,3 +90,13 @@ def batch_list(iterable: Iterable, batch_size: int = 10) -> Iterable:
     data_len = len(iterable)
     for ndx in range(0, data_len, batch_size):
         yield iterable[ndx:min(ndx + batch_size, data_len)]
+
+
+def task_b_eval(data_dict: dict, df_pred: pd.DataFrame, df_pred_synt: pd.DataFrame):
+    """ Evaluate AMI TASK B """
+    test_set_base_path = data_dict["test_set_path"]
+    raw_data_gold, synt_data_gold, identityterms = read_gold(test_set_base_path / "AMI2020_test_raw_gold_anon.tsv",
+                                                             test_set_base_path / "AMI2020_test_synt_gold.tsv",
+                                                             test_set_base_path / "AMI2020_test_identityterms.txt",
+                                                             "b")
+    evaluate_task_b_singlefile(df_pred, df_pred_synt, raw_data_gold, synt_data_gold, identityterms)

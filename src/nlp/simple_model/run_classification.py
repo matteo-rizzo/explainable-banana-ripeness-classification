@@ -5,8 +5,7 @@ import pandas as pd
 from sklearn.linear_model import RidgeClassifier
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
-from src.nlp.dataset import train_val_test, compute_metrics
+from src.nlp.dataset import train_val_test, compute_metrics, task_b_eval
 from src.nlp.simple_model.pipeline import naive_classifier
 
 classifier_type = RidgeClassifier
@@ -25,17 +24,17 @@ def create_ami_submission(predictions: pd.DataFrame | pd.Series, task_type: str,
 if __name__ == "__main__":
     train_config: dict = load_yaml("src/nlp/params/experiment.yml")
     clf_params = train_config[classifier_type.__name__]
-    synthetic_add = train_config["add_synthetic"]
-    task = train_config["task"]
+    synthetic_add: bool = train_config["add_synthetic"]
+    task: str = train_config["task"]
 
-    print("*** Misogyny task")
+    print("*** Predicting misogyny ")
     data = train_val_test(target="M", add_synthetic_train=synthetic_add)
     m_pred, pipe_m = naive_classifier(classifier_type(**clf_params), data, return_pipe=True)
     m_f1 = compute_metrics(m_pred, data["test"]["y"], classifier_type.__name__)["f1"]
 
     match task:
         case "B":
-            print("*** Misogyny task B ")
+            print("*** Task B ")
             if not synthetic_add:
                 test_synt: dict = train_val_test(target="M", add_synthetic_train=True)["test_synt"]
             else:
@@ -49,12 +48,7 @@ if __name__ == "__main__":
             df_pred = df_pred.to_frame().reset_index().rename(columns={"index": "id", 0: "misogynous"})
             df_pred_synt = df_pred_synt.to_frame().reset_index().rename(columns={"index": "id", 0: "misogynous"})
             # Read gold test set
-            test_set_base_path = data["test_set_path"]
-            raw_data_gold, synt_data_gold, identityterms = read_gold(test_set_base_path / "AMI2020_test_raw_gold_anon.tsv",
-                                                                     test_set_base_path / "AMI2020_test_synt_gold.tsv",
-                                                                     test_set_base_path / "AMI2020_test_identityterms.txt",
-                                                                     "b")
-            evaluate_task_b_singlefile(df_pred, df_pred_synt, raw_data_gold, synt_data_gold, identityterms)
+            task_b_eval(data, df_pred, df_pred_synt)
 
             # USE BELOW to create submission files for the competition
             # fr = create_ami_submission(df_pred, task_type="B", data_type="r", run_type="c", run_id="run1", team_name=TEAM_NAME)
@@ -71,7 +65,8 @@ if __name__ == "__main__":
             #     *[(i, pid) for i, (p, pid) in enumerate(zip(m_pred, data["test"]["ids"])) if p > 0])
             # non_misogyny_ids: set[int] = set(data["test"]["ids"]) - set(misogyny_ids)
 
-            print("*** Aggressiveness task")
+            print("*** Task A")
+            print("*** Predicting aggressiveness ")
             data = train_val_test(target="A")
 
             # data_aggressiveness = {
