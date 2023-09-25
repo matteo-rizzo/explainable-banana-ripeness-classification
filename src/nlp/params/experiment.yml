@@ -16,6 +16,14 @@ RidgePriorClassifier:
   alpha: 10.0
   positive: false
 
+LogisticPriorClassifier:
+  solver: liblinear
+  tol: 1.0e-4
+  dual: true
+  penalty: l2
+  C: 1.0
+  max_iter: 100000
+
 BayesianRidgeClassifier:
   #  max_iter: None
   tol: 1.0e-4
@@ -49,6 +57,12 @@ grid_search_params:
     solver: [ auto, lsqr, sparse_cg ]
     tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
     alpha: [ 1.0e-06, 1.0e-05,  1.0e-04, 1.0e-03, 1.0e-02, 1.0e-01, 1.0, 1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6 ]
+
+  RidgePriorClassifier:
+    solver: [ auto, lsqr, sparse_cg ] # lbfgs when positive = True
+    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
+    alpha: [ 1.0e-06, 1.0e-05,  1.0e-04, 1.0e-03, 1.0e-02, 1.0e-01, 1.0, 1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6 ]
+    positive: [false, true]
 
   LogisticRegression:
     solver: [ liblinear, newton-cg, lbfgs ]
