@@ -108,7 +108,7 @@ class TextFeatureExtractor:
         string_clean = re.sub(" +", " ", string_clean)
 
         # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9, _, !, ? and all strings made of ":A-Z:", removing the colons
-        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s!?]", "", string_clean)
+        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s]", "", string_clean)  # removed !? for now
         string_clean = re.sub(r":", "", string_clean).strip()
 
         string_empty = len(string_clean) == 0

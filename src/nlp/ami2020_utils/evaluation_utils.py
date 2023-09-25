@@ -127,6 +127,8 @@ def get_final_metric(bias_df, overall_auc_test, model_name):
         bias_df[model_name + '_bpsn_auc'],
         bias_df[model_name + '_bnsp_auc']
     ])
+    print(f"Bias Score = {bias_score:.5f}")
+    print(f"AUC Score = {overall_auc_test:.5f}")
     return np.mean([overall_auc_test, bias_score])
 
 
