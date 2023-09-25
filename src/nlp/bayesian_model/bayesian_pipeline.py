@@ -65,7 +65,7 @@ def fit_pipeline(sk_classifier, X, y):
             f.write("%s\n" % item)
 
     with open('src/nlp/params/test_prior.txt', 'r', encoding='utf-8') as f:
-        prior_list = {line.split()[0]: float(line.split()[1]) for line in f}
+        prior_list = {' '.join(line.split()[:-1]): float(line.split()[-1]) for line in f}
 
     # Step 2: Conversion to dense array
     X_dense = X_transformed.toarray()

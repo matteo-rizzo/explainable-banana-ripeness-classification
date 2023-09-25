@@ -8,7 +8,8 @@ from typing import Iterable
 from src.nlp.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
 
 
-def train_val_test(target: str = "M", validation: float = .0, random_state: int = 0, add_synthetic_train: bool = False) -> dict[str, dict[str, list]]:
+def train_val_test(target: str = "M", validation: float = .0,
+                   random_state: int = 0, add_synthetic_train: bool = False) -> dict[str, dict[str, list]]:
     base_dataset = Path("dataset/AMI2020")
 
     target = "misogynous" if target == "M" else "aggressiveness"

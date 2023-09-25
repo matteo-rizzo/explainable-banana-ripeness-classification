@@ -1,13 +1,14 @@
+import html.entities
 import json
 import logging
 import re
 from collections import defaultdict
+
 import spacy
 from spacy import Language
 from treetaggerwrapper import TreeTagger
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-import html.entities
 
 punctuation = r"""!"'()*+,-./:;<=>?[\]^_`{|}~"""  # r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
 
@@ -107,9 +108,20 @@ class TextFeatureExtractor:
         # Remove double spaces
         string_clean = re.sub(" +", " ", string_clean)
 
-        # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9, _, !, ? and all strings made of ":A-Z:", removing the colons
-        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s]", "", string_clean)  # removed !? for now
+        # # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9,
+        # _, !, ? and all strings made of ":A-Z:", removing the colons
+        # string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s]", "", string_clean)  # removed !? for now
+        # string_clean = re.sub(r":", "", string_clean).strip()
+
+        # Regular expression pattern with negative lookahead (remove all characters that are not A-z,
+        # 0-9, and all strings made of ":A-Z:", removing the colons
+        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s]|[_!?]", "", string_clean)
+
+        # Remove colons
         string_clean = re.sub(r":", "", string_clean).strip()
+
+        # Remove @card@
+        # string_clean = string_clean.replace("@card@", "")
 
         string_empty = len(string_clean) == 0
         if string_empty:
@@ -121,7 +133,7 @@ class TextFeatureExtractor:
         # Lemmatizing each token and converting each token into lowercase
         # tokens = [token.lemma_.lower().strip() if token.lemma_ != "-PRON-" else token.lower_ for token in doc if not token.is_stop]
         tokens = [token.lemma_.lower().strip() for token in doc if not token.is_stop]
-        tokens = [t for t in tokens if t and (not t.isalnum() or len(t) > 2)]
+        tokens = [t for t in tokens if t and (not t.isalnum() or len(t) > 2) and t != "@card@"]
         # print(tokens)
         # pos_token = [token.pos_ for token in doc if not token.is_stop]
 
