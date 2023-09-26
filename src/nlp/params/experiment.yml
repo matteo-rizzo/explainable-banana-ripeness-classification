@@ -2,7 +2,8 @@
 # Path to install folder of TreeTagger (on Linux the one where you executed the installation script)
 tree_tagger_path: /treetagger # /home/alessandro/opt/treetagger
 add_synthetic: true
-task: B # A or B
+task: A # A or B
+max_features: 10000
 
 RidgeClassifier:
   solver: auto # lbfgs when positive = True
@@ -47,7 +48,21 @@ DecisionTreeClassifier:
   min_samples_split: 2
   ccp_alpha: 0.0016
 
+GaussianHMM:
+  algorithm: viterbi
 
+LinearSVC:
+  penalty: l2
+  loss: squared_hinge
+  tol: 1.0e-4
+  C: 1.0
+  dual: auto
+  max_iter: 1000
+
+MultinomialNB:
+  alpha: 1.0
+  fit_prior: true
+  force_alpha: false
 
 grid_search_params:
   num_seeds: 1
@@ -61,8 +76,8 @@ grid_search_params:
   RidgePriorClassifier:
     solver: [ auto, lsqr, sparse_cg ] # lbfgs when positive = True
     tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
-    alpha: [ 1.0e-06, 1.0e-05,  1.0e-04, 1.0e-03, 1.0e-02, 1.0e-01, 1.0, 1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6 ]
-    positive: [false, true]
+    alpha: [ 1.0e-06, 1.0e-03, 1.0e-02, 1.0e-01, 1.0, 1.0e+1, 1.0e+2, 1.0e+5, 1.0e+6 ]
+    positive: [ false, true ]
 
   LogisticRegression:
     solver: [ liblinear, newton-cg, lbfgs ]
@@ -70,16 +85,29 @@ grid_search_params:
     dual: [ true, false ]
     penalty: [ l1, l2 ]
     C: [ 0.001, 0.01, 0.1, 1.0, 10, 100, 1000 ]
-    max_iter: [ 500 ]
+    max_iter: [ 500, 1000 ]
 
-  BayesianRidgeClassifier:
-    #  max_iter: None
-    tol: [ 1.0e-4, 1.0e-3 ]
-    alpha_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-    alpha_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-    lambda_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-    lambda_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-  #  alpha_init: None
+  LinearSVC:
+#    penalty: [l1, l2]
+#    loss: [hinge, squared_hinge]
+    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
+    C: [ 0.001, 0.01, 0.1, 1.0, 10, 50, 100, 200, 500, 1000 ]
+    max_iter: [50000, 100000]
+    dual: [auto]
+
+  MultinomialNB:
+    alpha: [ 0.001, 0.01, 0.1, 1.0, 10, 100, 1000 ]
+    fit_prior: [true, false]
+    force_alpha: [true, false]
+
+#  BayesianRidgeClassifier:
+#    #  max_iter: None
+#    tol: [ 1.0e-4, 1.0e-3 ]
+#    alpha_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+#    alpha_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+#    lambda_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+#    lambda_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
+#  #  alpha_init: None
 
   DecisionTreeClassifier:
     # The function to measure the quality of a split
@@ -94,15 +122,10 @@ grid_search_params:
     # The minimum number of samples required to be at a leaf node
     # min_samples_leaf: [1, 2, 3, 4, 5]
     # The number of features to consider when looking for the best split # null = None
-    # max_features: [null, "sqrt", "log2"] # Not very impactful
+    max_features: [null, "sqrt", "log2"] # Not very impactful
     # Grow a tree with max_leaf_nodes in best-first fashion # null = None
     # max_leaf_nodes: [null, 5, 10, 15, 30, 50, 75, 100]
     # Complexity parameter used for Minimal Cost-Complexity Pruning
     # The subtree with the largest cost complexity that is smaller than ccp_alpha will be chosen
     # By default, no pruning is performed
-    ccp_alpha: [ 0.0, 0.001, 0.0012, 0.0014, 0.0016, 0.0018,
-                 0.002, 0.0025, 0.0026, 0.0026,
-                 0.0026, 0.0028, 0.003,
-                 0.005, 0.0075,
-                 0.01, 0.1
-    ]
+    ccp_alpha: [ 0.0, 0.001, 0.01, 0.1 ]

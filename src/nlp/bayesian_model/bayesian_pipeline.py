@@ -48,7 +48,7 @@ def bayesian_make_pipeline(sk_classifier: ClassifierMixin, prior=None) -> Pipeli
     return pipe
 
 
-def fit_pipeline(sk_classifier, X, y):
+def fit_prior_pipeline(sk_classifier, X, y):
     max_features = 8000
     fex = TextFeatureExtractor()
     bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
@@ -101,7 +101,7 @@ def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
 def bayesian_classifier(sk_classifier, training_data: dict[str, dict[str, list]],
                         return_pipe: bool = False) -> np.ndarray | tuple[np.ndarray, Pipeline]:
     print("------ Training")
-    clf, vect = fit_pipeline(sk_classifier, training_data["train"]["x"], training_data["train"]["y"])
+    clf, vect = fit_prior_pipeline(sk_classifier, training_data["train"]["x"], training_data["train"]["y"])
 
     print("------ Testing")
 
