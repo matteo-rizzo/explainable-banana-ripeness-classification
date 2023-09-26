@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.bayesian_model.bayesian_ridge_classifier import RidgePriorClassifier
 from src.nlp.dataset import train_val_test, compute_metrics
-from src.nlp.simple_model.text_features import TextFeatureExtractor
+from src.nlp.text_features import TextFeatureExtractor
 
 classifier_type = RidgePriorClassifier
 
