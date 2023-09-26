@@ -121,8 +121,9 @@ class TextFeatureExtractor:
         # Remove double spaces
         string_clean = re.sub(" +", " ", string_clean)
 
-        # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9, _, !, ? and all strings made of ":A-Z:", removing the colons
-        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s]", "", string_clean)  # removed !? for now
+        # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9,
+        # and all strings made of ":A-Z:", removing the colons
+        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s]|_", "", string_clean)  # removed !? for now
         string_clean = re.sub(r":", "", string_clean).strip()
 
         # Remove @card@
