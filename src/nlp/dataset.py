@@ -1,10 +1,10 @@
 from pathlib import Path
+from typing import Iterable, Callable
 
 import numpy as np
 import pandas as pd
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
-from typing import Iterable, Callable
 
 from src.nlp.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
 
@@ -24,17 +24,22 @@ def train_val_test(target: str = "M", validation: float = .0,
     target = "misogynous" if target == "M" else "aggressiveness"
 
     # base_dataset
-    train_df = pd.read_csv(base_dataset / "trainingset" / "AMI2020_training_raw_anon.tsv", sep="\t", usecols=["id", "text", target])
-    test_df = pd.read_csv(base_dataset / "testset" / "AMI2020_test_raw_gold_anon.tsv", sep="\t", usecols=["id", "text", target])
+    train_df = pd.read_csv(base_dataset / "trainingset" / "AMI2020_training_raw_anon.tsv", sep="\t",
+                           usecols=["id", "text", target])
+    test_df = pd.read_csv(base_dataset / "testset" / "AMI2020_test_raw_gold_anon.tsv", sep="\t",
+                          usecols=["id", "text", target])
 
     synt_test_x, synt_test_y, synt_test_ids = None, None, None  # Synthetic test set, only returned if add_synthetic_train = True
     if add_synthetic_train and target == "misogynous":
-        train_df_synt = pd.read_csv(base_dataset / "trainingset" / "AMI2020_training_synt.tsv", sep="\t", usecols=["id", "text", "misogynous"])
+        train_df_synt = pd.read_csv(base_dataset / "trainingset" / "AMI2020_training_synt.tsv", sep="\t",
+                                    usecols=["id", "text", "misogynous"])
         train_df_synt["id"] = "s_" + train_df_synt["id"].astype(str)
         train_df = pd.concat([train_df, train_df_synt])
 
-        test_df_synt = pd.read_csv(base_dataset / "testset" / "AMI2020_test_synt_gold.tsv", sep="\t", usecols=["id", "text", "misogynous"])
-        synt_test_x, synt_test_y, synt_test_ids = test_df_synt["text"].tolist(), test_df_synt[target].tolist(), test_df_synt["id"].tolist()
+        test_df_synt = pd.read_csv(base_dataset / "testset" / "AMI2020_test_synt_gold.tsv", sep="\t",
+                                   usecols=["id", "text", "misogynous"])
+        synt_test_x, synt_test_y, synt_test_ids = test_df_synt["text"].tolist(), test_df_synt[target].tolist(), \
+        test_df_synt["id"].tolist()
 
     train_x, train_y, train_ids = train_df["text"].tolist(), train_df[target].tolist(), train_df["id"].tolist()
     test_x, test_y, test_ids = test_df["text"].tolist(), test_df[target].tolist(), test_df["id"].tolist()
@@ -47,7 +52,9 @@ def train_val_test(target: str = "M", validation: float = .0,
     add_val = dict()
 
     if validation > 0:
-        train_x, val_x, train_y, val_y, train_ids, val_ids = train_test_split(train_x, train_y, train_ids, test_size=validation, random_state=random_state,
+        train_x, val_x, train_y, val_y, train_ids, val_ids = train_test_split(train_x, train_y, train_ids,
+                                                                              test_size=validation,
+                                                                              random_state=random_state,
                                                                               shuffle=True, stratify=train_y)
         add_val = {
             "val": {
@@ -83,7 +90,8 @@ def train_val_test(target: str = "M", validation: float = .0,
 
 
 def compute_metrics(y_pred, y_true, sk_classifier_name: str = None) -> dict[str, float]:
-    precision, recall, f1_score, _ = metrics.precision_recall_fscore_support(y_true, y_pred, average="macro", pos_label=1)
+    precision, recall, f1_score, _ = metrics.precision_recall_fscore_support(y_true, y_pred, average="macro",
+                                                                             pos_label=1)
     acc = metrics.accuracy_score(y_true, y_pred)
     if sk_classifier_name:
         print(f"{sk_classifier_name} accuracy: {acc:.3f}")
