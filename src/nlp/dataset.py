@@ -4,13 +4,21 @@ import numpy as np
 import pandas as pd
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
-from typing import Iterable
+from typing import Iterable, Callable
 
 from src.nlp.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
 
 
+def loop_preprocess(fn: Callable[[str], str], texts: list[str]) -> list[str]:
+    texts_preprocessed = list()
+    for txt in texts:
+        texts_preprocessed.append(fn(txt))
+    return texts_preprocessed
+
+
 def train_val_test(target: str = "M", validation: float = .0,
-                   random_state: int = 0, add_synthetic_train: bool = False) -> dict[str, dict[str, list]]:
+                   random_state: int = 0, add_synthetic_train: bool = False,
+                   preprocessing_function: Callable[[str], str] = None) -> dict[str, dict[str, list]]:
     base_dataset = Path("dataset/AMI2020")
 
     target = "misogynous" if target == "M" else "aggressiveness"
@@ -30,6 +38,11 @@ def train_val_test(target: str = "M", validation: float = .0,
 
     train_x, train_y, train_ids = train_df["text"].tolist(), train_df[target].tolist(), train_df["id"].tolist()
     test_x, test_y, test_ids = test_df["text"].tolist(), test_df[target].tolist(), test_df["id"].tolist()
+
+    if preprocessing_function is not None:
+        train_x = loop_preprocess(preprocessing_function, train_x)
+        test_x = loop_preprocess(preprocessing_function, test_x)
+        synt_test_x = loop_preprocess(preprocessing_function, synt_test_x) if synt_test_x else None
 
     add_val = dict()
 

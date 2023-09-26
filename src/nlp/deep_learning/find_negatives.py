@@ -5,7 +5,7 @@ import pandas as pd
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.dataset import train_val_test, wrong_predictions, compute_metrics
-from src.nlp.deep_learning.pipeline import create_hf_pipeline
+from src.nlp.deep_learning.pipeline import create_hf_pipeline, deep_preprocessing
 
 if __name__ == "__main__":
     out = Path("dumps") / "nlp_models" / "error_reports" / "DL"
@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     print("*** Predicting misogyny ")
     pipe_m = create_hf_pipeline(config["testing"]["task_m_model_name"], device=0 if use_gpu else "cpu", batch_size=bs, top_k=None)
-    dataset_m = train_val_test(target="M", add_synthetic_train=add_synthetic)
+    dataset_m = train_val_test(target="M", add_synthetic_train=add_synthetic, preprocessing_function=deep_preprocessing)
     x_data = dataset_m["test"]["x"] + dataset_m["test_synt"]["x"]
     y_data = dataset_m["test"]["y"] + dataset_m["test_synt"]["y"]
 

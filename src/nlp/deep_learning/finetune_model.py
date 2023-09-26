@@ -11,6 +11,7 @@ from transformers import TrainingArguments
 from transformers.trainer import Trainer
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml, dump_yaml
+from src.nlp.deep_learning.pipeline import deep_preprocessing
 from src.nlp.deep_learning.utils import create_hf_dataset, compute_metrics, get_next_run_name, log_results, delete_checkpoints
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -43,7 +44,7 @@ def finetune(hyperparameters) -> Trainer:
     else:
         checkpoint_model_path = get_next_run_name(base_model_path, base_model.replace("/", "_"))
 
-    train_ds, _ = create_hf_dataset(target="M", add_synthetic=hyperparameters["training"]["add_synthetic"])
+    train_ds, _ = create_hf_dataset(target="M", add_synthetic=hyperparameters["training"]["add_synthetic"], preprocessing_function=deep_preprocessing)
 
     tokenizer = AutoTokenizer.from_pretrained(base_model)
 

@@ -4,6 +4,7 @@ import os
 import re
 import shutil
 from pathlib import Path
+from typing import Callable
 
 import evaluate
 import numpy as np
@@ -16,13 +17,13 @@ from transformers import Trainer
 from src.nlp.dataset import train_val_test
 
 
-def create_hf_dataset(target: str = "M", add_synthetic: bool = False) -> tuple[Dataset, Dataset]:
+def create_hf_dataset(target: str = "M", add_synthetic: bool = False, preprocessing_function: Callable[[str], str] = None) -> tuple[Dataset, Dataset]:
     """
-    Load AMI dataset with specify binary target and prepare HuggingFace Dataset wrapper
+    Load AMI dataset with specified the binary target and prepare HuggingFace Dataset wrapper
 
     :return: training and test dataset
     """
-    dataset = train_val_test(target=target, add_synthetic_train=add_synthetic)
+    dataset = train_val_test(target=target, add_synthetic_train=add_synthetic, preprocessing_function=preprocessing_function)
 
     data_hf = {k: {"text": v["x"], "label": v["y"]} for k, v in dataset.items()}
 

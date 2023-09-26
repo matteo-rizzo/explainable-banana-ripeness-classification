@@ -5,7 +5,7 @@ import torch.cuda
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
 from src.nlp.dataset import train_val_test, compute_metrics, task_b_eval
-from src.nlp.deep_learning.pipeline import create_hf_pipeline
+from src.nlp.deep_learning.pipeline import create_hf_pipeline, deep_preprocessing
 
 if __name__ == "__main__":
     config: dict = load_yaml("src/nlp/params/deep_learning.yml")
@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     print("*** Predicting misogyny ")
     pipe_m = create_hf_pipeline(config["testing"]["task_m_model_name"], device=0 if use_gpu else "cpu", batch_size=bs, top_k=1)
-    dataset_m = train_val_test(target="M", add_synthetic_train=add_synthetic or task == "B")
+    dataset_m = train_val_test(target="M", add_synthetic_train=add_synthetic or task == "B", preprocessing_function=deep_preprocessing)
     results = pipe_m(dataset_m["test"]["x"])
     results = [1 if e[0]["label"] == target_label else 0 for e in results]
     metrics = compute_metrics(y_pred=results, y_true=dataset_m["test"]["y"])
