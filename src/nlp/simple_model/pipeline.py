@@ -13,6 +13,13 @@ from src.nlp.dataset import train_val_test, compute_metrics
 from src.nlp.simple_model.text_features import TextFeatureExtractor
 
 
+def predict_scores(pipeline: Pipeline, samples: list[str]) -> np.ndarray:
+    samples_tok = pipeline["vectorizer"].transform(samples)
+    scores = pipeline["classifier"].decision_function(samples_tok)
+    # scores = sp.special.expit(scores)
+    return scores
+
+
 def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
     fex = TextFeatureExtractor()
     bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
@@ -27,17 +34,19 @@ def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
 
 
 def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]],
-                     return_pipe: bool = False) -> np.ndarray | tuple[np.ndarray, Pipeline]:
+                     return_pipe: bool = False, predict: bool = True) -> np.ndarray | tuple[np.ndarray, Pipeline]:
     pipe = make_pipeline(sk_classifier)
 
     print("------ Training")
 
     pipe.fit(training_data["train"]["x"], training_data["train"]["y"])
 
-    print("------ Testing")
+    predicted = None
+    if predict:
+        print("------ Testing")
 
-    # Predicting with a test dataset
-    predicted = pipe.predict(training_data["test"]["x"])
+        # Predicting with a test dataset
+        predicted = pipe.predict(training_data["test"]["x"])
 
     if not return_pipe:
         return predicted
