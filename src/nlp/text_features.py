@@ -1,19 +1,22 @@
+import html.entities
 import json
 import logging
 import re
 from collections import defaultdict
+
 import spacy
 from spacy import Language
+# from spacy.lang.it import STOP_WORDS
+# import nlpaug.augmenter.word as naw
 from treetaggerwrapper import TreeTagger
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-import html.entities
 
-punctuation = r"""!"'()*+,-./:;<=>?[\]^_`{|}~"""  # r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
+punctuation = r"""!"'\(\)\*\+,-\./;<=>\?\[\\]^_`{|}\~"""  # r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
 
 
 def char_to_unicode(char):
-    return "U+" + format(ord(char), '04X')
+    return "U+" + format(ord(char), "04X")
 
 
 def separate_html_entities(text) -> str:
@@ -74,6 +77,8 @@ class TextFeatureExtractor:
         match = re.compile(r"[^\w]")
         self.__entity_map = {e["code"]: f":{match.sub('', e['description']).upper().strip()}:" for e in emap}
 
+        # self.__augmenter = naw.SynonymAug(aug_src="wordnet", lang="ita", stopwords=STOP_WORDS)
+
     def count_characters(self, s: str):
         d = defaultdict(int)
         for t in s:
@@ -95,6 +100,13 @@ class TextFeatureExtractor:
 
         return d
 
+    # @staticmethod
+    # def to_nltk_tree(node, remove_sw: bool = True):
+    #     if node.n_lefts + node.n_rights > 0:
+    #         return Tree(node.lemma_, [TextFeatureExtractor.to_nltk_tree(child) for child in node.children if not remove_sw or not child.is_stop])
+    #     else:
+    #         return node.orth_
+
     def preprocessing_tokenizer(self, string: str) -> list[str]:
         # string_clean = re.sub("<MENTION_.>", "", string, flags=re.RegexFlag.IGNORECASE).strip()
 
@@ -104,24 +116,31 @@ class TextFeatureExtractor:
         string_clean = replace_with_unicode(string_clean, self.__entity_map)
         # Remove all substrings with < "anything but spaces" >
         string_clean = re.sub("<\S+>", "", string_clean, flags=re.RegexFlag.IGNORECASE).strip()
+        # Replace punctuation with space
+        string_clean = re.sub(punctuation, " ", string_clean).strip()
         # Remove double spaces
         string_clean = re.sub(" +", " ", string_clean)
 
-        # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9, _, !, ? and all strings made of ":A-Z:", removing the colons
-        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s!?]", "", string_clean)
+        # Regular expression pattern with negative lookahead (remove all characters that are not A-z, 0-9,
+        # and all strings made of ":A-Z:", removing the colons
+        string_clean = re.sub(r"(?!:[A-Z]+:)[^\w\s]|_", "", string_clean)  # removed !? for now
         string_clean = re.sub(r":", "", string_clean).strip()
+
+        # Remove @card@
+        # string_clean = string_clean.replace("@card@", "")
 
         string_empty = len(string_clean) == 0
         if string_empty:
             # Encode empty string with this string
             string_clean = "EMPTYSTRING"
+        # string_clean = self.__augmenter.augment(string_clean)[0]
         doc = self.__spacy_model(string_clean)
         # print(doc.text)
         # entities = [(i, i.label_, i.label) for i in doc.ents]
         # Lemmatizing each token and converting each token into lowercase
         # tokens = [token.lemma_.lower().strip() if token.lemma_ != "-PRON-" else token.lower_ for token in doc if not token.is_stop]
         tokens = [token.lemma_.lower().strip() for token in doc if not token.is_stop]
-        tokens = [t for t in tokens if t and (not t.isalnum() or len(t) > 2)]
+        tokens = [t for t in tokens if t and (not t.isalnum() or len(t) > 2) and t != "@card@"]
         # print(tokens)
         # pos_token = [token.pos_ for token in doc if not token.is_stop]
 
@@ -154,10 +173,20 @@ def tree_tagger(doc):
     return doc
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     fex = TextFeatureExtractor()
     # s = "<MENTION_1> So che tu sei acida&#x1f602; a"
     # s = "Porca troia che gran pezzo di figa"
     s = "Ti sfonderei tutta&#x1f61c;&#x1f61c;as dc"
-    rs = fex.preprocessing_tokenizer(s)
+    s1 = "Dirti che sei una stupida troia non farebbe piacere a nessuno"
+    # s2 = "Porcona schifosa ti mangio troia"
+    # rs = fex.preprocessing_tokenizer(s)
+    ms1 = fex._TextFeatureExtractor__spacy_model(s1)
+    ms2 = fex._TextFeatureExtractor__spacy_model(s2)
+
+    test = [fex.to_nltk_tree(sent.root, remove_sw=False) for sent in ms1.sents]
+
+    # displacy.serve(ms1, style="dep")
+    # displacy.serve(ms2, style="dep", port=5001)
+
     pass

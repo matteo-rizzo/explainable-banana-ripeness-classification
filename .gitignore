@@ -145,3 +145,6 @@ out/
 /dataset/
 /__old/plots/
 /dumps/
+
+!dataset/AMI2020/lexicon/bad_words.txt
+!dataset/AMI2020/lexicon/common_words.txt

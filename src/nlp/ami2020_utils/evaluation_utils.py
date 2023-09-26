@@ -96,7 +96,8 @@ def compute_negative_cross_auc(df, subgroup, label, model_name):
     """Computes the AUC of the within-subgroup negative examples and the background positive examples."""
     subgroup_negative_examples = df[df[subgroup] & ~df[label]]
     non_subgroup_positive_examples = df[~df[subgroup] & df[label]]
-    examples = subgroup_negative_examples.append(non_subgroup_positive_examples)
+    # examples = subgroup_negative_examples.append(non_subgroup_positive_examples)
+    examples = pd.concat([subgroup_negative_examples, non_subgroup_positive_examples])
     return compute_auc(examples[label], examples[model_name])
 
 
@@ -104,7 +105,8 @@ def compute_positive_cross_auc(df, subgroup, label, model_name):
     """Computes the AUC of the within-subgroup positive examples and the background negative examples."""
     subgroup_positive_examples = df[df[subgroup] & df[label]]
     non_subgroup_negative_examples = df[~df[subgroup] & ~df[label]]
-    examples = subgroup_positive_examples.append(non_subgroup_negative_examples)
+    # examples = subgroup_positive_examples.append(non_subgroup_negative_examples)
+    examples = pd.concat([subgroup_positive_examples, non_subgroup_negative_examples])
     return compute_auc(examples[label], examples[model_name])
 
 
@@ -125,6 +127,8 @@ def get_final_metric(bias_df, overall_auc_test, model_name):
         bias_df[model_name + '_bpsn_auc'],
         bias_df[model_name + '_bnsp_auc']
     ])
+    print(f"Bias Score = {bias_score:.5f}")
+    print(f"AUC Score = {overall_auc_test:.5f}")
     return np.mean([overall_auc_test, bias_score])
 
 
