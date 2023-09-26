@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.linear_model import RidgeClassifier
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.dataset import train_val_test, wrong_predictions
+from src.nlp.dataset import train_val_test, wrong_predictions, compute_metrics
 from src.nlp.simple_model.pipeline import naive_classifier, predict_scores
 
 classifier_type = RidgeClassifier
@@ -20,12 +20,14 @@ if __name__ == "__main__":
 
     # Create dataset
     data = train_val_test(target="M", add_synthetic_train=synthetic_add)
-
-    # Train model
-    _, pipe_m = naive_classifier(classifier_type(**clf_params), data, return_pipe=True, predict=False)
-
     x_data = data["test"]["x"] + data["test_synt"]["x"]
     y_data = data["test"]["y"] + data["test_synt"]["y"]
+    # Add synthetic test to the test set samples
+    data["test"]["x"] = x_data
+    # Train model
+    predictions_, pipe_m = naive_classifier(classifier_type(**clf_params), data, return_pipe=True, predict=True)
+    print("Metrics on RAW and SYNTHETIC datasets combined")
+    compute_metrics(predictions_, y_data, classifier_type.__name__)
 
     # Tokenize dataset, then extract non-zero entries from vectorizer to get the effective features (words) that are considered
     x_tokenized = pipe_m["vectorizer"].transform(x_data)
@@ -34,6 +36,7 @@ if __name__ == "__main__":
 
     # Predict scores with the model on test data
     m_scores = predict_scores(pipe_m, x_data)
+    assert np.array_equal(np.where(m_scores > .0, 1, 0), predictions_), "Results and scores do not match"
 
     # Find out which are wrong predictions
     error_df: pd.DataFrame = wrong_predictions(y_pred=m_scores, y_true=np.asarray(y_data, dtype=int), threshold=.0)

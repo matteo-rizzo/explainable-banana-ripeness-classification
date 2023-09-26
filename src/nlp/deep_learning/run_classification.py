@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import pandas as pd
 import torch.cuda
 
@@ -19,7 +21,7 @@ if __name__ == "__main__":
     results = pipe_m(dataset_m["test"]["x"])
     results = [1 if e[0]["label"] == target_label else 0 for e in results]
     metrics = compute_metrics(y_pred=results, y_true=dataset_m["test"]["y"])
-    print(metrics)
+    pprint(metrics)
     m_f1 = metrics["f1"]
 
     match task:
