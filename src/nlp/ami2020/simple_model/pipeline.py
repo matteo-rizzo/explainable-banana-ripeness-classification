@@ -3,12 +3,55 @@ from typing import Type
 
 import numpy as np
 from sklearn.base import ClassifierMixin
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.pipeline import Pipeline
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.bayesian_model.bayesian_pipeline import make_pipeline, bayesian_make_pipeline
-from src.nlp.bayesian_model.bayesian_ridge_classifier import BayesianRidgeClassifier, RidgePriorClassifier
-from src.nlp.dataset import train_val_test, compute_metrics
+from src.nlp.ami2020.dataset import train_val_test, compute_metrics
+from src.nlp.ami2020.text_features import TextFeatureExtractor
+
+
+def predict_scores(pipeline: Pipeline, samples: list[str]) -> np.ndarray:
+    samples_tok = pipeline["vectorizer"].transform(samples)
+    scores = pipeline["classifier"].decision_function(samples_tok)
+    # scores = sp.special.expit(scores)
+    return scores
+
+
+def make_pipeline(sk_classifier: ClassifierMixin) -> Pipeline:
+    fex = TextFeatureExtractor()
+    bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
+                                     ngram_range=(1, 3),
+                                     max_features=10000,
+                                     token_pattern=None)
+
+    # Create a pipeline using TF-IDF
+    pipe = Pipeline([('vectorizer', bow_vectorizer),
+                     ('classifier', sk_classifier)])
+    return pipe
+
+
+def naive_classifier(sk_classifier: ClassifierMixin, training_data: dict[str, dict[str, list]],
+                     return_pipe: bool = False, predict: bool = True) -> np.ndarray | tuple[np.ndarray, Pipeline]:
+    pipe = make_pipeline(sk_classifier)
+
+    print("------ Training")
+
+    pipe.fit(training_data["train"]["x"], training_data["train"]["y"])
+
+    predicted = None
+    if predict:
+        print("------ Testing")
+
+        # Predicting with a test dataset
+        predicted = pipe.predict(training_data["test"]["x"])
+
+    if not return_pipe:
+        return predicted
+    else:
+        return predicted, pipe
 
 
 def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: str = "M"):
@@ -30,7 +73,7 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
         params = train_config["grid_search_params"][sk_classifier_type.__name__]
 
         gs = GridSearchCV(sk_classifier_type(), param_grid=params, verbose=10, refit=True)
-        grid_clf = bayesian_make_pipeline(gs)
+        grid_clf = make_pipeline(gs)
 
         grid_clf.fit(val_data["train"]["x"], val_data["train"]["y"])
         y_pred = grid_clf.predict(val_data["val"]["x"]).tolist()
@@ -61,4 +104,4 @@ def grid_search_best_params(sk_classifier_type: Type[ClassifierMixin], target: s
 
 if __name__ == "__main__":
     print("*** GRID SEARCH ")
-    grid_search_best_params(RidgePriorClassifier, target="M")
+    grid_search_best_params(RidgeClassifier, target="M")

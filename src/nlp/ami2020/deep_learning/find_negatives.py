@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.dataset import train_val_test, wrong_predictions, compute_metrics
-from src.nlp.deep_learning.pipeline import create_hf_pipeline, deep_preprocessing
+from src.nlp.ami2020.dataset import train_val_test, wrong_predictions, compute_metrics
+from src.nlp.ami2020.deep_learning.pipeline import create_hf_pipeline, deep_preprocessing
 
 if __name__ == "__main__":
     out = Path("dumps") / "nlp_models" / "error_reports" / "DL"

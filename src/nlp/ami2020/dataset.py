@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 
-from src.nlp.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
+from src.nlp.ami2020.ami2020_utils.evaluation_submission import read_gold, evaluate_task_b_singlefile
 
 
 def loop_preprocess(fn: Callable[[str], str], texts: list[str]) -> list[str]:

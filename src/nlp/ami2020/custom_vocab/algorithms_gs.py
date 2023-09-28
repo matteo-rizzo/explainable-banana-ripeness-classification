@@ -2,29 +2,25 @@
 from pprint import pprint
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import RidgeClassifier
 from sklearn.model_selection import GridSearchCV
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.svm import LinearSVC
-from sklearn.tree import DecisionTreeClassifier
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.bayesian_model.bayesian_ridge_classifier import RidgePriorClassifier
-from src.nlp.dataset import train_val_test, compute_metrics
-from src.nlp.simple_model.text_features import TextFeatureExtractor
+from src.nlp.ami2020.dataset import train_val_test, compute_metrics
+from src.nlp.ami2020.text_features import TextFeatureExtractor
 
-classifier_types = [MultinomialNB, LinearSVC, LogisticRegression,
-                    DecisionTreeClassifier, RidgePriorClassifier]
+classifier_types = [RidgeClassifier]
 
 
 def main():
     for classifier_type in classifier_types:
         # ---------------------------------------
         train_config: dict = load_yaml("src/nlp/params/experiment.yml")
+        synthetic_add: bool = train_config["add_synthetic"]
         clf = classifier_type()
         # ---------------------------------------
         print("*** Misogyny task")
-        data = train_val_test(target="M")
+        data = train_val_test(target="M", add_synthetic_train=synthetic_add)
         X, y = data["train"]["x"], data["train"]["y"]
         # ---------------------------------------
         print("------ Training")

@@ -8,8 +8,8 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.simple_model.pipeline import train_val_test, naive_classifier, compute_metrics
-from src.nlp.simple_model.run_classification import classifier_type
+from src.nlp.ami2020.simple_model.pipeline import train_val_test, naive_classifier, compute_metrics
+from src.nlp.ami2020.simple_model.run_classification import classifier_type
 
 # Ignore all warnings
 warnings.filterwarnings('ignore')

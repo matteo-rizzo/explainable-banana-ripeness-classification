@@ -4,7 +4,7 @@ from sklearn.base import TransformerMixin
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline
 
-from src.nlp.text_features import TextFeatureExtractor
+from src.nlp.ami2020.text_features import TextFeatureExtractor
 
 
 class DenseTransformer(TransformerMixin):

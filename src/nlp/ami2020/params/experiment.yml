@@ -7,8 +7,8 @@ max_features: 10000
 
 RidgeClassifier:
   solver: auto # lbfgs when positive = True
-  tol: 1.0e-4
-  alpha: 10.0
+  tol: 0.0001
+  alpha: 5.0
   positive: false
 
 RidgePriorClassifier:
@@ -68,10 +68,15 @@ grid_search_params:
   num_seeds: 1
   test_size: 0.2
 
+#  RidgeClassifier:
+#    solver: [ auto, lsqr, sparse_cg ]
+#    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
+#    alpha: [ 1.0e-06, 1.0e-05,  1.0e-04, 1.0e-03, 1.0e-02, 1.0e-01, 1.0, 1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6 ]
   RidgeClassifier:
-    solver: [ auto, lsqr, sparse_cg ]
-    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
-    alpha: [ 1.0e-06, 1.0e-05,  1.0e-04, 1.0e-03, 1.0e-02, 1.0e-01, 1.0, 1.0e+1, 1.0e+2, 1.0e+3, 1.0e+4, 1.0e+5, 1.0e+6 ]
+    solver: [auto] # lbfgs when positive = True
+    tol: [ 1.0e-4, 1.0e-5, 1.0e-3, 1.0e-2 ]
+    alpha: [1.0, 2.5, 5.0, 7.5, 10.0, 15.0]
+    positive: [false]
 
   RidgePriorClassifier:
     solver: [ auto, lsqr, sparse_cg ] # lbfgs when positive = True
@@ -96,18 +101,30 @@ grid_search_params:
     dual: [auto]
 
   MultinomialNB:
-    alpha: [ 0.001, 0.01, 0.1, 1.0, 10, 100, 1000 ]
+    alpha: [ 0.001, 0.01, 0.1, 1.0, 5, 10, 15, 20, 100, 1000 ]
     fit_prior: [true, false]
     force_alpha: [true, false]
 
-#  BayesianRidgeClassifier:
-#    #  max_iter: None
-#    tol: [ 1.0e-4, 1.0e-3 ]
-#    alpha_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-#    alpha_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-#    lambda_1: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-#    lambda_2: [ 1.0e-06, 1.0e-05, 1.0e-04 ]
-#  #  alpha_init: None
+  GaussianNB:
+    var_smoothing: [1.0e-9, 1.0e-6, 1.0e-3, 1.0e-1]
+
+  BayesianGaussianMixture:
+    n_components: [1, 5, 10]
+    covariance_type: ['full', 'tied', 'diag', 'spherical']
+    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
+    n_init: [1, 5]
+
+  RandomForestClassifier:
+    n_estimators: [50, 100]
+    criterion: [ "gini", "entropy", "log_loss" ]
+    min_samples_split: [ 2, 4 ]
+    ccp_alpha: [ 0.0, 0.001, 0.01, 0.1 ]
+
+  SVC:
+    C: [0.1, 1.0, 10.0]
+    kernel: ['linear', 'rbf']
+    gamma: ['scale', 'auto']
+    tol: [ 1.0e-4, 1.0e-5, 1.0e-3 ]
 
   DecisionTreeClassifier:
     # The function to measure the quality of a split
@@ -129,3 +146,12 @@ grid_search_params:
     # The subtree with the largest cost complexity that is smaller than ccp_alpha will be chosen
     # By default, no pruning is performed
     ccp_alpha: [ 0.0, 0.001, 0.01, 0.1 ]
+
+
+#  BNClassifier:
+#    learningMethod: ['GHC', 'MIIC']
+#    prior: ['Smoothing', 'BDeu', 'NoPrior']
+#    priorWeight: [0.1, 1, 10]
+#    discretizationNbBins: [1]
+#    discretizationStrategy: ["uniform", 'kmeans', 'uniform', 'quantile', 'NML', 'MDLP', 'CAIM', 'NoDiscretization']
+#    usePR: [False]

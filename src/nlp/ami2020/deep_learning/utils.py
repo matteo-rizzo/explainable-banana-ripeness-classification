@@ -14,7 +14,7 @@ from matplotlib import pyplot as plt
 from shap.models import TransformersPipeline
 from transformers import Trainer
 
-from src.nlp.dataset import train_val_test
+from src.nlp.ami2020.dataset import train_val_test
 
 
 def create_hf_dataset(target: str = "M", add_synthetic: bool = False, preprocessing_function: Callable[[str], str] = None) -> tuple[Dataset, Dataset]:

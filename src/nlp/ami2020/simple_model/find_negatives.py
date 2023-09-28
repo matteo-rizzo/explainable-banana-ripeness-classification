@@ -5,8 +5,8 @@ import pandas as pd
 from sklearn.linear_model import RidgeClassifier
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.dataset import train_val_test, wrong_predictions, compute_metrics
-from src.nlp.simple_model.pipeline import naive_classifier, predict_scores
+from src.nlp.ami2020.dataset import train_val_test, wrong_predictions, compute_metrics
+from src.nlp.ami2020.simple_model.pipeline import naive_classifier, predict_scores
 
 classifier_type = RidgeClassifier
 

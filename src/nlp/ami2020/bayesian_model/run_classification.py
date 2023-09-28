@@ -5,10 +5,9 @@ from pathlib import Path
 import pandas as pd
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.bayesian_model.bayesian_pipeline import bayesian_classifier
-from src.nlp.bayesian_model.bayesian_ridge_classifier import BayesianRidgeClassifier, RidgePriorClassifier, \
-    LogisticPriorClassifier
-from src.nlp.dataset import train_val_test, compute_metrics
+from src.nlp.ami2020.bayesian_model.bayesian_pipeline import bayesian_classifier
+from src.nlp.ami2020.bayesian_model.bayesian_ridge_classifier import RidgePriorClassifier
+from src.nlp.ami2020.dataset import train_val_test, compute_metrics
 
 classifier_type = RidgePriorClassifier
 

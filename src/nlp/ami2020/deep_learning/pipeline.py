@@ -5,7 +5,7 @@ import re
 
 from transformers import pipeline
 
-from src.nlp.text_features import separate_html_entities
+from src.nlp.ami2020.text_features import separate_html_entities
 
 
 # Load model directly

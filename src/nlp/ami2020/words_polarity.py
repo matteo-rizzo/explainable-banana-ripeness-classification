@@ -38,10 +38,15 @@ def inject_polarity(doc_representation: np.ndarray, doc_original: str, vocabular
     return doc_representation
 
 
-if __name__ == "__main__":
-    vocabulary = ["sborro", "ciao bella", "mannagialpapa", "dio stregone", "ultrasauro"]
-    doc_original = "Non sei sborro"
-    doc_representation = np.array([0.1, 0, 0, 0, 0])
+def main():
+    vocabulary = ["sborro", "ciao bella", "mannagialpapa", "dio stregone", "ultrasauro", "scopo"]
+    # doc_original = "Non sei sborro"
+    doc_original = "non ti scopo neanche col cazzo di un altro"
+    doc_representation = np.array([0.0, 0, 0, 0, 0, 0.1])
     print("Before\n", doc_representation)
-    doc_representation = inject_polarity(doc_representation, doc_original="Non sei sborro", vocabulary=vocabulary)
+    doc_representation = inject_polarity(doc_representation, doc_original=doc_original, vocabulary=vocabulary)
     print("After\n", doc_representation)
+
+
+if __name__ == "__main__":
+    main()

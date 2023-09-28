@@ -1,7 +1,7 @@
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.dataset import train_val_test
-from src.nlp.deep_learning.pipeline import create_hf_pipeline
-from src.nlp.deep_learning.utils import shap_explain
+from src.nlp.ami2020.dataset import train_val_test
+from src.nlp.ami2020.deep_learning.pipeline import create_hf_pipeline
+from src.nlp.ami2020.deep_learning.utils import shap_explain
 
 NUM_EXPLANATIONS = 10
 

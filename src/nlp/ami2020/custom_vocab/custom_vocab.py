@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import Pipeline
 
-from src.nlp.simple_model.text_features import TextFeatureExtractor
+from src.nlp.ami2020.text_features import TextFeatureExtractor
 
 
 def make_custom_vectorizer(X, y, **kwargs):
@@ -34,15 +34,15 @@ def make_custom_vectorizer(X, y, **kwargs):
 
 def fit_custom_pipeline(sk_classifier, X, y, max_features: int):
     fex = TextFeatureExtractor()
-    bow_vectorizer = make_custom_vectorizer(X, y,
-                                            tokenizer=fex.preprocessing_tokenizer,
-                                            ngram_range=(1, 5),
-                                            max_features=max_features,
-                                            token_pattern=None)
-    # bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
-    #                                  ngram_range=(1, 5),
-    #                                  max_features=max_features,
-    #                                  token_pattern=None)
+    # bow_vectorizer = make_custom_vectorizer(X, y,
+    #                                         tokenizer=fex.preprocessing_tokenizer,
+    #                                         ngram_range=(1, 3),
+    #                                         max_features=max_features,
+    #                                         token_pattern=None)
+    bow_vectorizer = TfidfVectorizer(tokenizer=fex.preprocessing_tokenizer,
+                                     ngram_range=(1, 3),
+                                     max_features=max_features,
+                                     token_pattern=None)
 
     # Create a pipeline using TF-IDF
     # Step 1: Vectorization
@@ -58,7 +58,7 @@ def fit_custom_pipeline(sk_classifier, X, y, max_features: int):
 
 
 def custom_vocab_classifier(sk_classifier, training_data: dict[str, dict[str, list]],
-                            max_features: int = 8000) -> np.ndarray | tuple[np.ndarray, Pipeline]:
+                            max_features: int = 10000) -> np.ndarray | tuple[np.ndarray, Pipeline]:
     print("------ Training")
     clf, vect = fit_custom_pipeline(sk_classifier, training_data["train"]["x"],
                                     training_data["train"]["y"], max_features)

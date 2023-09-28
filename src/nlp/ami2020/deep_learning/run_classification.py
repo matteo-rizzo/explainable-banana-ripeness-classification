@@ -4,8 +4,8 @@ import pandas as pd
 import torch.cuda
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml
-from src.nlp.dataset import train_val_test, compute_metrics, task_b_eval
-from src.nlp.deep_learning.pipeline import create_hf_pipeline, deep_preprocessing
+from src.nlp.ami2020.dataset import train_val_test, compute_metrics, task_b_eval
+from src.nlp.ami2020.deep_learning.pipeline import create_hf_pipeline, deep_preprocessing
 
 if __name__ == "__main__":
     config: dict = load_yaml("src/nlp/params/deep_learning.yml")

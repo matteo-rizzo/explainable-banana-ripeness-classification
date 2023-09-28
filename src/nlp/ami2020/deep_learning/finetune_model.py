@@ -11,8 +11,8 @@ from transformers import TrainingArguments
 from transformers.trainer import Trainer
 
 from src.cv.classifiers.deep_learning.functional.yaml_manager import load_yaml, dump_yaml
-from src.nlp.deep_learning.pipeline import deep_preprocessing
-from src.nlp.deep_learning.utils import create_hf_dataset, compute_metrics, get_next_run_name, log_results, delete_checkpoints
+from src.nlp.ami2020.deep_learning.pipeline import deep_preprocessing
+from src.nlp.ami2020.deep_learning.utils import create_hf_dataset, compute_metrics, get_next_run_name, log_results, delete_checkpoints
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
