@@ -5,12 +5,12 @@ scikit-learn==1.3.1
 termcolor==2.3.0
 Pillow==10.0.1
 torchvision==0.15.2
-transformers==4.33.2
+transformers==4.33.3
 pyyaml~=6.0
 scikit-image==0.21.0
 matplotlib
 tqdm
-scipy==1.11.2
+scipy==1.11.3
 torchmetrics==1.2.0
 lime~=0.2.0.1
 shap==0.42.1
